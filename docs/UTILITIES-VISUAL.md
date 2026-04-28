@@ -153,7 +153,7 @@ Keyframe-based entry animations. Keyframes themselves (`fade-in`, `slide-up`, `s
 
 | Class | Effect |
 |-------|--------|
-| `.backdrop-blur` | `backdrop-filter: blur(var(--backdrop-blur))` |
+| `.backdrop-blur` | `backdrop-filter: blur(8px)` |
 | `.grayscale` | `filter: grayscale(1)` |
 | `.grayscale-0` | `filter: grayscale(0)` |
 | `.isolation-isolate` | `isolation: isolate` (creates new stacking context) |

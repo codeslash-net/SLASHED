@@ -702,7 +702,7 @@ renames and removals.
 
 Remove:
 
-```
+```text
 --font-weight-thin, --font-weight-extralight, --font-weight-light,
 --font-weight-normal, --font-weight-medium, --font-weight-semibold,
 --font-weight-extrabold, --font-weight-black
@@ -710,7 +710,7 @@ Remove:
 
 Rename:
 
-```
+```text
 --font-weight-bold: 700  →  --font-weight-heading: 700
 ```
 
@@ -723,7 +723,7 @@ Rename:
 Remove for `--primary`, `--secondary`, and `--accent` in the light block, dark
 block, and legacy fallback block:
 
-```
+```text
 --primary-a10, --primary-a90
 --secondary-a10, --secondary-a90
 --accent-a10, --accent-a90
@@ -740,7 +740,7 @@ block — 3 steps, consistently.
 
 Remove:
 
-```
+```text
 --text-6xl, --text-7xl, --text-8xl, --text-9xl
 ```
 
@@ -755,7 +755,7 @@ sections.
 
 Remove and replace:
 
-```
+```text
 --container-xs: 20rem      →  --container-dialog: 20rem
 --container-sm: 24rem      →  --container-form:   24rem
 --container-narrow: 40rem  →  --container-prose:  40rem
@@ -772,7 +772,7 @@ Remove and replace:
 
 Light mode:
 
-```
+```text
 --color-text-faint:    var(--neutral-400)  (unchanged)
 --color-text-disabled: var(--neutral-300)  (was: --neutral-400)
 ```
@@ -854,7 +854,7 @@ rest of the token rationalisation pass.)
 
 **File:** `css/slashed-core.css`
 
-```
+```text
 .container--xs      →  .container--dialog
 .container--sm      →  .container--form
 .container--narrow  →  .container--prose
@@ -933,7 +933,7 @@ Identical to C3 — search and replace throughout the file.
 
 Remove:
 
-```
+```text
 .text-6xl, .text-7xl, .text-8xl, .text-9xl
 ```
 

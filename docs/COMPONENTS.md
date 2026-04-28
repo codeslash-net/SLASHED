@@ -144,7 +144,7 @@ Color-circle selector row. Each swatch driven by `--swatch-color`.
 
 ### `.cs-form-group`
 
-Label-above-input group with built-in CSS-only validation cascade via `:has(:invalid)`.
+Label-above-input group with built-in CSS-only validation cascade via `:has(:user-invalid)`.
 
 ```html
 <div class="cs-form-group">
@@ -160,7 +160,7 @@ Label-above-input group with built-in CSS-only validation cascade via `:has(:inv
 | `__label` | Label text |
 | `__input` | Input/select/textarea |
 | `__hint` | Help text (always visible) |
-| `__error` | Validation message (revealed when input is `:invalid` after blur) |
+| `__error` | Validation message (revealed when input is `:user-invalid` after blur) |
 
 Size modifiers: `.cs-input--s` / `.cs-input--l` on the input element (or `__input--s/--l`).
 
@@ -1083,4 +1083,4 @@ For custom dropdown components, opt into the same auto-escape by setting `[data-
 
 ## Version
 
-This reference reflects framework **v0.4.3.0**. Changelog per component in [CHANGELOG.md](../CHANGELOG.md).
+This reference reflects framework **v0.4.4.0**. Changelog per component in [CHANGELOG.md](../CHANGELOG.md).

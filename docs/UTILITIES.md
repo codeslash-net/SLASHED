@@ -158,10 +158,10 @@ Classes: `.h1`, `.h2`, `.h3`, `.h4`, `.h5`, `.h6`
 | Class | Color |
 |-------|-------|
 | `.text-primary`, `.text-secondary`, `.text-accent` | Brand |
-| `.text-default` | Main body text |
 | `.text-muted` | Secondary text |
-| `.text-faint` | Tertiary text |
-| `.text-success`, `.text-warning`, `.text-error`, `.text-info` | Status |
+| `.text-subdued` | Tertiary text |
+| `.text-faint` | Quaternary / placeholder text |
+| `.text-success`, `.text-warning`, `.text-error` | Status |
 | `.text-on-primary`, `.text-on-dark` | Contrast text |
 
 > **Note:** Background color utilities (`.bg-primary`, `.bg-surface-2`, etc.), border color utilities (`.border-primary`, etc.), and SVG fill/stroke color utilities are in the opt-in `slashed-utilities-visual.css`. See [UTILITIES-VISUAL.md](UTILITIES-VISUAL.md).
@@ -183,13 +183,10 @@ Classes: `.h1`, `.h2`, `.h3`, `.h4`, `.h5`, `.h6`
 |-------|-------|
 | `.block` | `display: block` |
 | `.inline-block` | `display: inline-block` |
-| `.inline` | `display: inline` |
 | `.flex` | `display: flex` |
 | `.inline-flex` | `display: inline-flex` |
 | `.grid` | `display: grid` |
-| `.inline-grid` | `display: inline-grid` |
 | `.hidden` | `display: none` |
-| `.contents` | `display: contents` |
 
 ---
 
@@ -200,7 +197,6 @@ Classes: `.h1`, `.h2`, `.h3`, `.h4`, `.h5`, `.h6`
 | `.flex-row` | `flex-direction: row` |
 | `.flex-row-reverse` | `flex-direction: row-reverse` |
 | `.flex-col` | `flex-direction: column` |
-| `.flex-col-reverse` | `flex-direction: column-reverse` |
 | `.flex-wrap` | `flex-wrap: wrap` |
 | `.flex-nowrap` | `flex-wrap: nowrap` |
 | `.flex-1` | `flex: 1 1 0%` |
@@ -268,12 +264,10 @@ Single primitive driven by an inline instance token:
 | `.justify-center` | `justify-content: center` |
 | `.justify-end` | `justify-content: flex-end` |
 | `.justify-between` | `justify-content: space-between` |
-| `.justify-around` | `justify-content: space-around` |
-| `.justify-evenly` | `justify-content: space-evenly` |
 
 ### Self-alignment (grid/flex children)
 
-`.self-start`, `.self-center`, `.self-end`, `.self-stretch`
+`.self-start`, `.self-center`, `.self-end`
 
 ---
 
@@ -281,7 +275,6 @@ Single primitive driven by an inline instance token:
 
 | Class | Value |
 |-------|-------|
-| `.static` | `position: static` |
 | `.relative` | `position: relative` |
 | `.absolute` | `position: absolute` |
 | `.fixed` | `position: fixed` |
@@ -316,7 +309,6 @@ Single primitive driven by an inline instance token:
 | Class | Value |
 |-------|-------|
 | `.w-full` | `width: 100%` |
-| `.w-screen` | `width: 100vw` |
 | `.w-auto` | `width: auto` |
 | `.w-fit` | `width: fit-content` |
 | `.w-min` | `width: min-content` |
@@ -330,7 +322,6 @@ Single primitive driven by an inline instance token:
 ### Min / max
 
 `.min-w-0`, `.min-w-full`
-`.max-w-prose` (65ch), `.max-w-none`, `.max-w-full`
 
 ### Aspect ratio
 
@@ -381,14 +372,7 @@ For in-core use, set these properties directly in a BEM rule using design tokens
 
 ## Transitions & animations
 
-Base `.transition*` and `.animate-*` classes are in the opt-in [visual layer](UTILITIES-VISUAL.md). What stays in core utilities is the **motion-preference-gated** variants, plus duration/easing tokens usable in BEM rules:
-
-| Class | Effect |
-|-------|--------|
-| `.duration-fast` | `var(--duration-fast)` (usable in BEM `transition-duration: var(--duration-fast)` — included as token helper) |
-| `.duration-normal` | `var(--duration-normal)` |
-| `.duration-slow` | `var(--duration-slow)` |
-| `.ease-out`, `.ease-in`, `.ease-in-out` | Timing-function tokens |
+`.transition*` and `.animate-*` classes are in the opt-in [visual layer](UTILITIES-VISUAL.md). Duration and easing are exposed as design tokens (`--duration-fast`, `--duration-normal`, `--ease-out`, etc.) for use in BEM rules — they are not shipped as standalone utility classes.
 
 ### Motion-safe animations
 
@@ -482,12 +466,12 @@ When the user's system is in dark mode AND `data-theme` is not set to `light`:
 |-------|---------|
 | `.sr-only` | Screen reader only (visually hidden) |
 | `.not-sr-only` | Undo `.sr-only` |
-| `.focus-ring` | Explicit focus ring (for components without native) |
-| `.skip-link` | Skip-to-content link pattern |
 
 ---
 
 ## Composition example
+
+> **Note:** Classes like `rounded-l`, `bg-surface`, `shadow-s`, `border`, `border-subtle`, `transition`, and `motion-safe:hover-lift` in the example below come from the opt-in `slashed-utilities-visual.css`. Load that file alongside core utilities to use them.
 
 ```html
 <article class="flex items-center gap-m p-l rounded-l bg-surface shadow-s border border-subtle transition motion-safe:hover-lift">

@@ -38,8 +38,8 @@ if [[ ! "$NEW" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
 fi
 
 # ── Detect old version from tokens-default.css (same source as build-bundle) ──
-OLD="$(grep -oE '[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?' \
-  "$REPO_ROOT/css/tokens-default.css" | head -1)"
+OLD="$(grep -oE 'SLASHED Tokens — Default — v[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?' \
+  "$REPO_ROOT/css/tokens-default.css" | head -1 | awk '{print $NF}' | sed 's/^v//')"
 
 if [[ -z "$OLD" ]]; then
   echo "bump-version: could not detect current version from tokens-default.css" >&2

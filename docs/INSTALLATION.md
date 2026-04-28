@@ -190,7 +190,7 @@ import '../public/slashed/slashed-full.css';
 Add to `.eleventy.js`:
 
 ```js
-eleventyConfig.addPassthroughCopy({ "node_modules/slashed/css": "assets/slashed" });
+eleventyConfig.addPassthroughCopy({ "slashed/css": "assets/slashed" });
 ```
 
 Then in your layout:

@@ -161,15 +161,15 @@
     el.setAttribute('role', 'status');
     var bodySpan = document.createElement('span');
     bodySpan.className = 'cs-toast__body';
-    if (opts.title) {
+    if (opts.title != null) {
       var titleSpan = document.createElement('span');
       titleSpan.className = 'cs-toast__title';
-      titleSpan.textContent = opts.title;
+      titleSpan.textContent = String(opts.title);
       bodySpan.appendChild(titleSpan);
       bodySpan.appendChild(document.createTextNode(' '));
     }
-    if (opts.body) {
-      bodySpan.appendChild(document.createTextNode(opts.body));
+    if (opts.body != null) {
+      bodySpan.appendChild(document.createTextNode(String(opts.body)));
     }
     el.appendChild(bodySpan);
     var closeBtn = document.createElement('button');

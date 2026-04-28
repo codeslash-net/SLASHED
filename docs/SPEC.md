@@ -79,7 +79,7 @@ stylesheet, no class toggling required.
 
 ## 2. File architecture
 
-```
+```text
 css/
 ├── tokens-default.css              Design tokens (colors, spacing, typography, radii, shadows, etc.)
 ├── slashed-core.css              Reset + base + layout primitives + a11y + print

@@ -318,7 +318,7 @@
   .text-faint      { color: var(--color-text-faint); }
   .text-disabled   { color: var(--color-text-disabled); }
   .text-success    { color: var(--success); }
-  .text-warning    { color: var(--warning); }
+  .text-warning    { color: var(--warning-600); }
   .text-error      { color: var(--error); }
   .text-white      { color: white; }
   .text-inherit    { color: inherit; }
@@ -331,11 +331,11 @@
 
   /* ----- Scheme / Theme ----- */
 
-  /* Class-based equivalents to data-theme for visual builders.
-     color-scheme: dark/light causes all light-dark() tokens to resolve
-     to the correct values for the entire subtree automatically. */
-  .scheme--dark  { color-scheme: dark;  background-color: var(--color-bg); color: var(--color-text); }
-  .scheme--light { color-scheme: light; background-color: var(--color-bg); color: var(--color-text); }
+  /* UA color-scheme helpers only.
+     They do not replace [data-theme] because semantic --color-* tokens
+     are switched by the theme selectors in tokens-default.css. */
+  .scheme--dark  { color-scheme: dark; }
+  .scheme--light { color-scheme: light; }
 
   /* ----- Border ----- */
 

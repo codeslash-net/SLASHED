@@ -1394,7 +1394,8 @@
   /* Prevent code blocks from overflowing the page margin */
   pre {
     white-space: pre-wrap;
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: anywhere;
     border: 1px solid #000 !important;
     opacity: 0.3;
   }
@@ -1412,4 +1413,4 @@
      }
    ========================================================================== */
 
-@layer slashed.overrides {}
+@layer slashed.overrides;

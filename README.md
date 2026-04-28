@@ -14,7 +14,7 @@ A buildless CSS framework for WordPress, Bricks Builder, and static sites. BEM-f
 | **Edgeless** | The framework never blocks the consumer from doing what they need — there is always a clean path around or through it, by design. |
 | **Deterministic** | The same markup always produces the same visual result, regardless of load order, environment, or which subset of files you include. |
 
-**Version:** 0.4.3.0 (pre-1.0, API still evolving — see [Path to 1.0](docs/SPEC.md#path-to-10) for what needs to settle before semver kicks in). [`ROADMAP.md`](ROADMAP.md) lists what's not yet shipped.
+**Version:** 0.4.4.0 (pre-1.0, API still evolving — see [Path to 1.0](docs/SPEC.md#path-to-10) for what needs to settle before semver kicks in). [`ROADMAP.md`](ROADMAP.md) lists what's not yet shipped.
 
 ---
 
@@ -82,7 +82,7 @@ Place the `css/` folder in `wp-content/themes/your-theme/slashed/`.
 
 SLASHED tokens are CSS custom properties on `:root`. In any Bricks GUI control (color picker, spacing, font size, etc.), reference them directly:
 
-```
+```text
 var(--primary)
 var(--color-text-muted)
 var(--space-m)
@@ -95,7 +95,7 @@ To make tokens appear in Bricks Variable Picker with autocomplete, manually defi
 
 Select element → **Style tab** → **Classes** → type any SLASHED class:
 
-```
+```text
 cs-card cs-card--bordered
 flex items-center gap-m
 section container
@@ -106,7 +106,7 @@ text-xl font-bold text-center
 
 Many components expose customization tokens. Set them via element **Attributes** → `style`:
 
-```
+```text
 --btn-bg: var(--accent)
 --card-padding: var(--space-xl)
 --bento-cols: 4
@@ -162,7 +162,7 @@ wp_enqueue_style('slashed-bricks', "$base/slashed-bricks.css", ['slashed-compone
 
 ## File reference
 
-```
+```text
 index.html                        Repo hub with links to everything below
 README.md                         This file — framework overview + quick start
 CONTRIBUTING.md                   Maintainer notes: gotchas, build commands, versioning
@@ -185,7 +185,7 @@ docs/
 ├── COMPONENTS.md                 All .cs-* components reference
 ├── UTILITIES.md                  Core utility classes reference
 ├── UTILITIES-VISUAL.md           Opt-in visual utilities reference
-└── DEPRECATION-POLICY.md         Three-phase deprecation process (TBD)
+└── DEPRECATION-POLICY.md         Three-phase deprecation process (Announce → Alias → Remove)
 ```
 
 **Open `index.html` in a browser** as the main entry point. It links to the cheatsheet and docs.

@@ -108,13 +108,13 @@
   .bg-dark {
     color-scheme: dark;
     background-color: var(--neutral-800);
-    color: var(--color-text);
+    color: var(--color-text-on-dark);
   }
   .bg-ultra-light { background: var(--color-surface-2); color: var(--color-text); }
   .bg-ultra-dark {
     color-scheme: dark;
     background-color: var(--neutral-900);
-    color: var(--color-text);
+    color: var(--color-text-on-dark);
   }
   .bg-transparent { background: transparent; }
   .bg-inherit     { background: inherit; }
