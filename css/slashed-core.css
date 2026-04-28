@@ -1,0 +1,1415 @@
+/* ==========================================================================
+   SLASHED Core — v0.4.4.0
+   Reset, base element defaults, layout primitives, a11y, print.
+   Baseline: Chrome 123+, Firefox 120+, Safari 17.5+, Edge 123+ (graceful fallbacks for Safari 16.2–17.4)
+   ========================================================================== */
+
+@layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
+
+/* slashed.overrides: empty — reserved for user styles that must win over all framework layers. */
+
+@layer slashed.reset {
+
+/* ==========================================================================
+   RESET
+   ========================================================================== */
+
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-padding-top: var(--header-height, 5rem);
+    /* scrollbar-gutter: stable — always reserve space for scrollbar, even when content
+       doesn't overflow. Prevents layout shift when scroll appears/disappears (e.g. opening
+       modals, mobile menus, or dynamically loaded content). Chrome 94+, Firefox 97+, Safari 16+. */
+    scrollbar-gutter: stable;
+    /* Intentional duplicate of tokens-default.css :root { color-scheme }.
+       Both files must be self-contained — each works without the other. */
+    color-scheme: light dark;
+    /* hanging-punctuation: opening/closing quotes and dashes optically hang outside
+       the text margin at block start/end. Safari-supported for years; Chrome 2025+.
+       Set globally so it benefits all text, not just .prose. Zero risk — ignored by
+       non-supporting browsers. */
+    hanging-punctuation: first last;
+  }
+
+  @supports (interpolate-size: allow-keywords) {
+    html { interpolate-size: allow-keywords; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-inline-size: 320px;
+  }
+
+  img, picture, video, svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  button, input, select, textarea { font: inherit; }
+
+  summary { list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+
+  dialog, [popover], fieldset {
+    border: 0;
+    padding: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --duration-fast:   0.01ms;
+      --duration-normal: 0.01ms;
+      --duration-slow:   0.01ms;
+    }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+@layer slashed.base {
+
+  body {
+    font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+    font-size: var(--text-m, 1rem);
+    line-height: var(--leading-normal, 1.5);
+    color: var(--color-text, #111827);
+    background: var(--color-bg, #f9fafb);
+    scrollbar-width: thin;
+    scrollbar-color: var(--neutral-400, #9ca3af) transparent;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading, var(--font-body, ui-sans-serif, system-ui, sans-serif));
+    font-weight: 700;
+    line-height: var(--leading-tight, 1.2);
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+  h1 { font-size: var(--text-4xl, 3rem); }
+  h2 { font-size: var(--text-3xl, 2.4rem); }
+  h3 { font-size: var(--text-2xl, 1.9rem); }
+  h4 { font-size: var(--text-xl, 1.5rem); }
+  h5 { font-size: var(--text-l, 1.25rem); }
+  h6 { font-size: var(--text-m, 1rem); }
+
+  p { text-wrap: pretty; }
+
+  /* ----- Lists (minimal indent, .list-none resets) ----- */
+
+  ul, ol { padding-inline-start: 1.25em; }
+
+  a {
+    color: var(--color-link, var(--primary, #2563eb));
+    text-decoration-color: color-mix(in srgb, currentcolor 30%, transparent);
+    text-underline-offset: 0.15em;
+    transition: color var(--duration-fast, 150ms) var(--ease-out, ease-out),
+                text-decoration-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  a:hover { color: var(--color-link-hover, var(--primary, #2563eb)); text-decoration-color: currentcolor; }
+  a:visited { color: var(--color-link-visited, var(--primary, #2563eb)); }
+  /* text-decoration-skip-ink: auto draws underlines around descenders (g, p, y etc.)
+     giving a cleaner, more typographically accurate underline on unclassed links. */
+  a:not([class]) { text-decoration-skip-ink: auto; }
+
+  code {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.875em;
+    background: var(--color-surface-2, #f3f4f6);
+    padding: 0.125em 0.3em;
+    border-radius: var(--radius-xs, 0.125rem);
+  }
+
+  pre {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: var(--text-s, 0.8125rem);
+    background: var(--color-surface-2, #f3f4f6);
+    padding: var(--space-m, 1rem);
+    border-radius: var(--radius-m, 0.5rem);
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neutral-400, #9ca3af) transparent;
+    tab-size: 2;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; border-radius: 0; white-space: inherit; }
+
+  blockquote {
+    border-inline-start: var(--blockquote-border-width, 3px) solid var(--primary, #2563eb);
+    padding-inline-start: var(--space-m, 1rem);
+    color: var(--color-text-muted, #4b5563);
+  }
+
+  /* ----- Inline semantics ----- */
+
+  abbr[title] {
+    text-decoration: underline dotted;
+    cursor: help;
+  }
+
+  sub, sup {
+    font-size: 0.75em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub { bottom: -0.25em; }
+  sup { top: -0.5em; }
+
+  kbd {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.875em;
+    padding: 0.125em 0.375em;
+    background: var(--color-surface-2, #f3f4f6);
+    border: var(--border-width, 1px) solid var(--color-border-strong, #9ca3af);
+    border-radius: var(--radius-s, 0.25rem);
+    box-shadow: 0 1px 0 var(--color-border-strong, #9ca3af);
+  }
+
+  /* ----- Button base ----- */
+
+  button, [role="button"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: var(--space-xs, 0.5rem) var(--space-m, 1rem);
+    /* min 44×44px touch target (WCAG 2.5.5 / Apple HIG / Material).
+       min-width ensures icon-only buttons stay square — add aspect-ratio: 1
+       and remove padding for a circular icon button. */
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    border: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-s, 0.25rem);
+    background: var(--color-surface, white);
+    color: inherit;
+    transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease-out),
+                background-color var(--duration-fast, 150ms) var(--ease-out, ease-out),
+                color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  /* ----- Mobile UX: eliminate 300ms tap delay and iOS grey flash ----- */
+  /* touch-action: manipulation disables double-tap-to-zoom on interactive elements,
+     removing the 300ms delay browsers add to wait for a potential second tap.
+     -webkit-tap-highlight-color: transparent eliminates the grey/blue overlay iOS
+     draws on tap — without this, custom hover/bg effects flash with the system color.
+     Applied to all interactive elements; safe to set globally on these selectors. */
+
+  a, button, input, select, textarea, label, summary, [role="button"], [tabindex] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* ----- Form input base ----- */
+
+  input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="range"], [type="file"], [type="image"], [type="button"], [type="submit"], [type="reset"]),
+  select,
+  textarea {
+    padding: var(--space-xs, 0.5rem) var(--space-s, 0.75rem);
+    border: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-s, 0.25rem);
+    background: var(--color-surface, white);
+    color: inherit;
+    caret-color: var(--primary, #2563eb);
+    transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+
+    &:focus {
+      border-color: var(--primary, #2563eb);
+      outline: var(--focus-ring-width, 2px) solid color-mix(in srgb, var(--primary, #2563eb) 25%, transparent);
+      outline-offset: 0;
+    }
+    
+      &:hover { border-color: var(--color-border-strong, #9ca3af); }
+    
+  }
+
+  textarea {
+    resize: vertical;
+    max-height: var(--textarea-max-height, 20rem);
+  }
+  /* field-sizing: content auto-grows textarea to fit its content, capped by max-height.
+     Chrome 123+; no Firefox support as of baseline. Progressive enhancement. */
+  @supports (field-sizing: content) {
+    textarea { field-sizing: content; }
+  }
+
+  /* ----- Disabled & read-only states ----- */
+
+  input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="range"], [type="file"], [type="image"], [type="button"], [type="submit"], [type="reset"]):disabled,
+  select:disabled,
+  textarea:disabled {
+    background: var(--color-surface-2, #f3f4f6);
+    color: var(--color-text-muted, #4b5563);
+    cursor: not-allowed;
+    opacity: 1; /* Override global [disabled] opacity — color change is sufficient signal */
+  }
+
+  input:not([type="checkbox"], [type="radio"], [type="hidden"], [type="range"], [type="file"], [type="image"], [type="button"], [type="submit"], [type="reset"]):read-only,
+  textarea:read-only {
+    background: var(--color-surface-2, #f3f4f6);
+    cursor: default;
+  }
+
+  /* ----- Form validation ----- */
+
+  input:user-invalid,
+  select:user-invalid,
+  textarea:user-invalid {
+    border-color: var(--error, #dc2626);
+  }
+  input:user-invalid:focus-visible,
+  select:user-invalid:focus-visible,
+  textarea:user-invalid:focus-visible {
+    outline: var(--focus-ring-width, 2px) solid color-mix(in srgb, var(--error, #dc2626) 40%, transparent);
+  }
+
+  /* ----- Checkbox / radio accent ----- */
+
+  input[type="checkbox"],
+  input[type="radio"] { accent-color: var(--primary, #2563eb); }
+
+  /* Indeterminate state — used in "select all" patterns and tree views.
+     --primary-400 (lighter primary) signals partial selection without
+     the warning semantics that yellow would incorrectly imply. */
+  input[type="checkbox"]:indeterminate { accent-color: var(--primary-400, #60a5fa); }
+
+  /* ----- Select (custom chevron) ----- */
+  /* appearance: none removes the native OS arrow. A custom SVG chevron replaces it.
+     Excludes select[multiple] and select[size>1] which render as listboxes, not dropdowns.
+     Includes select[size="1"] explicitly as it is semantically a dropdown.
+     Chevron stroke maps to hardcoded hex equivalents of --neutral-600 (light) /
+     --neutral-400 (dark) — currentColor is not available in background-image SVGs.
+     ⚠️ <option> elements are always rendered by the OS and cannot be fully styled. */
+
+  select:not([multiple]):not([size]),
+  select:not([multiple])[size="1"] {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - var(--space-s, 0.75rem)) center; /* LTR */
+    background-size: 1em 1em;
+    padding-inline-end: calc(var(--space-s, 0.75rem) * 2 + 1em);
+  }
+
+  /* RTL: flip chevron to inline-end (left). background-position percentages are
+     physical, not logical — the calc() above does not flip automatically in RTL. */
+  :is([dir="rtl"], [dir="rtl"] *) select:not([multiple]):not([size]),
+  :is([dir="rtl"], [dir="rtl"] *) select:not([multiple])[size="1"] {
+    background-position: var(--space-s, 0.75rem) center;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) select:not([multiple]):not([size]),
+    :root:not([data-theme="light"]) select:not([multiple])[size="1"] {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    }
+  }
+
+  [data-theme="dark"] select:not([multiple]):not([size]),
+  [data-theme="dark"] select:not([multiple])[size="1"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  }
+
+  /* ----- Range slider ----- */
+  /* Fully cross-browser styled. No fill gradient — requires JS to update CSS variable.
+     Use --range-thumb-color to customise the thumb color per instance. */
+
+  input[type="range"] {
+    appearance: none;
+    -webkit-appearance: none;
+    inline-size: 100%;
+    height: 0.25rem;
+    background: var(--color-border, #e5e7eb);
+    border-radius: var(--radius-full, 9999px);
+    cursor: pointer;
+    transition: background var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-full, 9999px);
+    background: var(--range-thumb-color, var(--primary, #2563eb));
+    cursor: pointer;
+    border: 2px solid var(--color-surface, white);
+    box-shadow: var(--shadow-s);
+    transition: scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  
+    input[type="range"]::-webkit-slider-thumb:hover { scale: 1.15; }
+  
+  input[type="range"]::-moz-range-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-full, 9999px);
+    background: var(--range-thumb-color, var(--primary, #2563eb));
+    cursor: pointer;
+    border: 2px solid var(--color-surface, white);
+    box-shadow: var(--shadow-s);
+    transition: scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  
+    input[type="range"]::-moz-range-thumb:hover { scale: 1.15; }
+  
+  input[type="range"]::-moz-range-track {
+    height: 0.25rem;
+    background: var(--color-border, #e5e7eb);
+    border-radius: var(--radius-full, 9999px);
+  }
+  /* Focus ring on the thumb, not the track */
+  input[type="range"]:focus-visible { outline: none; }
+  input[type="range"]:focus-visible::-webkit-slider-thumb {
+    outline: var(--focus-ring-width, 2px) solid var(--primary, #2563eb);
+    outline-offset: 2px;
+  }
+  input[type="range"]:focus-visible::-moz-range-thumb {
+    outline: var(--focus-ring-width, 2px) solid var(--primary, #2563eb);
+    outline-offset: 2px;
+  }
+
+  /* ----- File input ----- */
+  /* ::file-selector-button is the "Choose File" button rendered inside the input.
+     The text after it ("No file chosen") is not styleable — OS-rendered. */
+
+  input[type="file"] {
+    padding: 0;
+    cursor: pointer;
+  }
+  input[type="file"]::file-selector-button {
+    font: inherit;
+    background: var(--color-surface-2, #f3f4f6);
+    border: 0;
+    border-inline-end: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    padding: var(--space-xs, 0.5rem) var(--space-m, 1rem);
+    margin-inline-end: var(--space-m, 1rem);
+    cursor: pointer;
+    transition: background-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  
+    input[type="file"]::file-selector-button:hover {
+      background: color-mix(in srgb, var(--color-surface-2, #f3f4f6) 60%, var(--neutral-300, #d1d5db));
+    }
+  
+
+  /* ----- Color input ----- */
+  /* height and width set explicit touch-target size; padding: 0 removes default inset.
+     ::-webkit-color-swatch-wrapper / ::-webkit-color-swatch remove the double-border
+     Chrome renders around the color preview — Firefox exposes no pseudo-elements here. */
+
+  input[type="color"] {
+    padding: 0;
+    height: 2.75rem;
+    width: 4rem;
+    cursor: pointer;
+    border: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-s, 0.25rem);
+    background: var(--color-surface, white);
+  }
+  input[type="color"]::-webkit-color-swatch-wrapper { padding: 0.25rem; }
+  input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-s, 0.25rem) - 2px);
+  }
+
+  /* ----- Search input ----- */
+  /* ::-webkit-search-cancel-button removes the × button that appears when the field has
+     content. Set to revert to restore it — display: none hides it entirely. */
+
+  input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1em;
+    height: 1em;
+    cursor: pointer;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 4l8 8M12 4l-8 8'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  /* ----- Placeholder normalization (Firefox opacity fix) ----- */
+
+  ::placeholder { color: var(--color-text-faint, #9ca3af); opacity: 1; }
+
+  /* ----- Fieldset / Legend ----- */
+
+  fieldset {
+    border: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-m, 0.5rem);
+    padding: var(--space-m, 1rem);
+  }
+  legend {
+    padding-inline: var(--space-xs, 0.5rem);
+    font-weight: 600;
+    font-size: var(--text-s, 0.8125rem);
+    color: var(--color-text-muted, #4b5563);
+  }
+
+  /* ----- Table ----- */
+
+  table { border-collapse: collapse; text-align: start; }
+  th, td {
+    padding: var(--space-xs, 0.5rem) var(--space-s, 0.75rem);
+    border-block-end: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+  }
+  th { font-weight: 600; text-align: inherit; }
+
+  mark {
+    background: var(--warning-100, #fef3c7);
+    color: inherit;
+    padding: 0.1em 0.2em;
+    border-radius: var(--radius-xs, 0.125rem);
+  }
+
+  small { font-size: var(--text-s, 0.8125rem); }
+
+  hr {
+    border: none;
+    border-block-start: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    margin-block: var(--space-l, 1.5rem);
+  }
+
+  /* ----- Dialog ----- */
+
+  dialog {
+    margin: auto;
+    width: min(calc(100% - 2 * var(--space-gutter, 1rem)), var(--container-narrow, 40rem));
+    max-width: min(90vw, var(--container-narrow, 40rem));
+    padding: var(--space-l, 1.5rem);
+    border-radius: var(--radius-l, 0.75rem);
+    box-shadow: var(--shadow-float, 0 16px 48px rgba(0, 0, 0, 0.12));
+    background: var(--color-surface, white);
+    color: var(--color-text, #111827);
+    overscroll-behavior: contain;
+  }
+  dialog::backdrop { background: oklch(0 0 0 / 0.5); }
+
+  /* ----- Dialog scroll lock ----- */
+  /* scrollbar-gutter: stable reserves scrollbar space before overflow: hidden removes it,
+     preventing the ~17px layout shift that occurs on Windows when the scrollbar disappears.
+     :modal matches only dialogs opened via showModal() — not open attribute or show(). */
+
+  body:has(dialog[open]:modal) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
+  /* ----- Popover ----- */
+
+  [popover] {
+    padding: var(--space-m, 1rem);
+    border: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-m, 0.5rem);
+    box-shadow: var(--shadow-l, 0 8px 24px rgba(0, 0, 0, 0.1));
+    background: var(--color-surface, white);
+    color: var(--color-text, #111827);
+    opacity: 0;
+    translate: 0 -0.5rem;
+    transition: opacity var(--duration-fast, 150ms) var(--ease-out, ease-out),
+                translate var(--duration-fast, 150ms) var(--ease-out, ease-out),
+                overlay var(--duration-fast, 150ms) var(--ease-out, ease-out) allow-discrete,
+                display var(--duration-fast, 150ms) var(--ease-out, ease-out) allow-discrete;
+  }
+  [popover]:popover-open { opacity: 1; translate: 0 0; }
+  @starting-style {
+    [popover]:popover-open { opacity: 0; translate: 0 -0.5rem; }
+  }
+  [popover]::backdrop { background: transparent; }
+
+  /* ----- Details / Summary ----- */
+
+  summary { cursor: pointer; font-weight: 600; }
+
+  /* ----- States ----- */
+
+  [aria-busy="true"]                    { cursor: wait; opacity: 0.7; }
+  [disabled], [aria-disabled="true"]    { cursor: not-allowed; opacity: 0.6; }
+  [inert], [inert] *                    { opacity: 0.4; pointer-events: none; user-select: none; }
+
+  /* ----- ARIA state styles ----- */
+  /* CSS-driven state styling via ARIA attributes — no JS class toggling needed.
+     These selectors mirror the semantic states that assistive technology reads,
+     keeping visual and accessibility state in sync automatically. */
+
+  [aria-expanded="false"] > .expand-icon { rotate: 0deg; }
+  [aria-expanded="true"]  > .expand-icon { rotate: 180deg; transition: rotate var(--duration-fast) var(--ease-out); }
+
+  [aria-invalid="true"],
+  [aria-invalid="spelling"],
+  [aria-invalid="grammar"] {
+    border-color: var(--error, #dc2626);
+  }
+
+  [aria-current="page"],
+  [aria-current="step"] {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  [aria-current="page"]::before {
+    content: '';
+    display: inline-block;
+    width: 0.25em;
+    height: 1em;
+    background: var(--primary);
+    border-radius: var(--radius-full);
+    margin-inline-end: 0.5em;
+    vertical-align: middle;
+  }
+
+  [aria-selected="true"] {
+    background: var(--primary-100);
+    color: var(--primary-700);
+  }
+
+  [aria-pressed="true"] {
+    background: var(--primary);
+    color: var(--color-text-on-primary);
+    border-color: var(--primary);
+  }
+  [aria-pressed="mixed"] {
+    background: var(--primary-100);
+    border-color: var(--primary);
+  }
+
+  /* ----- CSS-only dark mode toggle ----- */
+  /* Optional progressive enhancement for sites that want a CSS-only toggle.
+     Add a hidden checkbox and label to your HTML, then override the selector
+     in your own stylesheet to match whatever ID or class you use:
+
+       body:has([data-theme-toggle]:checked) { color-scheme: dark; }
+
+     The [data-theme-toggle] attribute is the recommended pattern — apply it
+     to a <input type="checkbox"> element. Bricks 2.2+ users: use the built-in
+     Toggle–Mode element instead — it handles localStorage persistence too.
+
+     For JS-driven toggle: document.documentElement.setAttribute('data-theme', 'dark')
+     Both approaches use the [data-theme="dark"] rule already in tokens-default.css. */
+
+  ::selection {
+    background: var(--color-selection, rgba(37, 99, 235, 0.2));
+    color: var(--color-text, #111827);
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--primary, #2563eb));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+
+  /* ----- Switch toggle (CSS-only) ----- */
+  /* Use <input type="checkbox" role="switch"> in HTML.
+     role="switch" overrides the implicit checkbox role, correctly conveying
+     on/off semantics to screen readers per the ARIA spec. */
+
+  input[role="switch"] {
+    --switch-size: 1.5em; /* override to scale the entire switch: --switch-size: 2em */
+
+    appearance: none;
+    position: relative;
+    width: calc(var(--switch-size) * 11 / 6);
+    height: var(--switch-size);
+    border-radius: var(--radius-full, 9999px);
+    background: var(--switch-bg, var(--neutral-300, #d1d5db));
+    cursor: pointer;
+    transition: background-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  input[role="switch"]::after {
+    content: '';
+    position: absolute;
+    inset-block-start: calc(var(--switch-size) * 0.125);
+    inset-inline-start: calc(var(--switch-size) * 0.125);
+    width: calc(var(--switch-size) * 0.75);
+    height: calc(var(--switch-size) * 0.75);
+    border-radius: var(--radius-full, 9999px);
+    background: white;
+    box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.04));
+    transition: translate var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  input[role="switch"]:checked {
+    background: var(--switch-active, var(--primary, #2563eb));
+  }
+  input[role="switch"]:checked::after {
+    translate: calc(var(--switch-size) * 5 / 6) 0;
+  }
+  input[role="switch"]:focus-visible {
+    outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--primary, #2563eb));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  /* ----- Icon base (data-icon) ----- */
+
+  [data-icon] {
+    display: inline-flex;
+    width: var(--icon-size, 1.5em);
+    height: var(--icon-size, 1.5em);
+    color: var(--icon-color, currentcolor);
+    flex-shrink: 0;
+  }
+
+  /* ----- Progress bar ----- */
+
+  progress {
+    appearance: none;
+    inline-size: 100%;
+    height: var(--progress-height, 0.5rem);
+    border: none;
+    border-radius: var(--radius-full, 9999px);
+    background: var(--color-surface-2, #f3f4f6);
+    overflow: hidden;
+  }
+  progress::-webkit-progress-bar {
+    background: var(--color-surface-2, #f3f4f6);
+    border-radius: var(--radius-full, 9999px);
+  }
+  progress::-webkit-progress-value {
+    background: var(--progress-color, var(--primary, #2563eb));
+    border-radius: var(--radius-full, 9999px);
+  }
+  progress::-moz-progress-bar {
+    background: var(--progress-color, var(--primary, #2563eb));
+    border-radius: var(--radius-full, 9999px);
+  }
+
+  /* ----- View Transitions ----- */
+  /* Sets default fade animation for full-page View Transitions.
+     Chrome 111+, Safari 18+. Progressive enhancement.
+     Override per-element with view-transition-name + custom keyframes. */
+
+  @supports (view-transition-name: none) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: var(--duration-normal, 250ms);
+      animation-timing-function: var(--ease-out);
+    }
+    ::view-transition-old(root) { animation-name: fade-out; }
+    ::view-transition-new(root) { animation-name: fade-in; }
+  }
+
+  /* ----- Keyframes ----- */
+
+  @keyframes fade-in       { from { opacity: 0; } }
+  @keyframes fade-out      { from { opacity: 1; } to { opacity: 0; } }
+  @keyframes slide-up      { from { opacity: 0; translate: 0 1rem; } }
+  @keyframes scale-in      { from { opacity: 0; scale: 0.95; } }
+  @keyframes spin          { to { rotate: 360deg; } }
+  @keyframes skeleton-pulse {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+}
+
+/* ==========================================================================
+   LAYOUT PRIMITIVES
+   ========================================================================== */
+
+@layer slashed.layout {
+
+  /* ================================================================
+     BREAKPOINTS used in this layer (grid-2 through grid-12, grids,
+     sidebar, alternate, etc.) — same values as slashed-utilities.css.
+     If you change breakpoints in utilities, change them here too.
+
+     md: 48em (768px)  →  find: (min-width: 48em)
+     sm: 30em (480px)  →  find: (min-width: 30em)
+     ================================================================ */
+
+  .section     { padding-block: var(--space-section); }
+  .section--xs { padding-block: var(--space-l); }
+  .section--s  { padding-block: var(--space-xl); }
+  .section--m  { padding-block: var(--space-2xl); }
+  .section--l  { padding-block: var(--space-4xl); }
+  .section--xl { padding-block: clamp(8rem, 12vw, 12rem); }
+  .section--alt { background: var(--color-surface-2); }
+  .section-group > .section + .section { padding-block-start: 0; }
+
+  /* ----- Container ----- */
+
+  .container {
+    width: 100%;
+    max-width: var(--container-default);
+    margin-inline: auto;
+    padding-inline: var(--space-gutter);
+  }
+  .container--xs     { max-width: var(--container-xs); }
+  .container--sm     { max-width: var(--container-sm); }
+  .container--narrow { max-width: var(--container-narrow); }
+  .container--wide   { max-width: var(--container-wide); }
+  .container--full   { max-width: var(--container-full); }
+  .container--prose  { max-width: var(--container-prose); }
+
+  /* ----- Content grid (breakout pattern) ----- */
+  /* ⚠️ --breakout-width must be >= --content-width.
+     If content-width > breakout-width, the calc() yields a negative value
+     and the breakout columns collapse to 0. */
+
+  .content-grid {
+    --content-width: var(--container-default);
+    --breakout-width: var(--container-wide);
+    display: grid;
+    grid-template-columns:
+      [full-start] minmax(var(--space-gutter), 1fr)
+      [breakout-start] minmax(0, calc((var(--breakout-width) - var(--content-width)) / 2))
+      [content-start] min(var(--content-width), 100% - var(--space-gutter) * 2) [content-end]
+      minmax(0, calc((var(--breakout-width) - var(--content-width)) / 2)) [breakout-end]
+      minmax(var(--space-gutter), 1fr) [full-end];
+  }
+  .content-grid > *           { grid-column: content; }
+  .content-grid > .breakout   { grid-column: breakout; }
+  .content-grid > .full-bleed { grid-column: full; }
+
+  /* ----- Auto-grid ----- */
+
+  .auto-grid {
+    --grid-min: 16rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min), 100%), 1fr));
+    gap: var(--space-gap);
+  }
+  .auto-grid--s    { --grid-min: 12rem; }
+  .auto-grid--m    { --grid-min: 18rem; }
+  .auto-grid--l    { --grid-min: 24rem; }
+  /* auto-fill keeps empty grid tracks visible (useful for UI with "add item" placeholders).
+     auto-fit (default) collapses empty tracks so items stretch to fill the row. */
+  .auto-grid--fill { grid-template-columns: repeat(auto-fill,  minmax(min(var(--grid-min), 100%), 1fr)); }
+
+  /* ----- Variable column grid ----- */
+  /* Set --cols via inline style: <div class="grid-cols" style="--cols: 3">
+     Spacing tokens use clamp() and are fluid — responsive override classes are
+     intentionally limited to zero-resets to keep file size in check. */
+
+  .grid-cols {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 1), 1fr);
+    gap: var(--grid-gap, var(--space-gap));
+  }
+
+  /* ----- Fixed grids (mobile-first) ----- */
+
+  .grid-1, .grid-2, .grid-3, .grid-4, .grid-5, .grid-6,
+  .grid-7, .grid-8, .grid-9, .grid-10, .grid-11, .grid-12 {
+    display: grid;
+    gap: var(--space-gap);
+  }
+  @media (min-width: 30em) {
+    .grid-4, .grid-5, .grid-6,
+    .grid-7, .grid-8, .grid-9, .grid-10, .grid-11, .grid-12 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 48em) {
+    .grid-2  { grid-template-columns: repeat(2, 1fr); }
+    .grid-3  { grid-template-columns: repeat(3, 1fr); }
+    .grid-4  { grid-template-columns: repeat(4, 1fr); }
+    .grid-5  { grid-template-columns: repeat(5, 1fr); }
+    .grid-6  { grid-template-columns: repeat(6, 1fr); }
+    .grid-7  { grid-template-columns: repeat(7, 1fr); }
+    .grid-8  { grid-template-columns: repeat(8, 1fr); }
+    .grid-9  { grid-template-columns: repeat(9, 1fr); }
+    .grid-10 { grid-template-columns: repeat(10, 1fr); }
+    .grid-11 { grid-template-columns: repeat(11, 1fr); }
+    .grid-12 { grid-template-columns: repeat(12, 1fr); }
+  }
+
+  /* ----- Grid sidebar ----- */
+
+  .grid-sidebar { display: grid; gap: var(--space-gap); }
+  @media (min-width: 48em) {
+    .grid-sidebar { grid-template-columns: var(--sidebar-width, 18rem) 1fr; }
+  }
+
+  /* ----- Ratio grids (mobile: stacked, ≥48em: ratio) ----- */
+
+  .grid-1-1, .grid-1-3, .grid-1-2, .grid-2-1 { display: grid; gap: var(--space-gap); }
+  @media (min-width: 48em) {
+    .grid-1-1 { grid-template-columns: 1fr 1fr; }
+    .grid-1-3 { grid-template-columns: 1fr 3fr; }
+    .grid-1-2 { grid-template-columns: 1fr 2fr; }
+    .grid-2-1 { grid-template-columns: 2fr 1fr; }
+  }
+
+  /* ----- Sidebar layout ----- */
+
+  .sidebar-layout { display: flex; flex-wrap: wrap; gap: var(--space-gap); }
+  .sidebar-layout > :first-child { flex-basis: var(--sidebar-width, 18rem); flex-grow: 1; }
+  .sidebar-layout > :last-child  { flex-basis: 0; flex-grow: 999; min-inline-size: 60%; }
+  /* .sidebar-layout--right: sidebar is the second child (right side) */
+  .sidebar-layout--right > :first-child { flex-basis: 0; flex-grow: 999; min-inline-size: 60%; }
+  .sidebar-layout--right > :last-child  { flex-basis: var(--sidebar-width, 18rem); flex-grow: 1; }
+  .sidebar-layout--narrow { --sidebar-width: 12rem; }
+  .sidebar-layout--wide   { --sidebar-width: 26rem; }
+
+  /* ----- Switcher (intrinsic horizontal↔vertical) ----- */
+
+  .switcher {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-gap);
+  }
+  .switcher > * {
+    flex-grow: 1;
+    flex-basis: calc((var(--switcher-threshold, 30rem) - 100%) * 999);
+  }
+  /* .switcher--no-wrap: always horizontal with overflow scroll on mobile.
+     Use for tab bars, step indicators, or horizontal lists that must not stack. */
+  .switcher--no-wrap { flex-wrap: nowrap; overflow-x: auto; }
+  /* .switcher--vertical: always stacked regardless of available width. */
+  .switcher--vertical { flex-direction: column; }
+
+  /* ----- Subgrid ----- */
+
+  .subgrid      { display: grid; grid-template-columns: subgrid; }
+  .subgrid-rows { display: grid; grid-template-rows: subgrid; }
+
+  /* ----- Flow ----- */
+
+  .flow > * + *    { margin-block-start: var(--space-content); }
+  .flow--s > * + * { margin-block-start: var(--space-s); }
+  .flow--l > * + * { margin-block-start: var(--space-l); }
+
+  /* ----- Stack ----- */
+
+  .stack      { display: flex; flex-direction: column; gap: var(--space-content); }
+  .stack--2xs { gap: var(--space-2xs); }
+  .stack--xs  { gap: var(--space-xs); }
+  .stack--s   { gap: var(--space-s); }
+  .stack--m   { gap: var(--space-m); }
+  .stack--l   { gap: var(--space-l); }
+  .stack--xl  { gap: var(--space-xl); }
+  .stack--2xl { gap: var(--space-2xl); }
+  .stack--3xl { gap: var(--space-3xl); }
+  /* .stack--recursive: applies gap to all descendant stacked elements, not just direct children.
+     Useful for deeply nested flow content (MDX, CMS-rendered blocks). */
+  .stack--recursive * + * { margin-block-start: var(--space-content); }
+
+  /* ----- Cluster ----- */
+
+  .cluster      { display: flex; flex-wrap: wrap; gap: var(--space-gap); }
+  .cluster--2xs { gap: var(--space-2xs); }
+  .cluster--xs  { gap: var(--space-xs); }
+  .cluster--s   { gap: var(--space-s); }
+  .cluster--l   { gap: var(--space-l); }
+  .cluster--xl  { gap: var(--space-xl); }
+  .cluster--no-wrap { flex-wrap: nowrap; }
+
+  /* ----- Alternate (zigzag, mobile-first) ----- */
+
+  .alternate { display: grid; gap: var(--space-content); }
+  .alternate > * { display: grid; gap: var(--space-gap); align-items: center; }
+  @media (min-width: 48em) {
+    .alternate > * { grid-template-columns: 1fr 1fr; }
+    .alternate > :nth-child(even) > :first-child { order: 2; }
+    .alternate > :nth-child(even) > :last-child  { order: 1; }
+  }
+
+  /* ----- Cover (hero) ----- */
+
+  .cover {
+    display: flex; flex-direction: column;
+    min-height: var(--cover-height, 100dvh);
+    padding-block: var(--space-section);
+    padding-inline: var(--space-gutter);
+  }
+  .cover > .cover__center { margin-block: auto; }
+  .cover--min { min-height: var(--cover-min, 50dvh); }
+  .cover--max { min-height: 0; max-height: var(--cover-max, 100dvh); }
+  .cover--padding-s { padding-block: var(--space-xl); }
+  .cover--padding-l { padding-block: var(--space-4xl); }
+
+  /* ----- Reel (horizontal scroll) ----- */
+
+  .reel {
+    display: flex;
+    gap: var(--reel-gap, var(--space-gap));
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--reel-padding, var(--space-gap));
+    /* overscroll-behavior: contain prevents scroll from propagating to the document
+       when the reel reaches its end — without this, horizontal swipe on mobile
+       can trigger browser back/forward navigation or pull-to-refresh. */
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--neutral-400, #9ca3af) transparent;
+  }
+  .reel > * { flex-shrink: 0; scroll-snap-align: start; }
+
+  /* ----- Clickable parent ----- */
+
+  .clickable-parent { position: relative; }
+  .clickable-parent a:first-of-type::after {
+    content: ''; position: absolute; inset: 0;
+    z-index: var(--z-raised, 1);
+  }
+  .clickable-parent:has(a):hover { cursor: pointer; }
+
+  /* ----- Focus parent ----- */
+  /* Uses :has(:focus-visible) so the outline only appears during keyboard navigation,
+     not on mouse click. This matches the intent of the focus-visible pattern. */
+
+  .focus-parent:has(:focus-visible) {
+    outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--primary, #2563eb));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  /* ----- Group hover/show ----- */
+  /* visibility + opacity combo is intentional: visibility: hidden removes the element
+     from the accessibility tree when invisible; opacity alone would not. The visibility
+     transition snaps (it doesn't interpolate) — this is expected CSS behavior. */
+
+  .group-show {
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--duration-fast, 150ms) var(--ease-out, ease-out),
+                visibility var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  .group:hover > .group-show,
+  .group:has(:focus-visible) > .group-show { opacity: 1; visibility: visible; }
+
+  /* ----- Overlay ----- */
+  /* isolation: isolate creates a new stacking context. z-index: -1 on ::after places it
+     between the element's own background and its children — exactly the intended layering:
+     background-image → ::after overlay → content.
+     ⚠️ Do NOT add background to .overlay itself — the overlay ::after sits above it,
+     creating a combined tint rather than a pure overlay effect. */
+
+  .overlay { position: relative; isolation: isolate; }
+  .overlay::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--overlay, rgba(0, 0, 0, 0.5));
+    border-radius: inherit; pointer-events: none;
+    z-index: -1;
+  }
+
+  /* ----- Bleed ----- */
+  /* ⚠️ Requires the parent to have padding-inline: var(--space-gutter) (e.g. .container).
+     If the parent uses a different padding value, .bleed will overshoot. */
+
+  .bleed {
+    margin-inline: calc(-1 * var(--space-gutter));
+    padding-inline: var(--space-gutter);
+  }
+
+  /* ----- Center ----- */
+  /* Horizontally centers content with max-width and optional gutters.
+     .center--intrinsic additionally centers children along the inline axis (flex column). */
+
+  .center {
+    box-sizing: content-box;
+    margin-inline: auto;
+    max-inline-size: var(--center-max, var(--container-default));
+    padding-inline: var(--center-gutter, var(--space-gutter));
+  }
+  .center--intrinsic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ----- Frame (aspect-ratio media wrapper) ----- */
+  /* Constrains img/video children to a fixed aspect ratio regardless of intrinsic dimensions.
+     Use --frame-ratio to set arbitrary ratios: style="--frame-ratio: 4/3" */
+
+  .frame {
+    aspect-ratio: var(--frame-ratio, 16 / 9);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .frame > img,
+  .frame > video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .frame--square   { --frame-ratio: 1; }
+  .frame--video    { --frame-ratio: 16 / 9; }
+  .frame--portrait { --frame-ratio: 3 / 4; }
+  .frame--cinema   { --frame-ratio: 21 / 9; }
+  .frame--4-3      { --frame-ratio: 4 / 3; }
+
+  /* ----- Imposter (centered absolute/fixed overlay) ----- */
+  /* Positions an element at the center of its nearest positioned ancestor.
+     .imposter--fixed: stays centered in the viewport regardless of scroll.
+     .imposter--contain: clamps to avoid overflow beyond the positioned parent. */
+
+  .imposter {
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    translate: -50% -50%;
+  }
+  .imposter--fixed { position: fixed; }
+  .imposter--contain {
+    --imposter-margin: var(--space-m);
+    max-inline-size: calc(100% - var(--imposter-margin) * 2);
+    max-block-size:  calc(100% - var(--imposter-margin) * 2);
+    overflow: auto;
+  }
+
+  /* ----- Bento grid ----- */
+  /* CSS Grid layout for asymmetric "bento box" patterns.
+     Uses container queries (not viewport queries) — bento collapses correctly
+     whether it's full-width or inside a sidebar.
+
+     Span children with existing utilities: .col-span-2/3/4/full, .row-span-2
+     Customizable: --bento-cols (default: 3), --bento-row (default: 14rem), --bento-gap
+
+     Usage:
+       <div class="bento cq-inline">
+         <div class="col-span-2 row-span-2">Featured</div>
+         <div>Item</div>
+         <div class="col-span-2">Wide item</div>
+       </div> */
+
+  .bento {
+    container-type: inline-size;
+    display: grid;
+    grid-template-columns: repeat(var(--bento-cols, 3), 1fr);
+    /* minmax(min, auto): row has a minimum height for visual rhythm but extends when
+       content is taller. Featured cards (row-span-2) get minimum 2× bento-row while
+       still preventing overflow-hidden content clipping for long copy. */
+    grid-auto-rows: minmax(var(--bento-row, 14rem), auto);
+    grid-auto-flow: dense;
+    gap: var(--bento-gap, var(--space-gap));
+  }
+
+  /* Collapse to single column below 30em container width */
+  @container (max-width: 30em) {
+    .bento {
+      grid-auto-rows: auto;
+    }
+    .bento > * {
+      grid-column: 1 / -1 !important;
+      grid-row: auto !important;
+    }
+  }
+
+  /* 2-column layout between 30em and 48em */
+  @container (min-width: 30em) and (max-width: 48em) {
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+      /* Same minmax pattern — keeps row-span-2 dominance while accommodating content */
+      grid-auto-rows: minmax(var(--bento-row, 14rem), auto);
+    }
+    .bento > .col-span-3,
+    .bento > .col-span-4,
+    .bento > .col-span-full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Preset column variants */
+  .bento--2 { --bento-cols: 2; }
+  .bento--4 { --bento-cols: 4; }
+
+  /* Row height presets */
+  .bento--compact { --bento-row: 10rem; }
+  .bento--tall    { --bento-row: 20rem; }
+
+  /* Masonry moved to slashed-experimental.css in 0.3.7.0. */
+
+  /* ----- Prose ----- */
+
+  .prose {
+    max-width: var(--container-prose);
+    overflow-wrap: break-word;
+    /* hanging-punctuation is set globally on html — .prose inherits it automatically. */
+  }
+  .prose > * + *                 { margin-block-start: var(--space-content); }
+  .prose :is(h2, h3, h4) + *    { margin-block-start: var(--space-s); }
+  .prose li + li                 { margin-block-start: var(--space-xs); }
+  .prose :is(blockquote, pre)    { margin-block: var(--space-m); }
+  .prose img                     { margin-block: var(--space-m); border-radius: var(--radius-m); }
+  .prose :is(ul, ol)             { padding-inline-start: 1.25em; }
+  .prose ul                      { list-style: disc; }
+  .prose ol                      { list-style: decimal; }
+  .prose ::marker                { color: var(--primary); }
+  .prose figure                  { margin-block: var(--space-l); }
+  .prose figcaption              { font-size: var(--text-s); color: var(--color-text-muted); margin-block-start: var(--space-xs); }
+  /* display: block + overflow-x: auto required for reliable table scroll on mobile.
+     overflow-x alone on a table element does not create a scroll container across browsers. */
+  .prose table                   { margin-block: var(--space-m); display: block; overflow-x: auto; max-width: 100%; }
+  .prose video                   { margin-block: var(--space-m); border-radius: var(--radius-m); }
+
+  /* ----- Not-prose (resets prose descendant styles for embedded components) ----- */
+  /* Prevents .prose flow spacing and element styles from leaking into cards,
+     widgets, or other components embedded inside prose content.
+     Only resets what .prose actually sets — not a destructive all: revert. */
+
+  .prose .not-prose > * + *           { margin-block-start: 0; }
+  .prose .not-prose :is(ul, ol)       { list-style: revert; padding-inline-start: revert; }
+  .prose .not-prose ::marker          { color: inherit; }
+  .prose .not-prose img               { margin-block: 0; border-radius: 0; }
+  .prose .not-prose figure            { margin-block: 0; }
+  .prose .not-prose figcaption        { font-size: inherit; color: inherit; margin-block-start: 0; }
+  .prose .not-prose table             { margin-block: 0; display: revert; }
+  .prose .not-prose video             { margin-block: 0; border-radius: 0; }
+
+  /* ==========================================================================
+     BEHAVIORAL PATTERNS
+     Hover effects, scroll-driven animations, stagger — behavioral classes that
+     add interaction and motion without defining spatial structure.
+     Sit in layout layer (not utilities) because they are multi-property behavioral
+     patterns, not single-property escape hatches.
+     ========================================================================== */
+
+  /* ----- Hover patterns ----- */
+  /* Transition declarations sit outside @media (hover: hover) so deactivation
+     is smooth. Hover state rules are guarded to prevent stuck states on touch. */
+
+  .hover-lift {
+    transition: box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out),
+                translate var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  .hover-fade {
+    transition: opacity var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  .hover-bg {
+    transition: background-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  .hover-scale {
+    transition: scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  .hover-border {
+    transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  .hover-text {
+    --hover-text: var(--primary-700, #1d4ed8);
+    transition: color var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  .hover-shadow {
+    --hover-shadow: var(--shadow-l, 0 8px 24px 0 rgb(0 0 0 / 0.12));
+    transition: box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+
+  
+    .hover-lift:hover   { box-shadow: var(--hover-lift-shadow, var(--shadow-m)); translate: 0 var(--hover-lift-y, -2px); }
+    .hover-fade:hover   { opacity: 0.7; }
+    .hover-bg:hover     { background-color: var(--hover-bg, var(--color-surface-2)); }
+    .hover-scale:hover  { scale: 1.05; }
+    .hover-border:hover { border-color: var(--hover-border, var(--primary)); }
+    .hover-text:hover   { color: var(--hover-text); }
+    .hover-shadow:hover { box-shadow: var(--hover-shadow); }
+  
+
+  /* Keyboard focus mirrors hover — outside @media (hover: hover) so keyboard users
+     on touch devices also receive feedback. Additive: focus-visible outline still applies. */
+  .hover-lift:focus-visible   { box-shadow: var(--hover-lift-shadow, var(--shadow-m)); translate: 0 var(--hover-lift-y, -2px); }
+  .hover-fade:focus-visible   { opacity: 0.7; }
+  .hover-bg:focus-visible     { background-color: var(--hover-bg, var(--color-surface-2)); }
+  .hover-scale:focus-visible  { scale: 1.05; }
+  .hover-border:focus-visible { border-color: var(--hover-border, var(--primary)); }
+  .hover-text:focus-visible   { color: var(--hover-text); }
+  .hover-shadow:focus-visible { box-shadow: var(--hover-shadow); }
+
+  /* ----- Scroll reveal (scroll-driven) ----- */
+  /* Wrapped in prefers-reduced-motion: no-preference — elements are fully visible
+     without animation in unsupporting browsers or when reduced motion is active. */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-reveal {
+      animation-name: fade-in;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 90%;
+    }
+    .scroll-reveal-up {
+      animation-name: slide-up;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 90%;
+    }
+  }
+
+  /* ----- Parallax (scroll-driven) ----- */
+  /* ⚠️ Apply only to decorative elements — animated transforms on CPU compositing
+     layers can cause repaint when combined with opacity. Add will-change: transform if needed. */
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .parallax {
+        animation: parallax-move linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+      @keyframes parallax-move {
+        from { translate: 0 calc(var(--parallax-speed, -3rem)); }
+        to   { translate: 0 calc(var(--parallax-speed, -3rem) * -1); }
+      }
+    }
+  }
+
+  /* ----- Stagger ----- */
+  /* Set --_i as an inline style on each child: style="--_i: 0", style="--_i: 1", etc.
+     CSS sibling-index() will replace this pattern when cross-browser support arrives. */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .stagger > * {
+      animation: fade-in 0.3s var(--ease-out, ease-out) both;
+      animation-delay: calc(var(--_i, 0) * var(--stagger-delay, var(--duration-stagger, 80ms)));
+    }
+  }
+
+}
+
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+
+@layer slashed.a11y {
+  /* ----- Screen reader only ----- */
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+
+  /* ----- Skip to content ----- */
+
+  .skip-to-content {
+    position: fixed; inset-block-start: -100%; inset-inline-start: 50%; translate: -50% 0;
+    padding: var(--space-s, 0.75rem) var(--space-m, 1rem);
+    background: var(--primary, #2563eb); color: var(--color-text-on-primary, white);
+    border-radius: var(--radius-m, 0.5rem); z-index: var(--z-max, 999999);
+    transition: inset-block-start var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  .skip-to-content:focus { inset-block-start: var(--space-s, 0.75rem); }
+
+  @media (prefers-contrast: more) {
+    :root {
+      --color-border: var(--neutral-400);
+      --color-border-strong: var(--neutral-600);
+      --color-text-muted: var(--neutral-700);
+      --focus-ring-width: 3px;
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    :root {
+      --primary-a10: var(--primary-100);
+      --primary-a25: var(--primary-200);
+      --primary-a50: var(--primary-300);
+    }
+  }
+
+  @media (forced-colors: active) {
+    button, input, select, textarea, [role="button"], summary {
+      border: 1px solid ButtonText;
+    }
+  }
+
+  /* ----- prefers-reduced-data ----- */
+  /* Activated by "Data Saver" mode on Android Chrome and iOS Low Data Mode.
+     Disables decorative background images and heavy gradients to reduce bandwidth.
+     Zero functional impact — layout and all interactive states are preserved.
+
+     Note: .bg-gradient / .text-gradient fallbacks live in slashed-utilities-visual.css
+     (opt-in layer) alongside their base rules — they are no-ops without that file. */
+
+  @media (prefers-reduced-data: reduce) {
+    *[style*="background-image"] { background-image: none !important; }
+    .mask-fade                   { mask-image: none; }
+  }
+
+  /* ----- Motion preference utilities -----
+     Relocated from slashed.utilities → slashed.a11y in 0.4.2.0.
+     Class names unchanged. Sits in the a11y layer alongside other
+     prefers-* overrides so motion preference always beats decoration. */
+
+  @media (prefers-reduced-motion: no-preference) {
+    .motion-safe\:transition        { transition-property: color, background-color, border-color, outline-color, box-shadow, opacity, transform, translate, scale, rotate; transition-duration: var(--duration-normal); transition-timing-function: var(--ease-out); }
+    .motion-safe\:animate-fade-in   { animation: fade-in var(--duration-normal) var(--ease-out) both; }
+    .motion-safe\:animate-slide-up  { animation: slide-up var(--duration-normal) var(--ease-out) both; }
+    .motion-safe\:animate-scale-in  { animation: scale-in var(--duration-normal) var(--ease-out) both; }
+    .motion-safe\:animate-spin      { animation: spin 1s linear infinite; }
+    .motion-safe\:hover-lift:hover  { box-shadow: var(--hover-lift-shadow, var(--shadow-m)); translate: 0 var(--hover-lift-y, -2px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .motion-reduce\:animate-none    { animation: none !important; }
+    .motion-reduce\:transition-none { transition: none !important; }
+    .motion-reduce\:animate-fade-in { animation: fade-in 0.01ms both !important; }
+
+    /* Stop marquee scroll; wrap items so content is still accessible */
+    .cs-marquee__track {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+}
+
+/* ==========================================================================
+   PRINT (unlayered — beats all layers by default)
+   ========================================================================== */
+
+.print-only { display: none; }
+
+@media print {
+  *, *::before, *::after {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  body { orphans: 3; widows: 3; }
+  .no-print   { display: none; }
+  .print-only { display: block; }
+  .page-break-before { break-before: page; }
+  .page-break-after  { break-after: page; }
+
+  /* Show link destinations — standard in professional print stylesheets */
+  a[href]:not([href^="#"]):not([href^="javascript:"]):not([href^="tel:"]):not([href^="mailto:"])::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #000 !important;
+    opacity: 0.6;
+    word-break: break-all;
+  }
+
+  /* Prevent code blocks from overflowing the page margin */
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    border: 1px solid #000 !important;
+    opacity: 0.3;
+  }
+}
+
+/* ==========================================================================
+   OVERRIDES (empty — user layer)
+   Sits above all slashed layers. Use for project-specific overrides that
+   need to beat framework defaults without !important.
+
+   Usage:
+     @layer slashed.overrides {
+       .hero { padding-block: 10rem; }
+       .cs-card { --card-padding: var(--space-xl); }
+     }
+   ========================================================================== */
+
+@layer slashed.overrides {}

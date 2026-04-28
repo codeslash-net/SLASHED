@@ -1,0 +1,228 @@
+/* ==========================================================================
+   SLASHED Utilities - Visual - v0.4.4.0
+   Optional visual-property utility layer.
+
+   PHILOSOPHY:
+   SLASHED core intentionally does NOT ship decorative utilities (backgrounds,
+   borders, radii, shadows, opacity, transitions, animations, filters).
+   Decoration belongs in BEM rules with design tokens - see SPEC.md pillar #2.
+
+   This file exists for projects that prefer decorative utility composition,
+   rapid prototyping, or ad-hoc tinting in Bricks GUI. It ships the exact 98
+   classes that were cut from core in 0.1.2.1, one-to-one. No additions.
+
+   USAGE:
+   Load AFTER slashed-full.css (or slashed-utilities.css):
+
+     <link rel="stylesheet" href="css/slashed-full.css">
+     <link rel="stylesheet" href="css/slashed-utilities-visual.css">   <-- opt-in
+
+   WordPress / Bricks enqueue:
+
+     wp_enqueue_style(
+       'slashed-visual',
+       "$base/slashed-utilities-visual.css",
+       ['slashed'],
+       $ver
+     );
+
+   LAYER:
+   All rules are nested in `@layer slashed.visual`, ordered after
+   `slashed.utilities`. Unlayered BEM still wins over every layer.
+
+   See docs/UTILITIES-VISUAL.md for guidance on when to reach for this file
+   vs. writing tokens-driven BEM rules.
+   ========================================================================== */
+
+@layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
+
+@layer slashed.visual {
+
+  /* ----- Border width / style ----- */
+
+  .border         { border: var(--border-width, 1px) solid var(--color-border); }
+  .border-0       { border: 0; }
+  .border-2       { border-width: 2px; }
+  .border-b       { border-block-end: var(--border-width, 1px) solid var(--color-border); }
+  .border-t       { border-block-start: var(--border-width, 1px) solid var(--color-border); }
+  .border-l       { border-inline-start: var(--border-width, 1px) solid var(--color-border); }
+  .border-r       { border-inline-end: var(--border-width, 1px) solid var(--color-border); }
+  .border-x       { border-inline: var(--border-width, 1px) solid var(--color-border); border-block: 0; }
+  .border-y       { border-block: var(--border-width, 1px) solid var(--color-border); border-inline: 0; }
+  .border-dashed  { border-style: dashed; }
+  .border-dotted  { border-style: dotted; }
+
+  /* ----- Border color - semantic ----- */
+
+  .border-primary { border-color: var(--primary); }
+  .border-strong  { border: var(--border-width, 1px) solid var(--color-border-strong); }
+  .border-subtle  { border: var(--border-width, 1px) solid var(--color-border-subtle); }
+  .accent-primary { accent-color: var(--primary); }
+
+  /* ----- Border radius ----- */
+
+  .rounded-none { border-radius: 0; }
+  .rounded-xs   { border-radius: var(--radius-xs); }
+  .rounded-s    { border-radius: var(--radius-s); }
+  .rounded-m    { border-radius: var(--radius-m); }
+  .rounded-l    { border-radius: var(--radius-l); }
+  .rounded-xl   { border-radius: var(--radius-xl); }
+  .rounded-2xl  { border-radius: var(--radius-2xl); }
+  .rounded-full { border-radius: var(--radius-full); }
+
+  /* ----- Background - palette (scale levels) ----- */
+
+  .bg-primary-50  { background: var(--primary-50); }
+  .bg-primary-100 { background: var(--primary-100); }
+  .bg-primary-200 { background: var(--primary-200); }
+  .bg-primary-700 { background: var(--primary-700); }
+  .bg-primary-800 { background: var(--primary-800); }
+  .bg-primary-900 { background: var(--primary-900); }
+  .bg-primary-950 { background: var(--primary-950); }
+  .bg-secondary-100 { background: var(--secondary-100); }
+  .bg-secondary-800 { background: var(--secondary-800); }
+  .bg-secondary-900 { background: var(--secondary-900); }
+  .bg-accent-100 { background: var(--accent-100); }
+  .bg-accent-800 { background: var(--accent-800); }
+  .bg-accent-900 { background: var(--accent-900); }
+  .bg-neutral-100 { background: var(--neutral-100); }
+  .bg-neutral-800 { background: var(--neutral-800); }
+  .bg-neutral-900 { background: var(--neutral-900); }
+  .bg-success-100 { background: var(--success-100); }
+  .bg-warning-100 { background: var(--warning-100); }
+  .bg-error-100   { background: var(--error-100); }
+
+  /* ----- Background - semantic ----- */
+
+  .bg-primary     { background: var(--primary); }
+  .bg-secondary   { background: var(--secondary); }
+  .bg-accent      { background: var(--accent); }
+  .bg-success     { background: var(--success); }
+  .bg-warning     { background: var(--warning); }
+  .bg-error       { background: var(--error); }
+  .bg-surface          { background: var(--color-surface); }
+  .bg-surface-2        { background: var(--color-surface-2); }
+  .bg-surface-elevated { background: var(--color-surface-elevated); }
+  .bg-surface-overlay  { background: var(--color-surface-overlay); }
+  .bg-light       { color-scheme: light; background: var(--color-surface);   color: var(--color-text); }
+  .bg-dark {
+    color-scheme: dark;
+    background-color: var(--neutral-800);
+    color: var(--color-text);
+  }
+  .bg-ultra-light { background: var(--color-surface-2); color: var(--color-text); }
+  .bg-ultra-dark {
+    color-scheme: dark;
+    background-color: var(--neutral-900);
+    color: var(--color-text);
+  }
+  .bg-transparent { background: transparent; }
+  .bg-inherit     { background: inherit; }
+  .bg-gradient {
+    background: var(--bg-gradient, linear-gradient(to bottom right, var(--primary, #2563eb), var(--accent, #f59e0b)));
+  }
+
+  /* ----- Shadow ----- */
+
+  .shadow-none    { box-shadow: none; }
+  .shadow-xs      { box-shadow: var(--shadow-xs); }
+  .shadow-s       { box-shadow: var(--shadow-s); }
+  .shadow-m       { box-shadow: var(--shadow-m); }
+  .shadow-l       { box-shadow: var(--shadow-l); }
+  .shadow-xl      { box-shadow: var(--shadow-xl); }
+  .shadow-float   { box-shadow: var(--shadow-float); }
+  .shadow-glow    { box-shadow: var(--shadow-glow); }
+  .shadow-colored { box-shadow: var(--shadow-colored); }
+  .shadow-inner   { box-shadow: var(--shadow-inner); }
+
+  /* ----- Opacity ----- */
+
+  .opacity-0   { opacity: 0; }
+  .opacity-50  { opacity: 0.5; }
+  .opacity-80  { opacity: 0.8; }
+  .opacity-100 { opacity: 1; }
+
+  /* ----- Animation / keyframes ----- */
+
+  .animate-fade-in  { animation: fade-in var(--duration-normal) var(--ease-out) both; }
+  .animate-scale-in { animation: scale-in var(--duration-normal) var(--ease-out) both; }
+  .animate-slide-up { animation: slide-up var(--duration-normal) var(--ease-out) both; }
+  .animate-spin     { animation: spin 1s linear infinite; }
+
+  /* ----- Transition ----- */
+
+  .transition {
+    transition-property: color, background-color, border-color, outline-color,
+                         box-shadow, opacity, transform, translate, scale, rotate, filter;
+    transition-duration: var(--duration-normal);
+    transition-timing-function: var(--ease-out);
+  }
+  .transition-colors {
+    transition-property: color, background-color, border-color, outline-color;
+    transition-duration: var(--duration-normal);
+    transition-timing-function: var(--ease-out);
+  }
+  .transition-fast {
+    transition-property: color, background-color, border-color, outline-color,
+                         box-shadow, opacity, transform, translate, scale, rotate, filter;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-out);
+  }
+  .transition-none { transition: none; }
+  .transition-shadow {
+    transition-property: box-shadow;
+    transition-duration: var(--duration-normal);
+    transition-timing-function: var(--ease-out);
+  }
+  .transition-transform {
+    transition-property: transform, translate, scale, rotate;
+    transition-duration: var(--duration-normal);
+    transition-timing-function: var(--ease-out);
+  }
+
+  /* ----- Filter / effects ----- */
+
+  .backdrop-blur { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .grayscale    { filter: grayscale(100%); }
+  .grayscale-0  { filter: grayscale(0); }
+  .isolation-isolate { isolation: isolate; }
+
+  /* ----- Fill / stroke - non-currentColor ----- */
+
+  .fill-primary { fill: var(--primary); }
+  .fill-success { fill: var(--success); }
+  .fill-warning { fill: var(--warning); }
+  .fill-error   { fill: var(--error); }
+  .fill-white   { fill: white; }
+  .fill-none    { fill: none; }
+  .stroke-none    { stroke: none; }
+  .stroke-width-1 { stroke-width: 1; }
+  .stroke-width-2 { stroke-width: 2; }
+
+  /* ----- Text - decorative / gradient ----- */
+
+  .text-gradient {
+    background: var(--text-gradient, linear-gradient(to right, var(--primary, #2563eb), var(--accent, #f59e0b)));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  /* Optical vertical centering. Chrome 135+; ignored elsewhere. */
+  @supports (text-box: trim-both cap alphabetic) {
+    .text-box-trim { text-box: trim-both cap alphabetic; }
+  }
+
+}
+
+/* ==========================================================================
+   A11Y OVERRIDES for visual utilities
+   These live in @layer slashed.a11y (ranked higher than slashed.visual)
+   so they can cancel visual effects when the user prefers reduced data.
+   ========================================================================== */
+
+@layer slashed.a11y {
+
+  @media (prefers-reduced-data: reduce) {
+    .bg-gradient   { background: var(--color-surface-2); }
+    .text-gradient { background: none; -webkit-text-fill-color: currentcolor; }
+  }
+
+}
