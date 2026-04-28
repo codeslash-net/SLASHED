@@ -30,16 +30,16 @@ For quick prototypes and CodePen-style work:
 
 ```html
 <!-- Pinned to exact version (REQUIRED for production until 1.0) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.3.0/css/slashed-full.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.4.0/css/slashed-full.css">
 
 <!-- Individual files (also pinned) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.3.0/css/tokens-default.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.3.0/css/slashed-core.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.3.0/css/slashed-components.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.3.0/css/slashed-utilities.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.4.0/css/tokens-default.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.4.0/css/slashed-core.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.4.0/css/slashed-components.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.4.0/css/slashed-utilities.css">
 
 <!-- Optional: visual utilities layer -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.3.0/css/slashed-utilities-visual.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/codeslash-net/slashed@0.4.4.0/css/slashed-utilities-visual.css">
 ```
 
 > **Why exact-version pinning matters during pre-1.0.** The framework
@@ -51,7 +51,7 @@ For quick prototypes and CodePen-style work:
 > only flagged in `CHANGELOG.md`. Floating tags like `@latest` or
 > partial pins like `@0.3` will silently pick those up and can break
 > a deployed site without warning. Pin to the full version
-> (`@0.4.3.0`) and bump deliberately after reading the changelog.
+> (`@0.4.4.0`) and bump deliberately after reading the changelog.
 
 ```html
 <!-- DO NOT USE in production until 1.0 — automatically picks up
@@ -265,7 +265,7 @@ No build step required.
 
 After installation, verify SLASHED is loaded by inspecting an element in DevTools:
 
-- A `.container` should have `max-inline-size: var(--container-default)`
+- A `.container` should have `max-width: var(--container-default)`
 - A `.cs-btn--primary` should have visible styling
 - `getComputedStyle(document.documentElement).getPropertyValue('--primary')` should return a color
 

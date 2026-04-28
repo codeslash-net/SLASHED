@@ -123,7 +123,19 @@
      but this adds .is-active for SSR/pre-rendered state and environments
      where :has() is unavailable.
   --------------------------------------------------------------- */
+  function syncTabs(tabs) {
+    var tabList = Array.from(tabs.querySelectorAll('.cs-tabs__tab'));
+    var panels  = Array.from(tabs.querySelectorAll('.cs-tabs__panel'));
+    var checked = tabList.findIndex(function (t) {
+      var r = t.querySelector('input[type="radio"]');
+      return r && r.checked;
+    });
+    var idx = checked >= 0 ? checked : 0;
+    panels.forEach(function (p, i) { p.classList.toggle('is-active', i === idx); });
+  }
+
   function initTabs() {
+    document.querySelectorAll('.cs-tabs').forEach(syncTabs);
     document.addEventListener('change', function (e) {
       var radio = e.target;
       if (radio.type !== 'radio') return;
@@ -131,12 +143,7 @@
       if (!tab) return;
       var tabs = radio.closest('.cs-tabs');
       if (!tabs) return;
-      var tabList = Array.from(tabs.querySelectorAll('.cs-tabs__tab'));
-      var panels = Array.from(tabs.querySelectorAll('.cs-tabs__panel'));
-      var idx = tabList.indexOf(tab);
-      panels.forEach(function (p, i) {
-        p.classList.toggle('is-active', i === idx);
-      });
+      syncTabs(tabs);
     });
   }
 
@@ -211,6 +218,6 @@
   /* Expose public helpers for dynamic content re-runs and toasts:
      slashedUI.initStagger(containerElement)
      slashedUI.toast({ title, body, variant, duration }) */
-  window.slashedUI = { initStagger: initStagger, toast: toast };
+  window.slashedUI = Object.assign(window.slashedUI || {}, { initStagger: initStagger, toast: toast });
 
 })();

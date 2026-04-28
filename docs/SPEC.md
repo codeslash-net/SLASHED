@@ -52,8 +52,10 @@ primitives (`.stack`, `.cover`, `.bento`), BEM components (`.cs-card`,
 `.cs-btn--primary`), and utility classes (`.flex`, `.gap-m`, `.text-l`). Every
 interactive component ships two paths: a pure-CSS baseline using native HTML
 semantics (`<details>`, `<dialog>`, `:has()`, radio inputs), and an optional
-WCAG-AAA JavaScript enhancement layer (`js/slashed-ui.js`) that adds
-`aria-expanded`, focus management, and keyboard navigation on top.
+JavaScript progressive-enhancement layer (`js/slashed-ui.js`) that adds
+`aria-expanded`, focus management, and keyboard navigation on top. Outstanding
+items (tab keyboard support, modal focus restoration, nav-dropdown keyboard
+navigation) are tracked in ROADMAP.md and will land before 1.0.
 
 **6. Edgeless.** The framework has no hard walls. Unlayered BEM always beats
 framework `@layer` rules — a consumer can override any framework default with

@@ -1069,7 +1069,7 @@ These components rely on `:has()` for state-driven styling without JS:
 - `.cs-card` segmented detection — `:has(> .cs-card__header, ...)` strips the wrapper's padding
 - `.cs-navbar` burger toggle — `:has(.cs-navbar__toggle:checked)` reveals the menu
 - `.cs-header` auto-escape — `:has(.cs-nav-dropdown[open], .cs-dropdown[open])` raises z-index and clears `backdrop-filter`
-- `.cs-form-group` — `:has(:invalid)` drives error message reveal
+- `.cs-form-group` — `:has(:user-invalid)` drives error message reveal (interaction-aware: fires only after the user has touched the field)
 
 Browser support: Chrome 105+, Firefox 121+, Safari 15.4+ (universal in modern evergreen browsers).
 
