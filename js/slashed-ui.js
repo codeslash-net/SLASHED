@@ -62,7 +62,11 @@
   function initModals() {
     document.addEventListener('click', function (e) {
       var openModals = Array.from(document.querySelectorAll('dialog.cs-modal[open]'));
-      var dialog = openModals[openModals.length - 1];
+      var dialog = null;
+      for (var i = openModals.length - 1; i >= 0; i--) {
+        if (openModals[i].matches(':modal')) { dialog = openModals[i]; break; }
+      }
+      if (!dialog) dialog = openModals[openModals.length - 1];
       if (!dialog) return;
       var rect = dialog.getBoundingClientRect();
       var clickedBackdrop =
@@ -104,9 +108,12 @@
   --------------------------------------------------------------- */
   function initRangeFill() {
     function update(input) {
-      var min = parseFloat(input.min) || 0;
-      var max = parseFloat(input.max) || 100;
-      var val = parseFloat(input.value) || 0;
+      var minRaw = parseFloat(input.min);
+      var maxRaw = parseFloat(input.max);
+      var valRaw = parseFloat(input.value);
+      var min = Number.isFinite(minRaw) ? minRaw : 0;
+      var max = Number.isFinite(maxRaw) ? maxRaw : 100;
+      var val = Number.isFinite(valRaw) ? valRaw : 0;
       var denom = max - min;
       if (denom === 0) {
         input.style.setProperty('--_fill', '0%');
