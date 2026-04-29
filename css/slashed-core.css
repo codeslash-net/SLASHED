@@ -331,18 +331,27 @@
   }
 
   /* ----- Range slider ----- */
-  /* Fully cross-browser styled. No fill gradient — requires JS to update CSS variable.
-     Use --range-thumb-color to customise the thumb color per instance. */
+  /* Fully cross-browser styled. Fill gradient painted by JS via --_fill (set by slashed-ui.js).
+     Use --range-thumb-color / --range-fill-color to customise colors per instance. */
 
   input[type="range"] {
     appearance: none;
     -webkit-appearance: none;
     inline-size: 100%;
     height: 0.25rem;
-    background: var(--color-border, #e5e7eb);
+    background: linear-gradient(
+      to right,
+      var(--range-fill-color, var(--primary, #2563eb)) var(--_fill, 0%),
+      var(--color-border, #e5e7eb) var(--_fill, 0%)
+    );
     border-radius: var(--radius-full, 9999px);
     cursor: pointer;
     transition: background var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  input[type="range"]::-moz-range-progress {
+    background: var(--range-fill-color, var(--primary, #2563eb));
+    height: 0.25rem;
+    border-radius: var(--radius-full, 9999px);
   }
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -764,6 +773,7 @@
   .content-grid {
     --content-width: var(--container-default);
     --breakout-width: var(--container-wide);
+
     display: grid;
     grid-template-columns:
       [full-start] minmax(var(--space-gutter), 1fr)
@@ -780,6 +790,7 @@
 
   .auto-grid {
     --grid-min: 16rem;
+
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min), 100%), 1fr));
     gap: var(--space-gap);
@@ -1059,6 +1070,7 @@
   .imposter--fixed { position: fixed; }
   .imposter--contain {
     --imposter-margin: var(--space-m);
+
     max-inline-size: calc(100% - var(--imposter-margin) * 2);
     max-block-size:  calc(100% - var(--imposter-margin) * 2);
     overflow: auto;
@@ -1198,11 +1210,13 @@
 
   .hover-text {
     --hover-text: var(--primary-700, #1d4ed8);
+
     transition: color var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
 
   .hover-shadow {
     --hover-shadow: var(--shadow-l, 0 8px 24px 0 rgb(0 0 0 / 0.12));
+
     transition: box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
 

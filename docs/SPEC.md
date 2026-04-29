@@ -28,7 +28,9 @@ The name is an acronym:
 eight explicitly ranked layers: `reset → base → layout → components →
 utilities → visual → a11y → overrides`. BEM naming is enforced in components.
 Token hierarchy is documented. Everything has a place and a reason. No
-specificity wars, no hacks, no `!important`.
+specificity wars, no hacks, no `!important` in normal rules (the only
+exceptions are a handful of `!important` in the `a11y` layer where forced-colors
+and reduced-motion overrides require it, and two print rules).
 
 **2. Lean.** No class exists speculatively. Every framework class was promoted
 from a pattern that appeared 3+ times across unrelated use cases and could
@@ -88,7 +90,8 @@ css/
 ├── slashed-components.css        Interactive UI components (.cs-* prefixed)
 ├── slashed-utilities.css         Layout + functional + inline typographic utilities
 ├── slashed-utilities-visual.css  OPT-IN: decorative utilities (bg, border, radius, shadow, ...)
-└── slashed-full.css              Bundle of 4 core files. Does NOT include visual layer.
+├── slashed-full.css              Bundle of 4 core files. Does NOT include visual layer.
+└── slashed-experimental.css      OPT-IN: features without stable cross-browser support yet.
 ```
 
 ### Load order

@@ -175,14 +175,14 @@ import '../css/slashed-full.css';
 
 ```js
 // app/layout.js
-import '../public/slashed/slashed-full.css';
+import '../public/slashed/css/slashed-full.css';
 ```
 
 ### Next.js (Pages Router)
 
 ```js
 // pages/_app.js
-import '../public/slashed/slashed-full.css';
+import '../public/slashed/css/slashed-full.css';
 ```
 
 ### Eleventy

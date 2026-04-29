@@ -131,6 +131,10 @@
       return r && r.checked;
     });
     var idx = checked >= 0 ? checked : 0;
+    if (checked < 0 && tabList[0]) {
+      var firstRadio = tabList[0].querySelector('input[type="radio"]');
+      if (firstRadio) firstRadio.checked = true;
+    }
     panels.forEach(function (p, i) { p.classList.toggle('is-active', i === idx); });
   }
 
