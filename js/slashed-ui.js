@@ -63,12 +63,13 @@
     document.addEventListener('click', function (e) {
       var openModals = document.querySelectorAll('dialog.cs-modal[open]');
       openModals.forEach(function (dialog) {
-        if (dialog.contains(e.target)) return;
         var rect = dialog.getBoundingClientRect();
-        var clickedOutside =
-          e.clientX < rect.left || e.clientX > rect.right ||
-          e.clientY < rect.top  || e.clientY > rect.bottom;
-        if (clickedOutside) dialog.close();
+        var clickedBackdrop =
+          e.target === dialog &&
+          (e.clientX < rect.left || e.clientX > rect.right ||
+           e.clientY < rect.top  || e.clientY > rect.bottom);
+        var clickedOutsideTree = !dialog.contains(e.target);
+        if (clickedBackdrop || clickedOutsideTree) dialog.close();
       });
     });
     /* Escape is handled natively by <dialog> — no JS needed */
@@ -126,8 +127,8 @@
      where :has() is unavailable.
   --------------------------------------------------------------- */
   function syncTabs(tabs) {
-    var tabList = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__tab'));
-    var panels  = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__panel'));
+    var tabList = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__list > .cs-tabs__tab'));
+    var panels  = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__panels > .cs-tabs__panel'));
     var checked = tabList.findIndex(function (t) {
       var r = t.querySelector('input[type="radio"]');
       return r && r.checked;
