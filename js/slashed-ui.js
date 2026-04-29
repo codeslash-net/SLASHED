@@ -124,8 +124,8 @@
      where :has() is unavailable.
   --------------------------------------------------------------- */
   function syncTabs(tabs) {
-    var tabList = Array.from(tabs.querySelectorAll('.cs-tabs__tab'));
-    var panels  = Array.from(tabs.querySelectorAll('.cs-tabs__panel'));
+    var tabList = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__tab'));
+    var panels  = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__panel'));
     var checked = tabList.findIndex(function (t) {
       var r = t.querySelector('input[type="radio"]');
       return r && r.checked;
@@ -196,6 +196,10 @@
   }
   function dismiss(el) {
     if (!el || !el.parentNode) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (el.parentNode) el.parentNode.removeChild(el);
+      return;
+    }
     el.style.transition = 'opacity 200ms, translate 200ms';
     el.style.opacity = '0';
     el.style.translate = '0 -0.5rem';

@@ -222,7 +222,7 @@ slashed/
 ### Single file (simplest)
 
 ```html
-<link rel="stylesheet" href="slashed-full.css">
+<link rel="stylesheet" href="slashed/css/slashed-full.css">
 ```
 
 Pros: one HTTP request, works everywhere.
@@ -231,10 +231,10 @@ Cons: user downloads all CSS even if only using components.
 ### Modular (better caching)
 
 ```html
-<link rel="stylesheet" href="tokens-default.css">
-<link rel="stylesheet" href="slashed-core.css">
-<link rel="stylesheet" href="slashed-components.css">
-<link rel="stylesheet" href="slashed-utilities.css">
+<link rel="stylesheet" href="slashed/css/tokens-default.css">
+<link rel="stylesheet" href="slashed/css/slashed-core.css">
+<link rel="stylesheet" href="slashed/css/slashed-components.css">
+<link rel="stylesheet" href="slashed/css/slashed-utilities.css">
 ```
 
 Pros: update one file without cache-busting others, smaller initial load if you drop a module.
@@ -243,8 +243,8 @@ Cons: 4 HTTP requests.
 ### Core only (minimal)
 
 ```html
-<link rel="stylesheet" href="tokens-default.css">
-<link rel="stylesheet" href="slashed-core.css">
+<link rel="stylesheet" href="slashed/css/tokens-default.css">
+<link rel="stylesheet" href="slashed/css/slashed-core.css">
 ```
 
 Skip components and utilities — use framework just for tokens + layout primitives. You write your own BEM classes on top.

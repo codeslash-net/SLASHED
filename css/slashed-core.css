@@ -1103,16 +1103,9 @@
     gap: var(--bento-gap, var(--space-gap));
   }
 
-  /* Collapse to single column below 30em container width */
-  @container (max-width: 30em) {
-    .bento {
-      grid-auto-rows: auto;
-    }
-    .bento > * {
-      grid-column: 1 / -1 !important;
-      grid-row: auto !important;
-    }
-  }
+  /* Collapse to single column below 30em container width.
+     Rules live in slashed.overrides so they beat utility span classes without
+     needing !important; unlayered user BEM still wins over any @layer. */
 
   /* 2-column layout between 30em and 48em */
   @container (min-width: 30em) and (max-width: 48em) {
@@ -1363,6 +1356,8 @@
     .motion-safe\:animate-slide-up  { animation: slide-up var(--duration-normal) var(--ease-out) both; }
     .motion-safe\:animate-scale-in  { animation: scale-in var(--duration-normal) var(--ease-out) both; }
     .motion-safe\:animate-spin      { animation: spin 1s linear infinite; }
+  }
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
     .motion-safe\:hover-lift:hover  { box-shadow: var(--hover-lift-shadow, var(--shadow-m)); translate: 0 var(--hover-lift-y, -2px); }
   }
 
@@ -1414,7 +1409,7 @@
     word-break: normal;
     overflow-wrap: anywhere;
     border: 1px solid #000 !important;
-    opacity: 0.3;
+    opacity: 1;
   }
 }
 
@@ -1430,4 +1425,18 @@
      }
    ========================================================================== */
 
-@layer slashed.overrides;
+@layer slashed.overrides {
+
+  /* Bento responsive collapse — must beat utility span classes (.col-span-2 etc.)
+     which live in slashed.utilities. Unlayered user BEM still overrides this. */
+  @container (max-width: 30em) {
+    .bento {
+      grid-auto-rows: auto;
+    }
+    .bento > * {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+  }
+
+}
