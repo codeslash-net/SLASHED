@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLASHED — Cheatsheet v0.4.4.0</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cs-bg:        #0d0f12;
+    --cs-surface:   #161920;
+    --cs-surface-2: #1e2228;
+    --cs-border:    #2a2f38;
+    --cs-text:      #e2e8f0;
+    --cs-muted:     #8892a4;
+    --cs-faint:     #4a5568;
+    --cs-accent:    #60a5fa;
+    --cs-green:     #4ade80;
+    --cs-yellow:    #facc15;
+    --cs-purple:    #a78bfa;
+    --cs-pink:      #f472b6;
+    --cs-orange:    #fb923c;
+    --cs-cyan:      #22d3ee;
+    --mono: 'SF Mono', 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --sans: system-ui, -apple-system, sans-serif;
+  }
+
+  html { background: var(--cs-bg); color: var(--cs-text); font-family: var(--sans); font-size: 13px; line-height: 1.5; }
+  body { max-width: 1400px; margin: 0 auto; padding: 0 1rem 4rem; }
+  a { color: var(--cs-accent); text-decoration: none; }
+
+  nav.docs-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--cs-bg);
+    border-bottom: 1px solid var(--cs-border);
+    padding: 0.75rem 0;
+    display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;
+    margin-bottom: 2rem;
+  }
+  nav.docs-nav a {
+    color: var(--cs-muted);
+    font-size: 12px;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  nav.docs-nav a:hover, nav.docs-nav a.active {
+    color: var(--cs-accent);
+    border-color: var(--cs-border);
+    background: var(--cs-surface);
+  }
+
+  .docs-logo {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--cs-text);
+    margin-right: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+  .docs-logo span { color: var(--cs-accent); }
+
+  .docs-search { margin-left: auto; }
+  #search {
+    background: var(--cs-surface);
+    border: 1px solid var(--cs-border);
+    color: var(--cs-text);
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: var(--sans);
+    width: 240px;
+    outline: none;
+  }
+  #search:focus { border-color: var(--cs-accent); }
+
+  .page-header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--cs-border);
+    margin-bottom: 2rem;
+  }
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .page-header h1 span { color: var(--cs-accent); }
+  .page-header p {
+    color: var(--cs-muted);
+    margin-top: 0.5rem;
+    font-size: 14px;
+  }
+
+  .version-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 600;
+    font-family: var(--mono);
+    background: rgba(74, 222, 128, 0.12);
+    color: var(--cs-green);
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  .section { margin-bottom: 3rem; scroll-margin-top: 70px; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cs-faint);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--cs-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-title .meta {
+    color: var(--cs-muted);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    margin-left: auto;
+  }
+  .subheading {
+    color: var(--cs-muted);
+    font-size: 12px;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+  }
+
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .item {
+    background: var(--cs-surface);
+    border: 1px solid var(--cs-border);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: border-color 0.15s;
+  }
+  .item:hover { border-color: var(--cs-accent); }
+  .name { color: var(--cs-accent); font-weight: 600; }
+  .desc { color: var(--cs-muted); font-size: 11px; font-family: var(--sans); line-height: 1.4; }
+  .val { color: var(--cs-faint); font-size: 10px; }
+
+  pre.code-block {
+    background: var(--cs-surface);
+    border: 1px solid var(--cs-border);
+    border-radius: 6px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 12px;
+    margin: 0.5rem 0 1rem;
+  }
+  pre.code-block code { font-family: var(--mono); color: var(--cs-text); }
+  .c-comment { color: var(--cs-faint); }
+  .c-tag { color: var(--cs-pink); }
+  .c-attr { color: var(--cs-yellow); }
+  .c-string { color: var(--cs-green); }
+
+  .intro-note {
+    background: var(--cs-surface-2);
+    border-left: 3px solid var(--cs-accent);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 1.5rem;
+    color: var(--cs-muted);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .intro-note strong { color: var(--cs-text); }
+  .intro-note code {
+    font-family: var(--mono);
+    background: var(--cs-bg);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    color: var(--cs-accent);
+    font-size: 12px;
+  }
+
+  .color-chip {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid var(--cs-border);
+    vertical-align: middle;
+    margin-right: 0.4rem;
+  }
+
+  .no-results {
+    padding: 3rem;
+    text-align: center;
+    color: var(--cs-faint);
+    font-style: italic;
+  }
+
+  .section.hidden, .item.hidden { display: none; }
+
+  .footer-note {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--cs-border);
+    color: var(--cs-faint);
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<nav class="docs-nav">
+  <span class="docs-logo">SLASHED</span>
+  <a href="#tokens">Tokens</a>
+  <a href="#layout">Layout</a>
+  <a href="#components">Components</a>
+  <a href="#spacing">Spacing</a>
+  <a href="#typography">Typography</a>
+  <a href="#colors">Colors</a>
+  <a href="#display">Display</a>
+  <a href="#flex-grid">Flex/Grid</a>
+  <a href="#borders">Borders</a>
+  <a href="#position">Position</a>
+  <a href="#effects">Effects</a>
+  <a href="#responsive">Responsive</a>
+  <a href="#a11y">A11y</a>
+  <div class="docs-search">
+    <input type="search" id="search" placeholder="Filter classes…" autocomplete="off">
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>SLASHED Cheatsheet <span class="version-badge">v0.4.4.0</span></h1>
+  <p>Buildless CSS framework · 201 tokens · 647 utility classes · 50+ components · <a href="README.md">README</a> · <a href="docs/">Docs</a></p>
+</div>
+
+<div class="intro-note">
+  <strong>Philosophy:</strong> UI components are <code>.cs-*</code> prefixed. Layout primitives and utilities are unprefixed for ergonomic authoring.
+  Framework uses cascade layers — any unlayered BEM class you write beats framework rules automatically.
+</div>
+
+<!-- ============================================================ TOKENS -->
+<section class="section" id="tokens">
+  <h2 class="section-title">Design Tokens <span class="meta">201 tokens · see docs/TOKENS.md</span></h2>
+
+  <h3 class="subheading">Brand Colors</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">--primary</span><span class="desc"><span class="color-chip" style="background:#2563eb"></span>Primary brand color</span></div>
+    <div class="item"><span class="name">--secondary</span><span class="desc"><span class="color-chip" style="background:#0d9488"></span>Secondary brand color</span></div>
+    <div class="item"><span class="name">--accent</span><span class="desc"><span class="color-chip" style="background:#f59e0b"></span>Accent color</span></div>
+    <div class="item"><span class="name">--primary-50..950</span><span class="desc">Primary palette shades</span></div>
+    <div class="item"><span class="name">--secondary-50..950</span><span class="desc">Secondary palette shades</span></div>
+    <div class="item"><span class="name">--accent-50..950</span><span class="desc">Accent palette shades</span></div>
+  </div>
+
+  <h3 class="subheading">Semantic Colors</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">--color-bg</span><span class="desc">Page background</span></div>
+    <div class="item"><span class="name">--color-surface</span><span class="desc">Card / elevated surface</span></div>
+    <div class="item"><span class="name">--color-surface-2</span><span class="desc">Secondary surface (hover, nested)</span></div>
+    <div class="item"><span class="name">--color-surface-elevated</span><span class="desc">Highest elevation</span></div>
+    <div class="item"><span class="name">--color-text</span><span class="desc">Primary body text</span></div>
+    <div class="item"><span class="name">--color-text-secondary</span><span class="desc">Secondary text</span></div>
+    <div class="item"><span class="name">--color-text-muted</span><span class="desc">Muted / helper text</span></div>
+    <div class="item"><span class="name">--color-text-faint</span><span class="desc">Tertiary / disabled text</span></div>
+    <div class="item"><span class="name">--color-border</span><span class="desc">Default border color</span></div>
+    <div class="item"><span class="name">--color-border-subtle</span><span class="desc">Subtle border</span></div>
+    <div class="item"><span class="name">--color-border-strong</span><span class="desc">Strong border</span></div>
+  </div>
+
+  <h3 class="subheading">Spacing Scale (fluid clamp values)</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">--space-px</span><span class="val">1px</span></div>
+    <div class="item"><span class="name">--space-0-5</span><span class="val">0.125rem / 2px</span></div>
+    <div class="item"><span class="name">--space-2xs</span><span class="val">clamp(0.25rem → 0.375rem)</span></div>
+    <div class="item"><span class="name">--space-xs</span><span class="val">clamp(0.5rem → 0.75rem)</span></div>
+    <div class="item"><span class="name">--space-s</span><span class="val">clamp(0.75rem → 1.125rem)</span></div>
+    <div class="item"><span class="name">--space-m</span><span class="val">clamp(1rem → 1.5rem)</span></div>
+    <div class="item"><span class="name">--space-l</span><span class="val">clamp(1.5rem → 2.25rem)</span></div>
+    <div class="item"><span class="name">--space-xl</span><span class="val">clamp(2rem → 3rem)</span></div>
+    <div class="item"><span class="name">--space-2xl</span><span class="val">clamp(3rem → 4.5rem)</span></div>
+    <div class="item"><span class="name">--space-3xl</span><span class="val">clamp(4rem → 6rem)</span></div>
+    <div class="item"><span class="name">--space-4xl</span><span class="val">clamp(6rem → 9rem)</span></div>
+    <div class="item"><span class="name">--space-gutter</span><span class="val">Page gutter (fluid)</span></div>
+  </div>
+
+  <h3 class="subheading">Typography Scale</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">--text-2xs..9xl</span><span class="val">Fluid clamp scale, 14 steps</span></div>
+    <div class="item"><span class="name">--text-fluid-hero</span><span class="val">Ultra-fluid for hero</span></div>
+    <div class="item"><span class="name">--h1..h6</span><span class="val">Semantic heading sizes</span></div>
+    <div class="item"><span class="name">--leading-tight..loose</span><span class="val">Line-height scale</span></div>
+    <div class="item"><span class="name">--tracking-tighter..widest</span><span class="val">Letter-spacing scale</span></div>
+    <div class="item"><span class="name">--font-weight-light..black</span><span class="val">300-900 weights</span></div>
+    <div class="item"><span class="name">--font-body / heading / mono</span><span class="val">Font families</span></div>
+  </div>
+
+  <h3 class="subheading">Radius, Shadows, Motion, Z-index</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">--radius-xs..2xl</span><span class="val">Border radius scale</span></div>
+    <div class="item"><span class="name">--radius-full</span><span class="val">9999px (pill / circle)</span></div>
+    <div class="item"><span class="name">--shadow-xs..xl</span><span class="val">Box shadow scale</span></div>
+    <div class="item"><span class="name">--duration-fast/normal/slow</span><span class="val">150 / 250 / 400ms</span></div>
+    <div class="item"><span class="name">--ease-out / in / in-out / spring</span><span class="val">Timing functions</span></div>
+    <div class="item"><span class="name">--z-base..tooltip</span><span class="val">0 / 1 / 10 / 1100 / 1300 / 1400 / 1800</span></div>
+    <div class="item"><span class="name">--container-xs..full</span><span class="val">Container width scale</span></div>
+    <div class="item"><span class="name">--focus-ring-width / color / offset</span><span class="val">Focus styling</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ LAYOUT -->
+<section class="section" id="layout">
+  <h2 class="section-title">Layout Primitives <span class="meta">unprefixed · core building blocks</span></h2>
+  <div class="class-grid">
+    <div class="item"><span class="name">.section</span><span class="desc">Vertical padding rhythm for page sections</span></div>
+    <div class="item"><span class="name">.section--s / --xl</span><span class="desc">Smaller / larger section variants</span></div>
+    <div class="item"><span class="name">.container</span><span class="desc">Max-width centered wrapper</span></div>
+    <div class="item"><span class="name">.container--xs / --sm / --narrow / --wide / --full / --prose</span><span class="desc">Container size variants</span></div>
+    <div class="item"><span class="name">.stack</span><span class="desc">Vertical spacing between children</span></div>
+    <div class="item"><span class="name">.stack--xs / --s / --l</span><span class="desc">Stack size variants</span></div>
+    <div class="item"><span class="name">.cluster</span><span class="desc">Horizontal flex with wrap</span></div>
+    <div class="item"><span class="name">.cluster--2xs / --s / --l / --xl</span><span class="desc">Cluster gap variants</span></div>
+    <div class="item"><span class="name">.auto-grid</span><span class="desc">Auto-fitting grid (--grid-min)</span></div>
+    <div class="item"><span class="name">.auto-grid--s / --m / --l / --fill</span><span class="desc">Preset min widths</span></div>
+    <div class="item"><span class="name">.bento</span><span class="desc">Bento-style grid layout</span></div>
+    <div class="item"><span class="name">.bento--2 / --4 / --compact / --tall</span><span class="desc">Bento variants</span></div>
+    <div class="item"><span class="name">.cover</span><span class="desc">Full-height hero section</span></div>
+    <div class="item"><span class="name">.cover--min / --max</span><span class="desc">Min/max height variants</span></div>
+    <div class="item"><span class="name">.cover--padding-s / --padding-l</span><span class="desc">Cover padding variants</span></div>
+    <div class="item"><span class="name">.cover__center</span><span class="desc">Auto-centered block</span></div>
+    <div class="item"><span class="name">.center / .center--intrinsic</span><span class="desc">Intrinsically centered</span></div>
+    <div class="item"><span class="name">.flow / .flow--s / --l</span><span class="desc">Flow content spacing</span></div>
+    <div class="item"><span class="name">.frame</span><span class="desc">Aspect-ratio box (--frame-ratio)</span></div>
+    <div class="item"><span class="name">.bleed</span><span class="desc">Full-bleed element</span></div>
+    <div class="item"><span class="name">.alternate</span><span class="desc">Alternating background sections</span></div>
+    <div class="item"><span class="name">.content-grid</span><span class="desc">Grid w/ named columns (main, wide, fullwidth)</span></div>
+    <div class="item"><span class="name">.clickable-parent</span><span class="desc">Make whole card clickable via inner link</span></div>
+    <div class="item"><span class="name">.focus-parent</span><span class="desc">Focus ring on parent from inner focus</span></div>
+    <div class="item"><span class="name">.masonry</span><span class="desc">CSS masonry layout</span></div>
+  </div>
+
+  <h3 class="subheading">Grid columns & spans</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.grid-1..12</span><span class="desc">N equal columns</span></div>
+    <div class="item"><span class="name">.grid-cols</span><span class="desc">Custom grid via --cols</span></div>
+    <div class="item"><span class="name">.col-span-2 / 3 / 4 / 5 / 6 / full</span><span class="desc">Grid column spans</span></div>
+    <div class="item"><span class="name">.row-span-2 / 3 / 4</span><span class="desc">Grid row spans</span></div>
+  </div>
+
+  <pre class="code-block"><code><span class="c-tag">&lt;section</span> <span class="c-attr">class</span>=<span class="c-string">"section"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-string">"container stack stack--l"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;h2&gt;</span>Heading<span class="c-tag">&lt;/h2&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-string">"auto-grid"</span> <span class="c-attr">style</span>=<span class="c-string">"--grid-min: 16rem"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/section&gt;</span></code></pre>
+</section>
+
+<!-- ============================================================ COMPONENTS -->
+<section class="section" id="components">
+  <h2 class="section-title">UI Components <span class="meta">.cs-* prefixed · docs/COMPONENTS.md</span></h2>
+  <div class="class-grid">
+    <div class="item"><span class="name">.cs-btn--primary</span><span class="desc">Primary CTA button</span></div>
+    <div class="item"><span class="name">.cs-btn--outline</span><span class="desc">Outline button</span></div>
+    <div class="item"><span class="name">.cs-btn--ghost</span><span class="desc">Ghost button</span></div>
+    <div class="item"><span class="name">.cs-btn--l</span><span class="desc">Large size modifier</span></div>
+    <div class="item"><span class="name">.cs-card</span><span class="desc">Base card component</span></div>
+    <div class="item"><span class="name">.cs-card--bordered</span><span class="desc">Card with border (no shadow)</span></div>
+    <div class="item"><span class="name">.cs-card--interactive</span><span class="desc">Hover-lift card</span></div>
+    <div class="item"><span class="name">.cs-badge</span><span class="desc">Small label / status pill</span></div>
+    <div class="item"><span class="name">.cs-badge--outline</span><span class="desc">Outlined badge</span></div>
+    <div class="item"><span class="name">.cs-eyebrow</span><span class="desc">Small uppercase pre-heading</span></div>
+    <div class="item"><span class="name">.cs-section-header</span><span class="desc">Centered section header wrapper</span></div>
+    <div class="item"><span class="name">.cs-section-header__heading</span><span class="desc">Header title</span></div>
+    <div class="item"><span class="name">.cs-section-header__lead</span><span class="desc">Header lead text</span></div>
+    <div class="item"><span class="name">.cs-section-header--left</span><span class="desc">Left-aligned variant</span></div>
+    <div class="item"><span class="name">.cs-stat</span><span class="desc">Large number + label</span></div>
+    <div class="item"><span class="name">.cs-stat__value</span><span class="desc">Stat number</span></div>
+    <div class="item"><span class="name">.cs-stat__label</span><span class="desc">Stat description</span></div>
+    <div class="item"><span class="name">.cs-divider</span><span class="desc">Horizontal rule with optional label</span></div>
+    <div class="item"><span class="name">.cs-accordion-group</span><span class="desc">Accordion wrapper</span></div>
+    <div class="item"><span class="name">.cs-accordion</span><span class="desc">Native details/summary styled</span></div>
+    <div class="item"><span class="name">.cs-accordion__body</span><span class="desc">Accordion content</span></div>
+    <div class="item"><span class="name">.cs-form-group</span><span class="desc">Accessible form field wrapper</span></div>
+    <div class="item"><span class="name">.cs-form-group__label</span><span class="desc">Form label</span></div>
+    <div class="item"><span class="name">.cs-form-group__input</span><span class="desc">Form input field</span></div>
+    <div class="item"><span class="name">.cs-form-group__hint</span><span class="desc">Form hint text</span></div>
+    <div class="item"><span class="name">.cs-form-group__error</span><span class="desc">Form error message</span></div>
+    <div class="item"><span class="name">.cs-notice</span><span class="desc">Info callout box</span></div>
+    <div class="item"><span class="name">.cs-notice--success / --warning / --error</span><span class="desc">Notice state variants</span></div>
+    <div class="item"><span class="name">.cs-spinner</span><span class="desc">Loading spinner</span></div>
+    <div class="item"><span class="name">.cs-progress</span><span class="desc">Progress bar (native &lt;progress&gt; primary pattern)</span></div>
+    <div class="item"><span class="name">.cs-select-wrap</span><span class="desc">Select wrapper with token-driven chevron via mask-image</span></div>
+    <div class="item"><span class="name">.cs-media</span><span class="desc">Image / video wrapper</span></div>
+    <div class="item"><span class="name">[data-icon]="s/m/l/xl"</span><span class="desc">SVG icon sizing</span></div>
+    <div class="item"><span class="name">input[role="switch"]</span><span class="desc">Toggle switch styling</span></div>
+  </div>
+
+  <h3 class="subheading">Instance tokens (per-component customization)</h3>
+  <pre class="code-block"><code><span class="c-tag">&lt;a</span> <span class="c-attr">class</span>=<span class="c-string">"cs-btn--primary"</span> <span class="c-attr">style</span>=<span class="c-string">"--btn-bg: var(--accent); --btn-radius: var(--radius-full)"</span><span class="c-tag">&gt;</span>
+  Rounded accent button
+<span class="c-tag">&lt;/a&gt;</span>
+
+<span class="c-tag">&lt;article</span> <span class="c-attr">class</span>=<span class="c-string">"cs-card cs-card--bordered"</span> <span class="c-attr">style</span>=<span class="c-string">"--card-padding: var(--space-2xl)"</span><span class="c-tag">&gt;</span>
+  Large padded card
+<span class="c-tag">&lt;/article&gt;</span>
+
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-string">"bento"</span> <span class="c-attr">style</span>=<span class="c-string">"--bento-cols: 4; --bento-row: 16rem"</span><span class="c-tag">&gt;</span>
+  Custom bento grid
+<span class="c-tag">&lt;/div&gt;</span></code></pre>
+</section>
+
+<!-- ============================================================ SPACING -->
+<section class="section" id="spacing">
+  <h2 class="section-title">Spacing Utilities</h2>
+
+  <h3 class="subheading">Padding</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.p-0</span><span class="desc">padding: 0</span></div>
+    <div class="item"><span class="name">.p-px / .p-0-5</span><span class="desc">1px / 2px padding</span></div>
+    <div class="item"><span class="name">.p-2xs / xs / s / m / l / xl / 2xl / 3xl / 4xl</span><span class="desc">All-sides padding scale</span></div>
+    <div class="item"><span class="name">.px-* (px-2xs..px-4xl)</span><span class="desc">Inline padding (left+right)</span></div>
+    <div class="item"><span class="name">.py-* (py-2xs..py-4xl)</span><span class="desc">Block padding (top+bottom)</span></div>
+    <div class="item"><span class="name">.pt-* (pt-0..pt-4xl)</span><span class="desc">Top padding</span></div>
+    <div class="item"><span class="name">.pb-* (pb-0..pb-4xl)</span><span class="desc">Bottom padding</span></div>
+    <div class="item"><span class="name">.px-gutter</span><span class="desc">Page gutter padding</span></div>
+  </div>
+
+  <h3 class="subheading">Margin</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.m-auto</span><span class="desc">Auto margin all sides</span></div>
+    <div class="item"><span class="name">.mx-auto</span><span class="desc">Horizontal auto center</span></div>
+    <div class="item"><span class="name">.mt-auto / .mb-auto</span><span class="desc">Push to end in flex column</span></div>
+    <div class="item"><span class="name">.ms-auto / .me-auto</span><span class="desc">Logical (LTR/RTL aware)</span></div>
+    <div class="item"><span class="name">.mt-0..mt-4xl</span><span class="desc">Top margin scale</span></div>
+    <div class="item"><span class="name">.mb-0..mb-4xl</span><span class="desc">Bottom margin scale</span></div>
+    <div class="item"><span class="name">.mx-2xs..mx-xl</span><span class="desc">Horizontal margin scale</span></div>
+  </div>
+
+  <h3 class="subheading">Gap (flex/grid)</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.gap-0</span><span class="desc">No gap</span></div>
+    <div class="item"><span class="name">.gap-2xs..gap-4xl</span><span class="desc">Full scale (9 steps)</span></div>
+    <div class="item"><span class="name">.gap-x-*</span><span class="desc">Column gap only</span></div>
+    <div class="item"><span class="name">.gap-y-*</span><span class="desc">Row gap only</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ TYPOGRAPHY -->
+<section class="section" id="typography">
+  <h2 class="section-title">Typography Utilities</h2>
+
+  <h3 class="subheading">Font size</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.text-2xs / xs / s / m / l / xl</span><span class="desc">Body text sizes</span></div>
+    <div class="item"><span class="name">.text-2xl / 3xl / 4xl / 5xl</span><span class="desc">Display sizes</span></div>
+    <div class="item"><span class="name">.text-6xl / 7xl / 8xl / 9xl</span><span class="desc">Hero sizes</span></div>
+    <div class="item"><span class="name">.text-fluid-hero</span><span class="desc">Ultra-fluid hero title</span></div>
+    <div class="item"><span class="name">.h1 / h2 / h3 / h4 / h5 / h6</span><span class="desc">Semantic heading styles</span></div>
+  </div>
+
+  <h3 class="subheading">Weight</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.font-light</span><span class="desc">300</span></div>
+    <div class="item"><span class="name">.font-normal</span><span class="desc">400</span></div>
+    <div class="item"><span class="name">.font-medium</span><span class="desc">500</span></div>
+    <div class="item"><span class="name">.font-semi</span><span class="desc">600</span></div>
+    <div class="item"><span class="name">.font-bold</span><span class="desc">700</span></div>
+    <div class="item"><span class="name">.font-extrabold</span><span class="desc">800</span></div>
+    <div class="item"><span class="name">.font-black</span><span class="desc">900</span></div>
+  </div>
+
+  <h3 class="subheading">Style, case, decoration</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.italic</span><span class="desc">font-style: italic</span></div>
+    <div class="item"><span class="name">.uppercase / .lowercase / .capitalize</span><span class="desc">Case transforms</span></div>
+    <div class="item"><span class="name">.underline / .no-underline</span><span class="desc">Underline toggle</span></div>
+    <div class="item"><span class="name">.line-through</span><span class="desc">Strikethrough</span></div>
+  </div>
+
+  <h3 class="subheading">Alignment & wrapping</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.text-left / .text-center / .text-right</span><span class="desc">Text alignment (logical)</span></div>
+    <div class="item"><span class="name">.text-balance</span><span class="desc">text-wrap: balance (headings)</span></div>
+    <div class="item"><span class="name">.text-pretty</span><span class="desc">text-wrap: pretty (paragraphs)</span></div>
+  </div>
+
+  <h3 class="subheading">Line height & tracking</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.leading-tight</span><span class="desc">~1.15 (headings)</span></div>
+    <div class="item"><span class="name">.leading-snug</span><span class="desc">~1.3</span></div>
+    <div class="item"><span class="name">.leading-normal</span><span class="desc">~1.5 (body)</span></div>
+    <div class="item"><span class="name">.leading-loose</span><span class="desc">~1.8</span></div>
+    <div class="item"><span class="name">.tracking-tighter..widest</span><span class="desc">Letter-spacing scale (5 steps)</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ COLORS -->
+<section class="section" id="colors">
+  <h2 class="section-title">Color Utilities</h2>
+
+  <h3 class="subheading">Text color</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.text-primary / -secondary / -accent</span><span class="desc">Brand text colors</span></div>
+    <div class="item"><span class="name">.text-default</span><span class="desc">Main body text</span></div>
+    <div class="item"><span class="name">.text-muted</span><span class="desc">Secondary text</span></div>
+    <div class="item"><span class="name">.text-faint</span><span class="desc">Tertiary text</span></div>
+    <div class="item"><span class="name">.text-success / -warning / -error / -info</span><span class="desc">Status text colors</span></div>
+    <div class="item"><span class="name">.text-on-primary / -on-dark</span><span class="desc">Contrast text colors</span></div>
+    <div class="item"><span class="name">.text-inherit</span><span class="desc">color: inherit</span></div>
+  </div>
+
+  <h3 class="subheading">Background color</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.bg-surface / -2 / -elevated</span><span class="desc">Semantic surfaces</span></div>
+    <div class="item"><span class="name">.bg-primary / -50 / -100 / -200 / -700 / -800 / -900 / -950</span><span class="desc">Primary palette</span></div>
+    <div class="item"><span class="name">.bg-secondary / -100 / -800 / -900</span><span class="desc">Secondary palette</span></div>
+    <div class="item"><span class="name">.bg-accent / -100 / -800 / -900</span><span class="desc">Accent palette</span></div>
+    <div class="item"><span class="name">.bg-success / -100</span><span class="desc">Success backgrounds</span></div>
+    <div class="item"><span class="name">.bg-warning / -100</span><span class="desc">Warning backgrounds</span></div>
+    <div class="item"><span class="name">.bg-error / -100</span><span class="desc">Error backgrounds</span></div>
+    <div class="item"><span class="name">.bg-neutral-100 / -800 / -900</span><span class="desc">Neutrals</span></div>
+    <div class="item"><span class="name">.bg-light / -ultra-light</span><span class="desc">Scoped light theme</span></div>
+    <div class="item"><span class="name">.bg-dark / -ultra-dark</span><span class="desc">Scoped dark theme</span></div>
+    <div class="item"><span class="name">.bg-gradient</span><span class="desc">Customizable gradient (--bg-gradient)</span></div>
+    <div class="item"><span class="name">.bg-transparent / -inherit</span><span class="desc">Transparent / inherited</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ DISPLAY -->
+<section class="section" id="display">
+  <h2 class="section-title">Display</h2>
+  <div class="class-grid">
+    <div class="item"><span class="name">.block / .inline-block</span><span class="desc">Block / inline display</span></div>
+    <div class="item"><span class="name">.flex / .inline-flex</span><span class="desc">Flexbox</span></div>
+    <div class="item"><span class="name">.grid</span><span class="desc">CSS Grid</span></div>
+    <div class="item"><span class="name">.hidden</span><span class="desc">display: none</span></div>
+    <div class="item"><span class="name">.visible / .invisible</span><span class="desc">visibility toggle</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ FLEX & GRID -->
+<section class="section" id="flex-grid">
+  <h2 class="section-title">Flex & Alignment</h2>
+
+  <h3 class="subheading">Flex</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.flex-row / -col</span><span class="desc">flex-direction</span></div>
+    <div class="item"><span class="name">.flex-row-reverse</span><span class="desc">Reverse direction</span></div>
+    <div class="item"><span class="name">.flex-wrap / -nowrap</span><span class="desc">Wrapping behavior</span></div>
+    <div class="item"><span class="name">.flex-1 / -auto / -none</span><span class="desc">flex shorthand</span></div>
+    <div class="item"><span class="name">.grow / .grow-0</span><span class="desc">flex-grow toggle</span></div>
+    <div class="item"><span class="name">.shrink-0</span><span class="desc">flex-shrink: 0</span></div>
+  </div>
+
+  <h3 class="subheading">Alignment</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.items-start / -center / -end</span><span class="desc">align-items</span></div>
+    <div class="item"><span class="name">.items-baseline / -stretch</span><span class="desc">Alignment variants</span></div>
+    <div class="item"><span class="name">.justify-start / -center / -end</span><span class="desc">justify-content</span></div>
+    <div class="item"><span class="name">.justify-between</span><span class="desc">Distribution</span></div>
+    <div class="item"><span class="name">.self-start / -center / -end</span><span class="desc">align-self for children</span></div>
+    <div class="item"><span class="name">.place-center</span><span class="desc">Shorthand center (grid)</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ BORDERS -->
+<section class="section" id="borders">
+  <h2 class="section-title">Borders & Radius</h2>
+  <div class="class-grid">
+    <div class="item"><span class="name">.border</span><span class="desc">1px solid border</span></div>
+    <div class="item"><span class="name">.border-0 / -2</span><span class="desc">Border width</span></div>
+    <div class="item"><span class="name">.border-primary / -subtle / -strong</span><span class="desc">Border colors</span></div>
+    <div class="item"><span class="name">.rounded-none</span><span class="desc">No radius</span></div>
+    <div class="item"><span class="name">.rounded-xs / -s / -m / -l</span><span class="desc">Common radii</span></div>
+    <div class="item"><span class="name">.rounded-xl / -2xl</span><span class="desc">Large radii</span></div>
+    <div class="item"><span class="name">.rounded-full</span><span class="desc">Fully rounded</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ POSITION -->
+<section class="section" id="position">
+  <h2 class="section-title">Position & Sizing</h2>
+
+  <h3 class="subheading">Position</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.relative / .absolute</span><span class="desc">Basic positioning</span></div>
+    <div class="item"><span class="name">.fixed / .sticky</span><span class="desc">Viewport / scroll positioning</span></div>
+    <div class="item"><span class="name">.inset-0</span><span class="desc">All offsets 0</span></div>
+    <div class="item"><span class="name">.top-0 / right-0 / bottom-0 / left-0</span><span class="desc">Physical offsets</span></div>
+  </div>
+
+  <h3 class="subheading">Z-index</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.z-base</span><span class="val">0</span></div>
+    <div class="item"><span class="name">.z-raised</span><span class="val">1</span></div>
+    <div class="item"><span class="name">.z-docked</span><span class="val">10</span></div>
+    <div class="item"><span class="name">.z-sticky</span><span class="val">1100</span></div>
+    <div class="item"><span class="name">.z-overlay</span><span class="val">1300</span></div>
+    <div class="item"><span class="name">.z-modal</span><span class="val">1400</span></div>
+    <div class="item"><span class="name">.z-tooltip</span><span class="val">1800</span></div>
+  </div>
+
+  <h3 class="subheading">Width</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.w-full</span><span class="desc">100%</span></div>
+    <div class="item"><span class="name">.w-auto / -fit / -min / -max</span><span class="desc">Content-based widths</span></div>
+    <div class="item"><span class="name">.w-25 / -33 / -50 / -66 / -75</span><span class="desc">Percentage widths</span></div>
+    <div class="item"><span class="name">.min-w-0 / -full</span><span class="desc">Min width (0 = shrinkable)</span></div>
+  </div>
+
+  <h3 class="subheading">Height & aspect ratio</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.h-full / .h-screen</span><span class="desc">100% / 100vh</span></div>
+    <div class="item"><span class="name">.h-auto / -fit</span><span class="desc">Content-based heights</span></div>
+    <div class="item"><span class="name">.aspect-square / -video / -4-3 / -3-2</span><span class="desc">Aspect ratios</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ EFFECTS -->
+<section class="section" id="effects">
+  <h2 class="section-title">Effects · Overflow · Motion</h2>
+  <div class="class-grid">
+    <div class="item"><span class="name">.shadow-none / -xs / -s / -m / -l / -xl</span><span class="desc">Box shadow scale</span></div>
+    <div class="item"><span class="name">.transition</span><span class="desc">Default smooth transition</span></div>
+    <div class="item"><span class="name">.transition-none</span><span class="desc">Disable transitions</span></div>
+    <div class="item"><span class="name">.duration-fast / -normal / -slow</span><span class="desc">Transition duration</span></div>
+    <div class="item"><span class="name">.ease-out / -in / -in-out</span><span class="desc">Timing functions</span></div>
+    <div class="item"><span class="name">.overflow-hidden / -auto / -scroll / -visible</span><span class="desc">Overflow control</span></div>
+    <div class="item"><span class="name">.overflow-x-* / -y-*</span><span class="desc">Single-axis overflow</span></div>
+    <div class="item"><span class="name">.object-cover / -contain / -fill / -scale-down</span><span class="desc">Image fit</span></div>
+    <div class="item"><span class="name">.object-center / -top / -bottom / -left / -right</span><span class="desc">Image position</span></div>
+    <div class="item"><span class="name">.cursor-pointer / -default / -not-allowed / -wait</span><span class="desc">Cursor styles</span></div>
+    <div class="item"><span class="name">.backdrop-blur</span><span class="desc">Frosted glass effect</span></div>
+  </div>
+
+  <h3 class="subheading">Motion utilities (a11y layer — respect prefers-reduced-motion)</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.motion-safe:transition</span><span class="desc">Transition when motion OK</span></div>
+    <div class="item"><span class="name">.motion-safe:animate-fade-in</span><span class="desc">Fade in on load</span></div>
+    <div class="item"><span class="name">.motion-safe:animate-slide-up</span><span class="desc">Slide up on load</span></div>
+    <div class="item"><span class="name">.motion-safe:animate-scale-in</span><span class="desc">Scale in on load</span></div>
+    <div class="item"><span class="name">.motion-safe:animate-spin</span><span class="desc">Infinite spin (loading)</span></div>
+    <div class="item"><span class="name">.motion-safe:hover-lift</span><span class="desc">Hover: translate + shadow</span></div>
+    <div class="item"><span class="name">.motion-reduce:animate-none</span><span class="desc">Disable animations</span></div>
+    <div class="item"><span class="name">.motion-reduce:transition-none</span><span class="desc">Disable transitions</span></div>
+  </div>
+</section>
+
+<!-- ============================================================ RESPONSIVE -->
+<section class="section" id="responsive">
+  <h2 class="section-title">Responsive Variants <span class="meta">sm: 30em · md: 48em · lg: 64em · xl: 80em</span></h2>
+
+  <div class="intro-note">
+    Prefix any layout utility with a breakpoint to apply at that viewport and up.
+    Spacing/typography is auto-fluid via <code>clamp()</code> tokens — responsive variants cover discrete layout switches and specific overrides.
+  </div>
+
+  <div class="class-grid">
+    <div class="item"><span class="name">.sm: / .md: / .lg: / .xl:</span><span class="desc">Breakpoint prefixes (480 / 768 / 1024 / 1280 px)</span></div>
+    <div class="item"><span class="name">.md:flex / .md:grid / .md:hidden</span><span class="desc">Display switches</span></div>
+    <div class="item"><span class="name">.md:flex-row / .md:flex-col</span><span class="desc">Direction switches</span></div>
+    <div class="item"><span class="name">.md:grid-2 / -3 / -4</span><span class="desc">Grid columns at breakpoint</span></div>
+    <div class="item"><span class="name">.md:items-* / .md:justify-*</span><span class="desc">Alignment at breakpoint</span></div>
+    <div class="item"><span class="name">.md:gap-m / -l / -xl</span><span class="desc">Gap at breakpoint</span></div>
+    <div class="item"><span class="name">.md:text-left / -center / -right</span><span class="desc">Align at breakpoint</span></div>
+    <div class="item"><span class="name">.md:p-0 / .md:pt-0 / .md:mt-0 / .md:gap-0</span><span class="desc">Zero resets at breakpoint</span></div>
+    <div class="item"><span class="name">.md:col-span-2 / -full</span><span class="desc">Grid span at breakpoint</span></div>
+    <div class="item"><span class="name">.md:order-first / -last / -none</span><span class="desc">Order at breakpoint</span></div>
+  </div>
+
+  <pre class="code-block"><code><span class="c-comment">&lt;!-- Stack on mobile, 3-col md+, 4-col lg+ --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-string">"grid md:grid-3 lg:grid-4 gap-m md:gap-l"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/div&gt;</span>
+
+<span class="c-comment">&lt;!-- Hidden below md, flex from md+ --&gt;</span>
+<span class="c-tag">&lt;nav</span> <span class="c-attr">class</span>=<span class="c-string">"hidden md:flex items-center gap-l"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/nav&gt;</span></code></pre>
+</section>
+
+<!-- ============================================================ A11Y -->
+<section class="section" id="a11y">
+  <h2 class="section-title">Accessibility, Print, Dark Mode</h2>
+
+  <h3 class="subheading">Accessibility</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.sr-only</span><span class="desc">Visually hidden, screen-reader accessible</span></div>
+    <div class="item"><span class="name">.not-sr-only</span><span class="desc">Undo .sr-only</span></div>
+    <div class="item"><span class="name">.skip-to-content</span><span class="desc">Skip-to-content link pattern</span></div>
+    <div class="item"><span class="name">.has-invalid</span><span class="desc">:has(:user-invalid) wrapper</span></div>
+    <div class="item"><span class="name">.has-checked</span><span class="desc">:has(:checked) wrapper</span></div>
+  </div>
+
+  <h3 class="subheading">Print</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.print:hidden / :block</span><span class="desc">Print visibility toggles</span></div>
+    <div class="item"><span class="name">.print:text-black / :bg-white</span><span class="desc">Force print colors</span></div>
+    <div class="item"><span class="name">.print:shadow-none / :border-none</span><span class="desc">Strip visual effects</span></div>
+    <div class="item"><span class="name">.print:p-0 / :m-0</span><span class="desc">Zero spacing for print</span></div>
+  </div>
+
+  <h3 class="subheading">Dark mode</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.dark:hidden / :block / :flex</span><span class="desc">Dark-mode visibility</span></div>
+    <div class="item"><span class="name">.dark:bg-surface / :bg-neutral-900</span><span class="desc">Dark-specific backgrounds</span></div>
+    <div class="item"><span class="name">.dark:text-white</span><span class="desc">Dark-specific text color</span></div>
+  </div>
+</section>
+
+<div class="no-results" id="no-results" style="display:none;">No classes match your filter.</div>
+
+<footer class="footer-note">
+  SLASHED v0.4.4.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License
+</footer>
+
+<script>
+  const search = document.getElementById('search');
+  const sections = document.querySelectorAll('.section');
+  const noResults = document.getElementById('no-results');
+
+  search.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    let anyVisible = false;
+
+    sections.forEach(section => {
+      const items = section.querySelectorAll('.item');
+      let sectionHasVisible = false;
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          item.classList.remove('hidden');
+          sectionHasVisible = true;
+          anyVisible = true;
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+      section.classList.toggle('hidden', q && !sectionHasVisible);
+    });
+
+    noResults.style.display = (q && !anyVisible) ? 'block' : 'none';
+  });
+
+  const navLinks = document.querySelectorAll('nav.docs-nav a[href^="#"]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const link = document.querySelector(`nav.docs-nav a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => { if (s.id) observer.observe(s); });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,3139 @@
+/* ==========================================================================
+   SLASHED Components — v0.4.4.0
+   Interactive UI components, form patterns, animation patterns.
+   Requires: slashed-core.css (or slashed-full.css)
+   ========================================================================== */
+
+@layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
+
+/* slashed.overrides: empty — reserved for user styles that must win over all framework layers. */
+
+/* ==========================================================================
+   COMPONENTS
+   ========================================================================== */
+
+@layer slashed.components {
+
+  /* ----- Disclosure (bordered details/summary box) ----- */
+
+  .cs-disclosure {
+    border: var(--border-width, 1px) solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-m, 0.5rem);
+    padding: var(--space-s, 0.75rem) var(--space-m, 1rem);
+  }
+  .cs-disclosure[open] > summary { margin-block-end: var(--space-s, 0.75rem); }
+
+  /* Smooth open/close — matches .cs-accordion animation, same @supports guard. */
+  @supports selector(details::details-content) {
+    .cs-disclosure::details-content {
+      height: 0;
+      overflow: hidden;
+      transition: height var(--duration-normal, 250ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+    }
+    .cs-disclosure[open]::details-content { height: auto; }
+  }
+
+  /* ----- Accordion (details/summary) ----- */
+  /* Each .cs-accordion has only a bottom border. Wrap multiple accordions in .cs-accordion-group
+     to get the top border on the first item and avoid double borders between items.
+     BEM elements: __summary (clickable header), __body (content wrapper). */
+
+  .cs-accordion-group {
+    border-block-start: var(--border-width, 1px) solid var(--accordion-border, var(--color-border, #e5e7eb));
+  }
+  .cs-accordion { border-block-end: var(--border-width, 1px) solid var(--accordion-border, var(--color-border, #e5e7eb)); }
+
+  .cs-accordion__summary,
+  .cs-accordion > summary {
+    padding: var(--accordion-padding, var(--space-m, 1rem));
+    cursor: pointer;
+    list-style: none;
+    font-weight: 600;
+  }
+  .cs-accordion__summary::-webkit-details-marker,
+  .cs-accordion > summary::-webkit-details-marker { display: none; }
+  .cs-accordion__summary::after,
+  .cs-accordion > summary::after {
+    content: "";
+    display: inline-block;
+    float: inline-end;
+    width: 1em;
+    height: 1em;
+    border-inline-end: 2px solid currentcolor;
+    border-block-end: 2px solid currentcolor;
+    rotate: 45deg;
+    translate: 0 -0.2em;
+    transition: rotate var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  .cs-accordion[open] > .cs-accordion__summary::after,
+  .cs-accordion[open] > summary::after { rotate: -135deg; }
+
+  .cs-accordion__body {
+    padding: 0 var(--accordion-padding, var(--space-m, 1rem)) var(--accordion-padding, var(--space-m, 1rem));
+    color: var(--color-text-secondary);
+  }
+
+  /* Smooth accordion open/close via ::details-content (Chrome 131+, FF 133+, Safari 18.2+).
+     Requires interpolate-size: allow-keywords on html (set in reset layer) to transition
+     height to/from the `auto` keyword. Falls back to instant open/close in browsers below
+     this — the accordion still functions everywhere <details> is supported. */
+
+  @supports selector(details::details-content) {
+    .cs-accordion::details-content {
+      height: 0;
+      overflow: hidden;
+      transition: height var(--duration-normal, 250ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+    }
+    .cs-accordion[open]::details-content { height: auto; }
+  }
+  /* ----- Modal (dialog + animation) ----- */
+  /* .cs-modal extends the base <dialog> styles with entrance animation and backdrop blur.
+     The base dialog already handles sizing, padding, and colors.
+     Use <dialog class="modal"> in HTML. */
+
+  .cs-modal {
+    opacity: 0;
+    translate: 0 var(--space-m, 1rem);
+    transition: opacity var(--duration-normal, 250ms) var(--ease-out, ease-out),
+                translate var(--duration-normal, 250ms) var(--ease-out, ease-out),
+                overlay var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete,
+                display var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+  }
+  .cs-modal[open] { opacity: 1; translate: 0 0; }
+  @starting-style { .cs-modal[open] { opacity: 0; translate: 0 var(--space-m, 1rem); } }
+  .cs-modal::backdrop {
+    background: var(--color-backdrop, oklch(0 0 0 / 0.5));
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity var(--duration-normal, 250ms) var(--ease-out, ease-out),
+                overlay var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete,
+                display var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+  }
+  .cs-modal[open]::backdrop { opacity: 1; }
+  @starting-style { .cs-modal[open]::backdrop { opacity: 0; } }
+
+  /* ----- Button patterns ----- */
+
+  .cs-btn--primary,
+  .cs-btn--outline,
+  .cs-btn--ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: 2.75rem; /* also enforces touch target on <a> elements */
+    padding: var(--btn-py, var(--space-xs)) var(--btn-px, var(--space-m));
+    border-radius: var(--btn-radius, var(--radius-s));
+    font-size: var(--btn-font-size, var(--text-m));
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out),
+                transform var(--duration-fast) var(--ease-out);
+  }
+  /* Optical vertical centering of button text. Chrome 135+; ignored elsewhere. */
+  @supports (text-box: trim-both cap alphabetic) {
+    .cs-btn--primary,
+    .cs-btn--outline,
+    .cs-btn--ghost {
+      text-box: trim-both cap alphabetic;
+    }
+  }
+
+  .cs-btn--primary {
+    background: var(--btn-bg, var(--primary));
+    color: var(--btn-text, var(--color-text-on-primary));
+    border: var(--border-width, 1px) solid var(--btn-bg, var(--primary));
+  }
+  .cs-btn--outline {
+    background: transparent;
+    color: var(--btn-bg, var(--primary));
+    border: var(--border-width, 1px) solid var(--btn-bg, var(--primary));
+  }
+  .cs-btn--ghost {
+    background: transparent;
+    color: var(--btn-bg, var(--primary));
+    border: var(--border-width, 1px) solid transparent;
+  }
+
+  /* color-mix(in oklch) gives perceptually uniform dimming across all hues.
+     filter: brightness() causes hue shift on yellow/orange/red — oklch avoids this.
+     light-dark() flips direction: darkens in light mode, lightens in dark mode.
+     80% mix + translateY(-1px) + shadow provides clear visual feedback on interaction.
+
+     Applied to :hover, :focus-visible, and :active so feedback works on:
+     - Desktop mouse (hover)
+     - Keyboard navigation (focus-visible)
+     - Touch devices (active while pressed) */
+
+  .cs-btn--primary:hover,
+  .cs-btn--primary:focus-visible,
+  .cs-btn--primary:active {
+    background: light-dark(
+      color-mix(in oklch, var(--btn-bg, var(--primary)) 80%, black),
+      color-mix(in oklch, var(--btn-bg, var(--primary)) 80%, white)
+    );
+    border-color: light-dark(
+      color-mix(in oklch, var(--btn-bg, var(--primary)) 80%, black),
+      color-mix(in oklch, var(--btn-bg, var(--primary)) 80%, white)
+    );
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-s);
+  }
+  .cs-btn--outline:hover,
+  .cs-btn--outline:focus-visible,
+  .cs-btn--outline:active {
+    background: var(--btn-bg, var(--primary));
+    color: var(--btn-text, var(--color-text-on-primary));
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-s);
+  }
+  .cs-btn--ghost:hover,
+  .cs-btn--ghost:focus-visible,
+  .cs-btn--ghost:active {
+    background: color-mix(in srgb, var(--btn-bg, var(--primary)) 12%, transparent);
+  }
+
+  /* Outline button focus-visible needs outline-color since background fills solid */
+  .cs-btn--outline:focus-visible {
+    outline: 2px solid var(--btn-bg, var(--primary));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  .cs-btn--s { padding: var(--space-2xs) var(--space-s); font-size: var(--text-s); }
+  .cs-btn--l { padding: var(--space-s) var(--space-l); font-size: var(--text-l); }
+
+  /* ----- Card ----- */
+
+  .cs-card {
+    background: var(--card-bg, var(--color-surface));
+    border-radius: var(--card-radius, var(--radius-l));
+    padding: var(--card-padding, var(--space-l));
+    box-shadow: var(--card-shadow, var(--shadow-s));
+    overflow: var(--card-overflow, hidden);
+    display: flex;
+    flex-direction: column;
+    gap: var(--card-gap, var(--space-m));
+  }
+
+  .cs-card--bordered  { box-shadow: none; border: var(--border-width, 1px) solid var(--color-border); }
+  .cs-card--flat      { box-shadow: none; background: transparent; }
+  .cs-card--elevated  { box-shadow: var(--shadow-m); }
+
+  /* --interactive: adds hover lift effect without requiring .hover-lift utility.
+     Use for clickable cards. Combine with .clickable-parent for full-card link area. */
+  .cs-card--interactive {
+    cursor: pointer;
+    transition: box-shadow var(--duration-fast) var(--ease-out),
+                translate var(--duration-fast) var(--ease-out);
+  }
+  
+    .cs-card--interactive:hover {
+      box-shadow: var(--card-hover-shadow, var(--shadow-l));
+      translate: 0 var(--card-hover-lift, -3px);
+    }
+  
+  .cs-card--interactive:focus-visible {
+    box-shadow: var(--card-hover-shadow, var(--shadow-l));
+    translate: 0 var(--card-hover-lift, -3px);
+  }
+
+  /* --horizontal: side-by-side layout (media + content).
+     First child (image/icon) gets fixed width via --card-media-width (default: 10rem).
+     Use with .cs-media or any two-child structure. */
+  .cs-card--horizontal {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0;
+  }
+  .cs-card--horizontal > :first-child {
+    flex-shrink: 0;
+    width: var(--card-media-width, 10rem);
+    align-self: stretch;
+    object-fit: cover;
+  }
+  .cs-card--horizontal > :last-child {
+    padding: var(--card-padding, var(--space-l));
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ----- Badge ----- */
+
+  .cs-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2xs) var(--space-xs);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    border-radius: var(--radius-full);
+    background: var(--badge-bg, var(--primary-100));
+    color: var(--badge-text, var(--primary));
+  }
+
+  .cs-badge--success { --badge-bg: var(--success-100); --badge-text: var(--success-600); }
+  .cs-badge--warning { --badge-bg: var(--warning-100); --badge-text: var(--warning-600); }
+  .cs-badge--error   { --badge-bg: var(--error-100);   --badge-text: var(--error-600);   }
+  .cs-badge--neutral { --badge-bg: var(--neutral-100, #f3f4f6); --badge-text: var(--neutral-600, #4b5563); }
+
+  /* --outline: transparent background, colored border */
+  .cs-badge--outline {
+    background: transparent;
+    border: var(--border-width, 1px) solid var(--badge-text, var(--primary));
+  }
+
+  /* size variants */
+  .cs-badge--s { padding: 0.1em var(--space-2xs); font-size: var(--text-2xs); }
+  .cs-badge--l { padding: var(--space-xs) var(--space-s); font-size: var(--text-s); }
+
+  /* ----- Notice ----- */
+
+  .cs-notice {
+    padding: var(--space-s) var(--space-m);
+    border-radius: var(--radius-m);
+    border-inline-start: var(--notice-border-width, 3px) solid var(--notice-color, var(--primary));
+    background: var(--notice-bg, var(--primary-100));
+    color: var(--notice-text, var(--color-text));
+  }
+
+  .cs-notice--success { --notice-color: var(--success); --notice-bg: var(--success-100); }
+  .cs-notice--warning { --notice-color: var(--warning); --notice-bg: var(--warning-100); }
+  .cs-notice--error   { --notice-color: var(--error);   --notice-bg: var(--error-100);   }
+
+  /* --bordered: full border on all sides instead of left accent only */
+  .cs-notice--bordered {
+    border: var(--border-width, 1px) solid var(--notice-color, var(--primary));
+    border-inline-start-width: var(--notice-border-width, 3px);
+  }
+
+  /* dismiss button — position the notice relative, then absolutely place the ×
+     HTML: <div class="cs-notice cs-notice--dismissible"><button class="cs-notice__close" aria-label="Dismiss">×</button>…</div> */
+  .cs-notice--dismissible {
+    position: relative;
+    padding-inline-end: var(--space-xl);
+  }
+  .cs-notice__close {
+    position: absolute;
+    inset-block-start: var(--space-xs);
+    inset-inline-end: var(--space-xs);
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    min-width: 0;
+    min-height: 0;
+    min-inline-size: 0;
+    line-height: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-s);
+    opacity: 0.6;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .cs-notice__close:hover { opacity: 1; }
+
+  /* ----- Banner (sticky full-width notification strip) ----- */
+  /* Distinct from .cs-notice (inline content element with left accent).
+     Use cases: cookie consent, site-wide announcements, promotional strips,
+     maintenance warnings.
+     --bottom modifier: sticky bottom requires the banner to be the last child
+     of a tall scroll container — sticky bottom on a non-last child does nothing. */
+
+  .cs-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+    width: 100%;
+    padding-block: var(--banner-padding-block, var(--space-s));
+    padding-inline: var(--banner-padding-inline, var(--space-gutter));
+    background: var(--banner-bg, var(--primary-100));
+    color: var(--banner-color, var(--color-text));
+    border-block-end: 1px solid var(--banner-border, var(--color-border));
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-banner); /* 1200 — above sticky header at 1100 */
+  }
+
+  .cs-banner--info    { --banner-bg: var(--primary-100); --banner-color: var(--primary);     --banner-border: var(--primary-a25); }
+  .cs-banner--warning { --banner-bg: var(--warning-100); --banner-color: var(--warning-600); --banner-border: color-mix(in srgb, var(--warning) 25%, transparent); }
+  .cs-banner--error   { --banner-bg: var(--error-100);   --banner-color: var(--error);       --banner-border: color-mix(in srgb, var(--error) 25%, transparent); }
+
+  /* Bottom-anchored: flip sticky edge and border to the correct side */
+  .cs-banner--bottom {
+    inset-block-start: unset;
+    inset-block-end: 0;
+    border-block-end: none;
+    border-block-start: 1px solid var(--banner-border, var(--color-border));
+  }
+
+  .cs-banner__message { flex: 1; }
+  .cs-banner__actions { display: flex; gap: var(--space-s); align-items: center; flex-wrap: wrap; }
+
+  .cs-banner__close {
+    flex-shrink: 0;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    padding: 0;
+  }
+  .cs-banner__close:hover { opacity: 1; }
+
+  /* ----- Marquee (horizontally scrolling strip) ----- */
+  /* Use cases: logo bars, tag clouds, announcement tickers.
+     HTML structure: .cs-marquee > .cs-marquee__track > [items × 2]
+     Items must be duplicated in HTML — the animation translates by exactly
+     calc(-50% - gap/2) so each set of items must be identical in width for
+     a seamless loop. Without duplication the loop jumps.
+     Instance tokens: --marquee-speed (default 40s, lower = faster), --marquee-gap. */
+
+  .cs-marquee {
+    --marquee-speed: 40s;
+    --marquee-gap: var(--space-l);
+    overflow: hidden;
+    display: flex;
+    user-select: none;
+  }
+
+  .cs-marquee__track {
+    display: flex;
+    gap: var(--marquee-gap);
+    animation: cs-marquee-scroll var(--marquee-speed) linear infinite;
+  }
+
+  @keyframes cs-marquee-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-50% - var(--marquee-gap) / 2)); }
+  }
+
+  /* ----- Section header ----- */
+  /* The most repeated pattern on marketing sites: eyebrow + heading + lead text.
+     Centered by default. Use --left modifier for left-aligned sections.
+     Customizable: --section-header-max (default: --container-narrow) */
+
+  .cs-section-header {
+    text-align: center;
+    max-width: var(--section-header-max, var(--container-narrow, 40rem));
+    margin-inline: auto;
+  }
+
+  .cs-section-header__heading {
+    font-size: var(--h2);
+    line-height: var(--leading-tight, 1.2);
+    font-weight: var(--font-weight-bold, 700);
+    text-wrap: balance;
+    color: var(--color-text);
+    margin-block: var(--space-xs) var(--space-s);
+  }
+
+  .cs-section-header__lead {
+    font-size: var(--text-l);
+    line-height: var(--leading-normal, 1.5);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+    max-width: 55ch;
+    margin-inline: auto;
+  }
+
+  .cs-section-header__cta {
+    margin-block-start: var(--space-l);
+    display: flex;
+    gap: var(--space-s);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* --left: left-aligned variant */
+  .cs-section-header--left {
+    text-align: start;
+    margin-inline: 0;
+  }
+  .cs-section-header--left .cs-section-header__lead { margin-inline: 0; }
+  .cs-section-header--left .cs-section-header__cta  { justify-content: flex-start; }
+
+  /* ----- Eyebrow ----- */
+
+  .cs-eyebrow {
+    display: inline-block;
+    font-size: var(--text-s);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--eyebrow-color, var(--primary));
+    margin-block-end: var(--space-xs);
+  }
+
+  /* ----- Media object ----- */
+
+  .cs-media {
+    display: flex;
+    gap: var(--space-m);
+    align-items: flex-start;
+  }
+  .cs-media > :first-child { flex-shrink: 0; }
+  .cs-media > :last-child  { flex: 1; min-width: 0; }
+
+  /* ----- Input group ----- */
+
+  .cs-input-group { display: flex; }
+  .cs-input-group > input,
+  .cs-input-group > select {
+    flex: 1;
+    min-width: 0;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    border-inline-end: 0;
+  }
+  .cs-input-group > button,
+  .cs-input-group > [role="button"] {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  /* ----- Divider (line-text-line) ----- */
+
+  .cs-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    color: var(--color-text-faint);
+    font-size: var(--text-s);
+  }
+  .cs-divider::before,
+  .cs-divider::after {
+    content: '';
+    flex: 1;
+    border-block-start: var(--border-width, 1px) solid var(--color-border);
+  }
+
+  /* ----- Stat display ----- */
+
+  .cs-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+  .cs-stat__value,
+  .cs-stat > strong {
+    font-size: var(--stat-size, var(--text-3xl));
+    font-weight: 700;
+    line-height: 1;
+    color: var(--stat-color, var(--primary));
+  }
+  .cs-stat__label {
+    font-size: var(--text-s);
+    color: var(--color-text-muted);
+  }
+
+  /* alignment modifiers */
+  .cs-stat--left  { align-items: flex-start; }
+  .cs-stat--inline {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--space-xs);
+  }
+  .cs-stat--inline .cs-stat__label,
+  .cs-stat--inline > span { order: -1; }
+
+  /* ----- Skeleton loader ----- */
+  /* ⚠️ .cs-skeleton-line must be a direct child of .cs-skeleton to correctly inherit
+     the animation and background-size values. Deeper nesting desynchronizes the animation.
+     Uses --color-border for the shimmer midpoint — adapts correctly in dark mode. */
+
+  .cs-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-surface-2) 25%,
+      var(--color-border) 50%,
+      var(--color-surface-2) 75%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-pulse var(--skeleton-speed, 1.5s) ease-in-out infinite;
+    border-radius: var(--radius-s);
+    color: transparent;
+    user-select: none;
+    pointer-events: none;
+  }
+  .cs-skeleton * { visibility: hidden; }
+  .cs-skeleton-line {
+    height: 0.75em;
+    border-radius: var(--radius-xs);
+    background: inherit;
+    animation: inherit;
+    background-size: inherit;
+    visibility: visible;
+  }
+
+  /* ----- Separated list (breadcrumbs, footer links, tag lists) ----- */
+
+  .cs-separated-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    list-style: none;
+    padding: 0;
+  }
+  .cs-separated-list > * + *::before {
+    content: var(--separator, "/");
+    margin-inline-end: var(--space-2xs);
+    opacity: 0.5;
+  }
+
+  /* ----- Form group (CSS-only validation cascade via :has()) ----- */
+  /* No JS required — browser applies :user-invalid after the first blur on an invalid field.
+     .cs-form-group__error is hidden by default and revealed when the group contains an invalid field.
+     Full BEM: __label, __input, __hint, __error for consistency across the framework. */
+
+  .cs-form-group { display: flex; flex-direction: column; gap: var(--space-2xs); }
+  .cs-form-group__label { font-size: var(--text-s); font-weight: 500; color: var(--color-text); }
+  .cs-form-group__hint  { font-size: var(--text-s); color: var(--color-text-muted); }
+  .cs-form-group__error { display: none; font-size: var(--text-s); color: var(--error); }
+
+  /* Opinionated input styling — matches buttons (padding, border-radius, transitions).
+     Use via <input class="cs-form-group__input"> for consistent sizing and focus states. */
+  .cs-form-group__input,
+  .cs-form-group__input[type="text"],
+  .cs-form-group__input[type="email"],
+  .cs-form-group__input[type="tel"],
+  .cs-form-group__input[type="url"],
+  .cs-form-group__input[type="search"],
+  .cs-form-group__input[type="password"],
+  .cs-form-group__input[type="number"],
+  textarea.cs-form-group__input,
+  select.cs-form-group__input {
+    padding: var(--input-padding-y, var(--space-xs)) var(--input-padding-x, var(--space-s));
+    border: var(--border-width, 1px) solid var(--input-border, var(--color-border));
+    border-radius: var(--input-radius, var(--radius-m));
+    background: var(--input-bg, var(--color-surface));
+    color: var(--input-text, var(--color-text));
+    font: inherit;
+    transition: border-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+  }
+  .cs-form-group__input:focus-visible {
+    border-color: var(--input-border-focus, var(--primary));
+    outline: 0;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+  }
+  .cs-form-group__input:user-invalid {
+    border-color: var(--error);
+  }
+
+  .cs-form-group:has(:user-invalid) .cs-form-group__label  { color: var(--error); }
+  .cs-form-group:has(:user-invalid) .cs-form-group__error  { display: block; }
+  .cs-form-group:has(:user-valid:not(:placeholder-shown)) .cs-form-group__label { color: var(--success); }
+
+  /* ----- Select wrapper (enhanced chevron via mask-image) ----- */
+  /* Wrapping <select> in <div class="cs-select-wrap"> upgrades the
+     chevron from a hardcoded-color SVG background-image to a
+     token-driven mask-image that follows --color-text-muted and
+     dark mode automatically.
+
+     Usage:
+       <div class="cs-select-wrap">
+         <select>...</select>
+       </div>
+
+     Without wrapper: built-in chevron (hardcoded color, see core reset).
+     With wrapper: token-driven chevron via ::after. */
+
+  .cs-select-wrap {
+    position: relative;
+    display: grid;
+  }
+  .cs-select-wrap select {
+    /* Remove the background-image chevron from the naked select */
+    background-image: none;
+    padding-inline-end: calc(var(--space-s) * 2 + 1em);
+  }
+  .cs-select-wrap::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-end: var(--space-s);
+    translate: 0 -50%;
+    inline-size: 1em;
+    block-size: 1em;
+    pointer-events: none;
+    background-color: var(--color-text-muted);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
+  /* ----- Spinner ----- */
+  /* Use as: <span class="spinner" aria-label="Loading" role="status"></span>
+     --spinner-size and --spinner-color customizable per instance. */
+
+  .cs-spinner {
+    display: inline-block;
+    width: var(--spinner-size, 1.5rem);
+    height: var(--spinner-size, 1.5rem);
+    border-radius: var(--radius-full, 9999px);
+    border: calc(var(--spinner-size, 1.5rem) * 0.15) solid
+      color-mix(in srgb, var(--spinner-color, var(--primary)) 25%, transparent);
+    border-block-start-color: var(--spinner-color, var(--primary));
+    animation: spin 0.65s linear infinite;
+    flex-shrink: 0;
+  }
+  .cs-spinner--s { --spinner-size: 1rem; }
+  .cs-spinner--l { --spinner-size: 2.5rem; }
+
+  /* ----- Chip (clickable tag / removable badge) ----- */
+  /* Semantically distinct from .cs-badge (read-only label): .cs-chip is interactive.
+     Use <button class="chip"> or <a class="chip"> for a standalone chip.
+     Add a <button class="chip__remove"> child for a removable chip. */
+
+  .cs-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-s);
+    font-size: var(--text-s);
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    border-radius: var(--radius-full);
+    border: var(--border-width, 1px) solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out);
+  }
+  
+    .cs-chip:hover { background: var(--color-border); border-color: var(--color-border-strong); }
+  
+  .cs-chip:focus-visible {
+    outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--primary));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+  .cs-chip--active {
+    background: var(--primary-100);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .cs-chip__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    border-radius: var(--radius-full);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.6;
+    min-height: revert;
+    min-width: revert;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .cs-chip__remove:hover { opacity: 1; }
+  .cs-chip__remove:focus-visible {
+    opacity: 1;
+    outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--primary));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  /* ----- Tooltip (CSS-only, progressive enhancement) ----- */
+  /* Usage: <button data-tooltip="This is the tooltip">Hover me</button>
+     Positioned above the element by default. Use CSS to override placement.
+     Fallback: classic position: absolute. Progressive enhancement: CSS Anchor Positioning
+     (Chrome 125+) when supported — enables smarter placement without scroll clipping. */
+
+  [data-tooltip] {
+    position: relative;
+  }
+  /* ⚠️ Fallback (non-anchor-positioning browsers): tooltip uses
+     position: absolute and may clip inside overflow: hidden parents.
+     Fix: add position: relative + overflow: visible on the parent,
+     or wrap in a z-index container. */
+  [data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    inset-block-end: calc(100% + var(--space-xs, 0.5rem));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    width: max-content;
+    max-width: var(--tooltip-max-width, 16rem);
+    padding: var(--space-2xs) var(--space-s);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    line-height: var(--leading-snug);
+    white-space: normal;
+    background: var(--neutral-900, #111827);
+    color: white;
+    border-radius: var(--radius-s);
+    box-shadow: var(--shadow-m);
+    pointer-events: none;
+    z-index: var(--z-tooltip, 1800);
+    /* Hidden by default — shown on focus/hover */
+    opacity: 0;
+    scale: 0.95;
+    transition: opacity var(--duration-fast) var(--ease-out),
+                scale var(--duration-fast) var(--ease-out);
+  }
+  
+    [data-tooltip]:hover::after { opacity: 1; scale: 1; }
+  
+  [data-tooltip]:focus-visible::after { opacity: 1; scale: 1; }
+
+  /* CSS Anchor Positioning — progressive enhancement for Chrome 125+.
+     Replaces the position: absolute fallback with proper anchor-based placement
+     that avoids clipping inside overflow: hidden parents. */
+  @supports (anchor-name: --a) {
+    [data-tooltip] { anchor-name: --_tooltip-anchor; }
+    [data-tooltip]::after {
+      position-anchor: --_tooltip-anchor;
+      position: absolute;
+      inset-block-end: anchor(top);
+      inset-inline-start: anchor(center);
+      translate: -50% calc(-1 * var(--space-xs, 0.5rem));
+      /* Remove the position: relative dependency — anchor handles placement */
+    }
+  }
+
+  /* ----- Table modifiers ----- */
+
+  .cs-table--striped tbody tr:nth-child(odd) { background: var(--color-surface-2); }
+  .cs-table--bordered,
+  .cs-table--bordered th,
+  .cs-table--bordered td {
+    border: var(--border-width, 1px) solid var(--color-border);
+  }
+  .cs-table--bordered { border-radius: var(--radius-m); overflow: hidden; }
+  .cs-table--hoverable tbody tr {
+    transition: background-color var(--duration-fast) var(--ease-out);
+  }
+  
+    .cs-table--hoverable tbody tr:hover { background: var(--color-surface-2); }
+  
+
+  /* ----- Feature list (checkmark-prefixed list) ----- */
+  /* Tag-agnostic — works on <ul>, <ol>, or <div>. Marker uses ::before with unicode,
+     no SVG needed. Override --feature-list-marker for custom icons (e.g., "→", "★"). */
+
+  .cs-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--feature-list-gap, var(--space-xs));
+  }
+  .cs-feature-list__item {
+    display: block;
+    position: relative;
+    padding-inline-start: calc(1.1em + var(--space-xs));
+  }
+  .cs-feature-list__item::before {
+    content: var(--feature-list-marker, "✓");
+    color: var(--feature-list-marker-color, var(--success));
+    font-weight: 700;
+    line-height: inherit;
+    font-size: 1.1em;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+  }
+  /* Variants — swap marker and color in one place */
+  .cs-feature-list--arrow { --feature-list-marker: "→"; --feature-list-marker-color: var(--primary); }
+  .cs-feature-list--star  { --feature-list-marker: "★"; --feature-list-marker-color: var(--accent); }
+  .cs-feature-list--bullet { --feature-list-marker: "•"; --feature-list-marker-color: var(--color-text-muted); }
+  .cs-feature-list--cross { --feature-list-marker: "✗"; --feature-list-marker-color: var(--error); }
+
+  /* Item-level variants — for mixed lists (some features included, some excluded) */
+  .cs-feature-list__item--cross { --feature-list-marker: "✗"; --feature-list-marker-color: var(--color-text-faint); color: var(--color-text-faint); }
+  .cs-feature-list__item--muted { color: var(--color-text-muted); }
+
+  /* ----- Avatar (circular or square portrait) ----- */
+  /* Use with <img> child or initials inside <span>/<div>. --avatar-size controls dimension,
+     --avatar-radius controls shape (50% circle by default, var(--radius-m) for rounded square). */
+
+  .cs-avatar {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--avatar-size, 3rem);
+    block-size: var(--avatar-size, 3rem);
+    border-radius: var(--avatar-radius, 50%);
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--avatar-bg, var(--color-surface-2));
+    color: var(--avatar-text, var(--color-text));
+    font-weight: 600;
+    font-size: calc(var(--avatar-size, 3rem) * 0.4);
+    line-height: 1;
+    user-select: none;
+  }
+  .cs-avatar > img,
+  .cs-avatar > picture > img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .cs-avatar--xs { --avatar-size: 1.5rem; }
+  .cs-avatar--s  { --avatar-size: 2rem; }
+  .cs-avatar--l  { --avatar-size: 4rem; }
+  .cs-avatar--xl { --avatar-size: 6rem; }
+  .cs-avatar--2xl { --avatar-size: 8rem; }
+  .cs-avatar--square { --avatar-radius: var(--radius-m); }
+  .cs-avatar--bordered { box-shadow: 0 0 0 2px var(--avatar-border-color, var(--color-surface)); }
+
+  /* Avatar stack — overlapping circular avatars (like GitHub contributors) */
+  .cs-avatar-stack {
+    display: inline-flex;
+    flex-direction: row;
+  }
+  .cs-avatar-stack > .cs-avatar + .cs-avatar {
+    margin-inline-start: calc(var(--avatar-size, 3rem) * -1 * var(--avatar-stack-overlap, 0.33));
+    box-shadow: 0 0 0 2px var(--avatar-stack-bg, var(--color-bg));
+  }
+
+  /* ----- Rating (star rating using unicode) ----- */
+  /* Pass text content as "★★★★★" or use aria-label for screen readers.
+     --rating-color and --rating-size configurable per instance. */
+
+  .cs-rating {
+    display: inline-flex;
+    color: var(--rating-color, var(--warning));
+    font-size: var(--rating-size, 1rem);
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
+  .cs-rating--l { --rating-size: 1.25rem; }
+  .cs-rating--xl { --rating-size: 1.5rem; }
+
+  /* ----- Quote / testimonial ----- */
+  /* Tag-agnostic — use on <blockquote>, <p>, or <div>. Italic by default,
+     configurable via --quote-size, --quote-color. */
+
+  .cs-quote {
+    margin: 0;
+    font-size: var(--quote-size, var(--text-l));
+    font-style: italic;
+    line-height: var(--leading-snug, 1.3);
+    color: var(--quote-color, var(--color-text));
+  }
+  .cs-quote--lead { --quote-size: var(--text-xl); }
+  .cs-quote--xl   { --quote-size: var(--text-2xl); }
+  .cs-quote--s    { --quote-size: var(--text-m); }
+
+  /* ----- Icon (SVG icon sizing wrapper) ----- */
+  /* Framework does NOT bundle an icon library — pick one (Lucide, Tabler, Phosphor,
+     Heroicons, Iconoir) and copy-paste SVG with .cs-icon class.
+     Reference stroke-width 1.75 works well for Lucide; use 1.5 for thinner feel.
+
+     Markup:
+       <svg class="cs-icon" xmlns="..." viewBox="0 0 24 24" fill="none"
+            stroke="currentcolor" stroke-width="1.75" stroke-linecap="round"
+            stroke-linejoin="round">
+         <path d="..."/>
+       </svg>
+
+     Size scales with font-size via `em` units — icon in a text-l context scales up
+     automatically. Override via --icon-size token for explicit sizing. */
+
+  .cs-icon {
+    inline-size: var(--icon-size, 1.5em);
+    block-size: var(--icon-size, 1.5em);
+    color: var(--icon-color, currentcolor);
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+  .cs-icon--xs { --icon-size: 0.875em; }
+  .cs-icon--s  { --icon-size: 1em; }
+  .cs-icon--m  { --icon-size: 1.5em; }  /* explicit default */
+  .cs-icon--l  { --icon-size: 2em; }
+  .cs-icon--xl { --icon-size: 3em; }
+  .cs-icon--2xl { --icon-size: 4em; }
+
+  /* stroke-width utility for line icons (Lucide-style) */
+  .cs-icon--thin   { stroke-width: 1.25; }
+  .cs-icon--regular { stroke-width: 1.75; }
+  .cs-icon--bold   { stroke-width: 2.25; }
+
+  /* ----- Logo (SVG logo styling for logo strips) ----- */
+  /* Use on <svg> directly: <svg class="cs-logo">...</svg>
+     Configurable: --logo-size (default 2rem), --logo-color (default text-muted) */
+
+  .cs-logo {
+    block-size: var(--logo-size, 2rem);
+    inline-size: auto;
+    color: var(--logo-color, var(--color-text-muted));
+    fill: currentcolor;
+    flex-shrink: 0;
+  }
+  .cs-logo--s  { --logo-size: 1.5rem; }
+  .cs-logo--l  { --logo-size: 2.5rem; }
+  .cs-logo--xl { --logo-size: 3rem; }
+
+  /* ----- Nav link (plain navigation link, matches parent in dropdowns) ----- */
+  /* Use on plain <a> in navigation alongside cs-nav-dropdown for visual consistency.
+     Uses `a.cs-nav-link` selector (specificity 0,1,1) to override base `a` and `a:visited`
+     which would otherwise apply framework's link color. */
+  a.cs-nav-link {
+    text-decoration: none;
+    color: var(--color-text-muted);
+    padding-block: var(--space-2xs);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  a.cs-nav-link:hover,
+  a.cs-nav-link:visited:hover { color: var(--color-text); }
+  a.cs-nav-link:visited { color: var(--color-text-muted); }
+
+  /* ----- Nav dropdown (submenu for primary navigation) ----- */
+  /* Uses native <details>/<summary> — zero JS required for basic operation.
+     Works on desktop (click to open) and mobile (tap to expand).
+     Use name="some-name" on multiple <details> for exclusive accordion (only one open).
+     Chrome 120+, Firefox 133+. Falls back to non-exclusive in older browsers.
+
+     The parent item is clickable as a link. Click on the label text navigates to the href,
+     click on the chevron area toggles the dropdown. Minimal JS (~8 lines) required to
+     route clicks correctly.
+
+     Markup with clickable parent:
+       <details class="cs-nav-dropdown" name="primary-nav">
+         <summary class="cs-nav-dropdown__trigger">
+           <a href="/product" class="cs-nav-dropdown__parent">Product</a>
+         </summary>
+         <ul class="cs-nav-dropdown__menu">
+           <li><a class="cs-nav-dropdown__link" href="#">Features</a></li>
+         </ul>
+       </details>
+
+     Markup without clickable parent (dropdown-only):
+       <details class="cs-nav-dropdown" name="primary-nav">
+         <summary class="cs-nav-dropdown__trigger">Solutions</summary>
+         <ul class="cs-nav-dropdown__menu">...</ul>
+       </details>
+
+     Required JS (handles both: click-outside to close, and link navigation vs toggle):
+       document.addEventListener('click', function(e) {
+         var parentLink = e.target.closest('.cs-nav-dropdown__parent');
+         if (parentLink) { e.stopPropagation(); return; }
+         document.querySelectorAll('details.cs-nav-dropdown[open]').forEach(function(d) {
+           if (!d.contains(e.target)) d.removeAttribute('open');
+         });
+       }); */
+
+  .cs-nav-dropdown {
+    position: relative;
+  }
+  .cs-nav-dropdown > summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    user-select: none;
+    font-weight: inherit;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .cs-nav-dropdown > summary::-webkit-details-marker { display: none; }
+  .cs-nav-dropdown > summary::after {
+    content: "";
+    display: inline-block;
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-inline-end: 2px solid currentcolor;
+    border-block-end: 2px solid currentcolor;
+    rotate: 45deg;
+    margin-block-end: 0.15em;
+    transition: rotate var(--duration-fast) var(--ease-out);
+    flex-shrink: 0;
+  }
+  .cs-nav-dropdown[open] > summary::after { rotate: -135deg; margin-block-end: -0.15em; }
+
+  /* Parent link — matches .cs-nav-link styling.
+     padding-block extends click target to full nav height.
+     Using a.-scoped selector (specificity 0,1,1) to override base `a` styles. */
+  a.cs-nav-dropdown__parent {
+    text-decoration: none;
+    color: var(--color-text-muted);
+    padding-block: var(--space-2xs);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  a.cs-nav-dropdown__parent:hover,
+  a.cs-nav-dropdown__parent:visited:hover,
+  .cs-nav-dropdown[open] > summary > a.cs-nav-dropdown__parent {
+    color: var(--color-text);
+  }
+  a.cs-nav-dropdown__parent:visited { color: var(--color-text-muted); }
+
+  .cs-nav-dropdown__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cs-nav-dropdown__link,
+  .cs-nav-dropdown__menu a {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-xs) var(--space-s);
+    border-radius: var(--radius-s);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .cs-nav-dropdown__link:hover,
+  .cs-nav-dropdown__menu a:hover {
+    background: var(--color-surface-2);
+  }
+  .cs-nav-dropdown__link-label {
+    font-weight: 600;
+  }
+  .cs-nav-dropdown__link-desc {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* Desktop: menu opens as absolute dropdown */
+  @media (min-width: 48em) {
+    .cs-nav-dropdown[open] > .cs-nav-dropdown__menu {
+      position: absolute;
+      inset-block-start: calc(100% + var(--space-xs));
+      inset-inline-start: 0;
+      min-inline-size: 16rem;
+      padding: var(--space-xs);
+      background: var(--color-surface);
+      border: var(--border-width, 1px) solid var(--color-border);
+      border-radius: var(--radius-m);
+      box-shadow: var(--shadow-m);
+      z-index: var(--z-dropdown);
+    }
+    /* Wide dropdown for multi-column menus */
+    .cs-nav-dropdown--wide[open] > .cs-nav-dropdown__menu {
+      min-inline-size: 32rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xs);
+    }
+  }
+
+  /* Mobile: menu expands inline (natural flow) */
+  @media (max-width: 47.99em) {
+    .cs-nav-dropdown__menu {
+      padding-inline-start: var(--space-m);
+      padding-block: var(--space-xs);
+      gap: var(--space-2xs);
+    }
+  }
+
+  /* ==========================================================================
+     0.2.0 ADDITIONS — e-commerce & transactional patterns
+     ==========================================================================
+     Added after battle-testing the blueprint library against framework surface.
+     All additions are additive: no existing class is modified. */
+
+  /* ----- Brand tile (colored container for single-letter or SVG logomarks) ----- */
+  /* Distinct from .cs-icon: .cs-icon is for inline SVG sizing in text contexts
+     (em-based, currentcolor). .cs-brand-tile is a block with explicit background
+     and foreground used in header/footer logos, integration cards, carrier logos.
+     --tile-bg / --tile-color / --tile-radius are per-instance overrides. */
+
+  .cs-brand-tile {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--tile-size, 2.5rem);
+    block-size: var(--tile-size, 2.5rem);
+    border-radius: var(--tile-radius, var(--radius-s));
+    background: var(--tile-bg, var(--primary));
+    color: var(--tile-color, #fff);
+    font-weight: 700;
+    line-height: 1;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .cs-brand-tile--s  { --tile-size: 2rem;   }
+  .cs-brand-tile--l  { --tile-size: 3rem;   }
+  .cs-brand-tile--xl { --tile-size: 4rem;   }
+
+  /* ----- Price (main number + row + original/save sub-elements) ----- */
+  /* Tag-agnostic: use on <span>, <strong>, <p>. Default size is text-l.
+     --price-size / --price-color for per-instance scaling and tier colors
+     (e.g. featured pricing tier can set --price-color: var(--primary)). */
+
+  .cs-price {
+    font-weight: 700;
+    font-size: var(--price-size, var(--text-l));
+    line-height: 1;
+    color: var(--price-color, var(--color-text));
+  }
+  .cs-price--s  { --price-size: var(--text-m); }
+  .cs-price--l  { --price-size: var(--text-2xl); }
+  .cs-price--xl { --price-size: var(--text-3xl); }
+
+  /* Row wrapper aligning main price with period, original, and save pill */
+  .cs-price__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-xs);
+  }
+
+  /* Strikethrough previous price */
+  .cs-price__original {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+    font-size: var(--text-s);
+    font-weight: 500;
+  }
+
+  /* Small colored pill — percent off, savings amount, etc. */
+  .cs-price__save {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2xs) var(--space-xs);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    line-height: 1;
+    border-radius: var(--radius-s);
+    background: var(--success-100);
+    color: var(--success-600);
+  }
+
+  /* ----- Summary card (order/cart/checkout totals aside) ----- */
+  /* Use on top of .cs-card (or any container). Designed to be sticky in wide
+     layouts: wrap in a parent that allows sticky positioning.
+     --summary-total-size lets per-instance variants use a compact total
+     (e.g. text-m for inline steppers, text-xl for full checkout).
+     --summary-heading-size mirrors that for the title. */
+
+  .cs-summary-card__heading {
+    font-size: var(--summary-heading-size, var(--text-m));
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .cs-summary-card__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-m);
+    padding-block: var(--space-2xs);
+    font-size: var(--text-s);
+  }
+
+  .cs-summary-card__row > :last-child {
+    font-weight: 500;
+    text-align: end;
+  }
+
+  .cs-summary-card__total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-m);
+    padding-block-start: var(--space-s);
+    margin-block-start: var(--space-s);
+    border-block-start: var(--border-width, 1px) solid var(--color-border);
+    font-size: var(--summary-total-size, var(--text-xl));
+    font-weight: 700;
+  }
+
+  /* ----- Line item (cart/checkout/order row: thumb + info + price) ----- */
+  /* Canonical line-item pattern — three-column grid: thumbnail, info stack, price.
+     Info stack holds name + variant + optional meta. Price aligns start by default
+     (use .items-center on the root to center price with thumb). */
+
+  .cs-line-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-m);
+    align-items: start;
+    padding-block: var(--line-item-padding, var(--space-s));
+  }
+
+  .cs-line-item__thumb {
+    inline-size: var(--line-item-thumb-size, 4rem);
+    block-size: var(--line-item-thumb-size, 4rem);
+    border-radius: var(--radius-s);
+    background: var(--color-surface-2);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .cs-line-item__info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    min-inline-size: 0;
+  }
+
+  .cs-line-item__name {
+    font-weight: 600;
+    font-size: var(--text-s);
+    line-height: var(--leading-snug);
+    margin: 0;
+  }
+
+  .cs-line-item__variant {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .cs-line-item__price {
+    font-weight: 700;
+    font-size: var(--text-s);
+    white-space: nowrap;
+  }
+
+  /* ----- Quantity input (inline ±/value control) ----- */
+  /* Use with three <button> or mix of buttons + <input type="number">.
+     Size modifier --s drops to 1.75rem buttons for compact contexts.
+     Hidden native spinners on <input type="number"> for consistency. */
+
+  .cs-quantity-input {
+    display: inline-flex;
+    align-items: stretch;
+    border: var(--border-width, 1px) solid var(--color-border);
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+
+  .cs-quantity-input__btn {
+    inline-size: var(--qty-btn-size, 2rem);
+    block-size: var(--qty-btn-size, 2rem);
+    display: inline-grid;
+    place-items: center;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-text);
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .cs-quantity-input__btn:hover { background: var(--color-surface-2); }
+  .cs-quantity-input__btn:disabled { cursor: not-allowed; opacity: 0.4; }
+
+  .cs-quantity-input__value {
+    min-inline-size: 2.5rem;
+    padding: 0;
+    text-align: center;
+    font-weight: 600;
+    font-size: var(--text-s);
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 0;
+    border-inline: var(--border-width, 1px) solid var(--color-border);
+    line-height: var(--qty-btn-size, 2rem);
+    -moz-appearance: textfield;
+  }
+  .cs-quantity-input__value::-webkit-outer-spin-button,
+  .cs-quantity-input__value::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .cs-quantity-input--s { --qty-btn-size: 1.75rem; }
+  .cs-quantity-input--s .cs-quantity-input__value {
+    font-size: var(--text-xs);
+    min-inline-size: 2rem;
+  }
+
+  /* ----- Radio card / check card (selectable card with hidden form input) ----- */
+  /* Markup: <label class="cs-radio-card"><input type="radio" class="cs-radio-card__input">
+              <span class="cs-radio-card__surface">…</span></label>
+     Uses :has() to style the surface when the hidden input is checked.
+     --radio-card-bg-selected / --radio-card-border-selected tokenize the selected state. */
+
+  .cs-radio-card,
+  .cs-check-card {
+    display: block;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .cs-radio-card__input,
+  .cs-check-card__input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .cs-radio-card__surface,
+  .cs-check-card__surface {
+    display: block;
+    padding: var(--radio-card-padding, var(--space-m));
+    border: var(--border-width, 1px) solid var(--color-border);
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
+    transition: border-color var(--duration-fast) var(--ease-out),
+                background var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .cs-radio-card:has(input:checked) .cs-radio-card__surface,
+  .cs-check-card:has(input:checked) .cs-check-card__surface {
+    border-color: var(--radio-card-border-selected, var(--primary));
+    background: var(--radio-card-bg-selected, var(--primary-50));
+    box-shadow: inset 0 0 0 1px var(--radio-card-border-selected, var(--primary));
+  }
+
+  .cs-radio-card:has(input:focus-visible) .cs-radio-card__surface,
+  .cs-check-card:has(input:focus-visible) .cs-check-card__surface {
+    outline: 2px solid var(--primary);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  .cs-radio-card:has(input:disabled),
+  .cs-check-card:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* ----- Option group (pill/rectangle mutually-exclusive choices) ----- */
+  /* Stateless list of options — click-to-select via JS, OR combine with a hidden
+     radio group via the `:has(input:checked)` fallback clause below.
+     For form-backed cards (bigger surface, richer content) use .cs-radio-card instead. */
+
+  .cs-option-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .cs-option-group__option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xs) var(--space-m);
+    border: var(--border-width, 1px) solid var(--color-border);
+    border-radius: var(--option-radius, var(--radius-m));
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-s);
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--ease-out),
+                background var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+  }
+  .cs-option-group__option:hover { border-color: var(--color-border-strong); }
+
+  .cs-option-group__option--selected,
+  .cs-option-group__option:has(input:checked) {
+    border-color: var(--primary);
+    background: var(--primary-50);
+    color: var(--primary);
+  }
+
+  /* ----- Progress bar ----- */
+  /* Primary: use native <progress value="65" max="100"> for
+     semantic markup and built-in accessibility (screen readers
+     announce the value automatically). Set value via HTML attribute.
+
+     Modifiers: --progress-color (default var(--primary)),
+                --progress-size  (default 6px)
+
+     Fallback div pattern (JS-driven or animation-only contexts):
+       <div class="cs-progress" style="--progress: 65%">
+         <div class="cs-progress__fill"></div>
+       </div>
+     See docs/COMPONENTS.md for fallback usage. */
+
+  .cs-progress {
+    appearance: none;
+    display: block;
+    inline-size: 100%;
+    block-size: var(--progress-size, 6px);
+    border: 0;
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    color: var(--progress-color, var(--primary));
+    background: var(--color-border);
+  }
+  .cs-progress--s { --progress-size: 3px; }
+  .cs-progress--l { --progress-size: 10px; }
+
+  /* WebKit: track + fill */
+  .cs-progress::-webkit-progress-bar {
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+  }
+  .cs-progress::-webkit-progress-value {
+    background: var(--progress-color, var(--primary));
+    border-radius: var(--radius-full);
+    transition: width var(--duration-normal) var(--ease-out);
+  }
+
+  /* Firefox: fill (track inherits from .cs-progress background) */
+  .cs-progress::-moz-progress-bar {
+    background: var(--progress-color, var(--primary));
+    border-radius: var(--radius-full);
+  }
+
+  /* Div fallback pattern (kept for JS-driven/animation contexts) */
+  .cs-progress__fill {
+    display: block;
+    block-size: 100%;
+    inline-size: var(--progress, 0%);
+    background: var(--progress-color, var(--primary));
+    border-radius: inherit;
+    transition: inline-size var(--duration-normal) var(--ease-out);
+  }
+
+  /* ----- Stepper (horizontal default + --vertical) ----- */
+  /* Steps connected by a pseudo-line between dots. Modifier classes --active and
+     --complete drive color state. Connector gets the active/complete color when
+     the PRECEDING step has that state (sibling combinator on ::before). */
+
+  .cs-stepper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cs-stepper__step {
+    flex: 1;
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    position: relative;
+    text-align: center;
+  }
+
+  .cs-stepper__step + .cs-stepper__step::before {
+    content: "";
+    position: absolute;
+    inset-block-start: calc(var(--stepper-dot-size, 2rem) / 2);
+    inset-inline-start: -50%;
+    inset-inline-end: 50%;
+    block-size: var(--stepper-line-width, 2px);
+    background: var(--color-border);
+    z-index: 0;
+    transform: translateY(-50%);
+  }
+  .cs-stepper__step--complete + .cs-stepper__step::before,
+  .cs-stepper__step--active + .cs-stepper__step::before {
+    background: var(--stepper-line-active, var(--primary));
+  }
+
+  .cs-stepper__dot {
+    inline-size: var(--stepper-dot-size, 2rem);
+    block-size: var(--stepper-dot-size, 2rem);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: var(--text-s);
+    font-weight: 600;
+    z-index: 1;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .cs-stepper__step--complete .cs-stepper__dot {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+  .cs-stepper__step--active .cs-stepper__dot {
+    background: var(--color-text);
+    border-color: var(--color-text);
+    color: var(--color-surface);
+  }
+
+  .cs-stepper__label {
+    font-size: var(--text-s);
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+  .cs-stepper__step--complete .cs-stepper__label,
+  .cs-stepper__step--active   .cs-stepper__label {
+    color: var(--color-text);
+  }
+
+  /* Optional wrapper for step label + time + detail (vertical-stepper content column) */
+  .cs-stepper__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    flex: 1;
+    min-inline-size: 0;
+  }
+
+  /* Vertical orientation — dot in left gutter, content beside, connector running
+     vertically down the dot column. */
+  .cs-stepper--vertical {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+  .cs-stepper--vertical .cs-stepper__step {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: start;
+    padding-block-end: var(--stepper-vertical-gap, var(--space-l));
+  }
+  .cs-stepper--vertical .cs-stepper__step:last-child { padding-block-end: 0; }
+
+  .cs-stepper--vertical .cs-stepper__step + .cs-stepper__step::before {
+    inset-block-start: calc(-1 * var(--stepper-vertical-gap, var(--space-l)));
+    inset-block-end: auto;
+    inset-inline-start: calc(var(--stepper-dot-size, 2rem) / 2 - var(--stepper-line-width, 2px) / 2);
+    inset-inline-end: auto;
+    block-size: var(--stepper-vertical-gap, var(--space-l));
+    inline-size: var(--stepper-line-width, 2px);
+    transform: none;
+  }
+  .cs-stepper--vertical .cs-stepper__step--active .cs-stepper__dot {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    box-shadow: 0 0 0 4px var(--primary-a25);
+  }
+
+  /* ----- Badge: --pill modifier + __dot element ----- */
+  /* Pill variant: semi-transparent color-mixed background + pure semantic color
+     text. Combines with existing --success/--warning/--error/--neutral to produce
+     the standard "status pill" look (delivered/in-transit/processing/cancelled).
+     __dot adds a small leading circle using currentcolor — no extra color setup. */
+
+  .cs-badge--pill {
+    --badge-bg: color-mix(in oklab, var(--badge-text, var(--primary)) 15%, transparent);
+    padding-inline: var(--space-s);
+    border-radius: var(--radius-full);
+    gap: var(--space-2xs);
+  }
+
+  .cs-badge__dot {
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-radius: 50%;
+    background: currentcolor;
+    flex-shrink: 0;
+    display: inline-block;
+  }
+
+  /* ----- Rating: __count element + --with-count modifier ----- */
+  /* Extends existing .cs-rating. Pattern: stars + "(123)" review-count on the same
+     baseline. --with-count adds the gap and alignment; __count styles the text. */
+
+  .cs-rating--with-count {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .cs-rating__count {
+    font-size: var(--text-s);
+    color: var(--color-text-muted);
+    font-weight: 500;
+    letter-spacing: normal;
+  }
+
+  /* ----- Breadcrumb (hierarchical nav trail) ----- */
+  /* Use on <nav aria-label="Breadcrumb"> wrapping an <ol>. Items are links except
+     the current page which gets __current (non-link, bolder, text color). */
+
+  .cs-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-s);
+    color: var(--color-text-muted);
+  }
+  .cs-breadcrumb > ol,
+  .cs-breadcrumb > ul {
+    display: contents;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .cs-breadcrumb__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .cs-breadcrumb__sep {
+    opacity: 0.5;
+    user-select: none;
+  }
+  .cs-breadcrumb__current {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  /* ----- Divider: __text element + --s modifier ----- */
+  /* Extends existing .cs-divider (line-text-line layout) with styled text slot
+     and a smaller-gap variant. Typical usage:
+       <div class="cs-divider"><span class="cs-divider__text">Or continue with email</span></div> */
+
+  .cs-divider__text {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-widest);
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+  .cs-divider--s {
+    gap: var(--space-s);
+  }
+  .cs-divider--s .cs-divider__text {
+    font-size: var(--text-2xs);
+  }
+
+  /* ----- Data list (label/value pairs with separators) ----- */
+  /* Semantic: use on <dl> with <div class="cs-data-list__row"><dt><dd> pattern, or
+     on <div> with arbitrary children styled via the element classes. */
+
+  .cs-data-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+  }
+  .cs-data-list__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-m);
+    padding-block: var(--space-s);
+    border-block-end: var(--border-width, 1px) solid var(--color-border);
+    font-size: var(--text-s);
+  }
+  .cs-data-list__row:last-child { border-block-end: 0; }
+  .cs-data-list__label {
+    color: var(--color-text-muted);
+    margin: 0;
+    min-inline-size: var(--data-list-label-width, auto);
+  }
+  .cs-data-list__value {
+    color: var(--color-text);
+    font-weight: 500;
+    margin: 0;
+    text-align: end;
+  }
+
+  /* ----- Swatches (color-circle selector row) ----- */
+  /* Container is a horizontal cluster; each swatch is a circle driven by
+     --swatch-color. Selected state: 2px outline ring with offset. */
+
+  .cs-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+  .cs-swatch {
+    inline-size: var(--swatch-size, 1.25rem);
+    block-size: var(--swatch-size, 1.25rem);
+    border-radius: 50%;
+    background: var(--swatch-color, var(--primary));
+    border: var(--border-width, 1px) solid var(--color-border);
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .cs-swatch--l  { --swatch-size: 1.75rem; }
+  .cs-swatch--xl { --swatch-size: 2.25rem; }
+  .cs-swatch--selected {
+    outline: 2px solid var(--primary);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  /* ==========================================================================
+     0.3.3.0 ADDITIONS — missing core components (tabs / pagination / dropdown /
+     message / footer)
+     ==========================================================================
+     All additions are additive; no existing class is modified. */
+
+  /* ----- Tabs (CSS-only via radio inputs + :has) ----- */
+  /* No JS required.
+
+     Full WAI-ARIA Tabs pattern markup (ids + aria-controls + aria-labelledby
+     + aria-selected + roving tabindex). CSS is role-agnostic, so a simpler
+     radio-group markup without ARIA also works visually — but for screen-reader
+     correctness follow the Tabs pattern as below:
+       <div class="cs-tabs">
+         <div class="cs-tabs__list" role="tablist" aria-label="Section tabs">
+           <label class="cs-tabs__tab"
+                  id="tab-one"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="panel-one"
+                  tabindex="0">
+             <input type="radio" name="t" checked>
+             <span>One</span>
+           </label>
+           <label class="cs-tabs__tab"
+                  id="tab-two"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="panel-two"
+                  tabindex="-1">
+             <input type="radio" name="t">
+             <span>Two</span>
+           </label>
+         </div>
+         <div class="cs-tabs__panels">
+           <div class="cs-tabs__panel"
+                id="panel-one"
+                role="tabpanel"
+                aria-labelledby="tab-one">Panel 1</div>
+           <div class="cs-tabs__panel"
+                id="panel-two"
+                role="tabpanel"
+                aria-labelledby="tab-two">Panel 2</div>
+         </div>
+       </div>
+
+     A small JS handler can flip aria-selected + tabindex when the user changes
+     the radio (see js/slashed-ui.js `initTabs` for an example). Without JS
+     the visual state still works via :has(input:checked); the aria-selected
+     and tabindex attributes will be stale but the roles remain correct and
+     the inactive panel is hidden from everyone (CSS display: none removes it
+     from the accessibility tree) rather than only sighted users.
+
+     NOTE: do not add the `hidden` HTML attribute to inactive panels unless
+     you also wire up JS to toggle it — the framework's base rule already sets
+     display: none on non-active panels, and a stale `hidden` would trap the
+     panel's content from assistive technologies even when CSS :has() reveals
+     it visually.
+
+     This is a styled radio/segmented control component. .cs-tabs wraps the entire
+     component, .cs-tabs__list contains the radio buttons styled as tabs,
+     .cs-tabs__tab wraps each radio input, .cs-tabs__panels contains the content,
+     and .cs-tabs__panel holds each panel. Uses :has(input:checked) on .cs-tabs__tab
+     to style active tab and nth-child() pairing to reveal matching panel.
+     Requires :has() support (Chrome 105+, Firefox 121+, Safari 15.4+). */
+
+  .cs-tabs {
+    --tabs-gap: var(--space-xs);
+    --tab-padding: var(--space-s) var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+  .cs-tabs__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tabs-gap);
+    border-block-end: var(--border-width, 1px) solid var(--color-border);
+  }
+  .cs-tabs__tab {
+    padding: var(--tab-padding);
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    border-block-end: 2px solid transparent;
+    margin-block-end: -1px;
+    transition: color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out);
+  }
+  .cs-tabs__tab > input { position: absolute; opacity: 0; pointer-events: none; }
+  .cs-tabs__tab:hover { color: var(--color-text); }
+  .cs-tabs__tab:has(input:checked) {
+    color: var(--primary);
+    border-block-end-color: var(--primary);
+  }
+  .cs-tabs__tab:has(input:focus-visible) {
+    outline: 2px solid var(--primary);
+    outline-offset: var(--focus-ring-offset, 2px);
+    border-radius: var(--radius-s);
+  }
+  .cs-tabs__panel { display: none; }
+  /* CSS-only panel reveal via :has(). Supports up to 10 tabs without JS.
+     .cs-tabs__panel.is-active also kept for JS-enhanced or SSR-rendered state. */
+  .cs-tabs:has(.cs-tabs__tab:nth-child(1) input:checked) .cs-tabs__panel:nth-child(1),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(2) input:checked) .cs-tabs__panel:nth-child(2),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(3) input:checked) .cs-tabs__panel:nth-child(3),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(4) input:checked) .cs-tabs__panel:nth-child(4),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(5) input:checked) .cs-tabs__panel:nth-child(5),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(6) input:checked) .cs-tabs__panel:nth-child(6),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(7) input:checked) .cs-tabs__panel:nth-child(7),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(8) input:checked) .cs-tabs__panel:nth-child(8),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(9) input:checked) .cs-tabs__panel:nth-child(9),
+  .cs-tabs:has(.cs-tabs__tab:nth-child(10) input:checked) .cs-tabs__panel:nth-child(10),
+  .cs-tabs__panel.is-active { display: block; }
+
+  /* --vertical: tab list on the inline-start, panels alongside */
+  .cs-tabs--vertical {
+    flex-direction: row;
+    gap: var(--space-l);
+  }
+  .cs-tabs--vertical > .cs-tabs__list {
+    flex-direction: column;
+    border-block-end: 0;
+    border-inline-end: var(--border-width, 1px) solid var(--color-border);
+    flex-shrink: 0;
+  }
+  .cs-tabs--vertical > .cs-tabs__list > .cs-tabs__tab {
+    border-block-end: 0;
+    border-inline-end: 2px solid transparent;
+    margin-block-end: 0;
+    margin-inline-end: -1px;
+  }
+  .cs-tabs--vertical > .cs-tabs__list > .cs-tabs__tab:has(input:checked) {
+    border-inline-end-color: var(--primary);
+  }
+  .cs-tabs--vertical > .cs-tabs__panels { flex: 1; }
+
+  /* --boxed: connected rectangular tabs (active is filled surface) */
+  .cs-tabs--boxed > .cs-tabs__list { gap: 0; }
+  .cs-tabs--boxed > .cs-tabs__list > .cs-tabs__tab {
+    border: var(--border-width, 1px) solid transparent;
+    border-block-end: 0;
+    border-start-start-radius: var(--radius-m);
+    border-start-end-radius: var(--radius-m);
+  }
+  .cs-tabs--boxed > .cs-tabs__list > .cs-tabs__tab:has(input:checked) {
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  /* --pill: rounded capsule tabs, no bottom border */
+  .cs-tabs--pill > .cs-tabs__list { border-block-end: 0; }
+  .cs-tabs--pill > .cs-tabs__list > .cs-tabs__tab {
+    border-radius: 999px;
+    border-block-end: 0;
+    margin-block-end: 0;
+  }
+  .cs-tabs--pill > .cs-tabs__list > .cs-tabs__tab:has(input:checked) {
+    background: var(--primary);
+    color: var(--color-text-on-primary);
+    border-block-end-color: transparent;
+  }
+
+  /* ----- Pagination (numbered page navigation) ----- */
+  /* Markup:
+       <nav class="cs-pagination" aria-label="Pagination">
+         <a class="cs-pagination__prev" href="?p=2" rel="prev">Previous</a>
+         <ul>
+           <li><a class="cs-pagination__link" href="?p=1">1</a></li>
+           <li><a class="cs-pagination__link cs-pagination__link--current" aria-current="page">2</a></li>
+           <li><span class="cs-pagination__ellipsis">…</span></li>
+           <li><a class="cs-pagination__link" href="?p=10">10</a></li>
+         </ul>
+         <a class="cs-pagination__next" href="?p=3" rel="next">Next</a>
+       </nav> */
+
+  .cs-pagination {
+    --pagination-size: 2.25rem;
+    --pagination-gap: var(--space-2xs);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--pagination-gap);
+  }
+  .cs-pagination > ul,
+  .cs-pagination > ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pagination-gap);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .cs-pagination__link,
+  .cs-pagination__prev,
+  .cs-pagination__next,
+  .cs-pagination__ellipsis {
+    min-inline-size: var(--pagination-size);
+    block-size: var(--pagination-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--space-s);
+    border: var(--border-width, 1px) solid var(--color-border);
+    border-radius: var(--radius-s);
+    text-decoration: none;
+    color: var(--color-text);
+    background: var(--color-surface);
+    font-weight: 500;
+    transition: background var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+  }
+  .cs-pagination__link:hover,
+  .cs-pagination__prev:hover,
+  .cs-pagination__next:hover {
+    background: var(--color-surface-2);
+    border-color: var(--primary);
+  }
+  .cs-pagination__link--current,
+  .cs-pagination__link[aria-current="page"] {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--color-text-on-primary);
+    pointer-events: none;
+  }
+  .cs-pagination__ellipsis {
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: default;
+  }
+  .cs-pagination--s { --pagination-size: 1.75rem; font-size: var(--text-s); }
+  .cs-pagination--l { --pagination-size: 2.75rem; font-size: var(--text-l); }
+
+  /* ----- Dropdown (generic, distinct from .cs-nav-dropdown) ----- */
+  /* General-purpose dropdown for action menus, filters, user menus.
+     Uses <details>/<summary> for zero-JS toggle. Differs from .cs-nav-dropdown:
+       - Trigger is a button-styled element, not a nav link
+       - Menu aligns to inline-start and lifts above surrounding content
+       - Supports dividers and right-aligned keyboard hints
+       - --up variant opens upward for bottom-anchored triggers
+
+     Markup:
+       <details class="cs-dropdown">
+         <summary class="cs-dropdown__trigger">Actions</summary>
+         <div class="cs-dropdown__menu">
+           <button class="cs-dropdown__item">Edit</button>
+           <button class="cs-dropdown__item">Duplicate</button>
+           <hr class="cs-dropdown__divider">
+           <button class="cs-dropdown__item">Delete</button>
+         </div>
+       </details>
+
+     Click-outside close via js/slashed-ui.js (same helper as .cs-nav-dropdown). */
+
+  .cs-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .cs-dropdown > summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-m);
+    border: var(--border-width, 1px) solid var(--color-border);
+    border-radius: var(--radius-s);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-weight: 500;
+    user-select: none;
+    transition: background var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out);
+  }
+  .cs-dropdown > summary::-webkit-details-marker { display: none; }
+  .cs-dropdown > summary::after {
+    content: "";
+    display: inline-block;
+    inline-size: 0.5em;
+    block-size: 0.5em;
+    border-inline-end: 2px solid currentcolor;
+    border-block-end: 2px solid currentcolor;
+    rotate: 45deg;
+    margin-block-end: 0.15em;
+    transition: rotate var(--duration-fast) var(--ease-out);
+    flex-shrink: 0;
+  }
+  .cs-dropdown[open] > summary::after { rotate: -135deg; margin-block-end: -0.15em; }
+  .cs-dropdown > summary:hover { background: var(--color-surface-2); }
+  .cs-dropdown > summary:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+  .cs-dropdown__menu {
+    position: absolute;
+    inset-block-start: calc(100% + var(--space-2xs));
+    inset-inline-start: 0;
+    min-inline-size: 12rem;
+    padding: var(--space-2xs);
+    background: var(--color-surface);
+    border: var(--border-width, 1px) solid var(--color-border);
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-m);
+    z-index: var(--z-dropdown);
+    display: none;
+  }
+  .cs-dropdown[open] .cs-dropdown__menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cs-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-xs) var(--space-s);
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: var(--color-text);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+    font: inherit;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .cs-dropdown__item:hover,
+  .cs-dropdown__item:focus-visible {
+    background: var(--color-surface-2);
+    outline: none;
+  }
+  .cs-dropdown__divider {
+    border: 0;
+    border-block-start: var(--border-width, 1px) solid var(--color-border);
+    margin: var(--space-2xs) 0;
+  }
+
+  /* --up: menu lifts upward from the trigger */
+  .cs-dropdown--up > .cs-dropdown__menu {
+    inset-block-start: auto;
+    inset-block-end: calc(100% + var(--space-2xs));
+  }
+  /* --end: menu aligns to inline-end edge of trigger */
+  .cs-dropdown--end > .cs-dropdown__menu {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+  }
+
+  /* ----- Message (advanced alert with header + body) ----- */
+  /* Distinct from .cs-notice: .cs-notice is a single-surface banner (left accent).
+     .cs-message is a two-section block with a tinted header strip and a body.
+     Use for terms of service blocks, long error explanations, onboarding tips.
+
+     Markup:
+       <article class="cs-message cs-message--warning">
+         <header class="cs-message__header">
+           Heads up
+           <button class="cs-message__close" aria-label="Dismiss">×</button>
+         </header>
+         <div class="cs-message__body">Body text…</div>
+       </article> */
+
+  .cs-message {
+    --message-color: var(--primary);
+    --message-bg: var(--primary-100);
+    border: var(--border-width, 1px) solid var(--message-color);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+  .cs-message__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--space-m);
+    background: var(--message-bg);
+    color: var(--message-color);
+    font-weight: 600;
+  }
+  .cs-message__body {
+    padding: var(--space-m);
+    color: var(--color-text);
+  }
+  .cs-message__close {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-s);
+    opacity: 0.7;
+    transition: opacity var(--duration-fast) var(--ease-out);
+    font-size: 1.25em;
+    line-height: 1;
+  }
+  .cs-message__close:hover { opacity: 1; }
+  .cs-message--success { --message-color: var(--success); --message-bg: var(--success-100); }
+  /* --warning uses --warning-600 for the header text (not --warning)
+     because --warning is ~2.8:1 on --warning-100 which fails WCAG AA.
+     --warning-600 ships ~5.2:1 on --warning-100 (AA-compliant). */
+  .cs-message--warning { --message-color: var(--warning-600); --message-bg: var(--warning-100); }
+  .cs-message--error   { --message-color: var(--error);   --message-bg: var(--error-100);   }
+
+  /* ----- Footer (page-bottom block) ----- */
+  /* Dedicated footer element with wider default paddings and surface-2
+     background. Intentionally minimal — most content inside is authored via
+     existing utilities (grid, stack, cluster, cs-nav-link, cs-divider). */
+
+  .cs-footer {
+    padding-block: var(--footer-padding-block, var(--space-2xl));
+    padding-inline: var(--footer-padding-inline, var(--space-l));
+    background: var(--footer-bg, var(--color-surface-2));
+    color: var(--footer-color, var(--color-text));
+    border-block-start: var(--border-width, 1px) solid var(--color-border);
+  }
+  .cs-footer a { color: inherit; }
+  .cs-footer__bottom {
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-m);
+    border-block-start: var(--border-width, 1px) solid var(--color-border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    color: var(--color-text-muted);
+    font-size: var(--text-s);
+  }
+
+  /* ==========================================================================
+     0.3.4.0 ADDITIONS — form enhancements
+     ==========================================================================
+     Extends the form surface with full select, checkbox/radio, input icons,
+     input size modifiers, file upload, horizontal alignment, and is-loading
+     states. All additive; .cs-form-group and .cs-input-group unchanged. */
+
+  /* ----- Input size modifiers (.cs-input--s / --l) ----- */
+  /* Applied to the same elements as .cs-form-group__input. Parallels .cs-btn--s/l. */
+
+  .cs-form-group__input.cs-input--s,
+  .cs-form-group__input--s {
+    --input-padding-y: var(--space-2xs);
+    --input-padding-x: var(--space-xs);
+    font-size: var(--text-s);
+  }
+  .cs-form-group__input.cs-input--l,
+  .cs-form-group__input--l {
+    --input-padding-y: var(--space-s);
+    --input-padding-x: var(--space-m);
+    font-size: var(--text-l);
+  }
+
+  /* ----- Input with icon (.cs-input-wrap + --has-icon-left/right) ----- */
+  /* Wrap <input> in a <div class="cs-input-wrap cs-input-wrap--has-icon-left">
+     alongside an <svg class="cs-input-wrap__icon">. Automatic padding keeps
+     text from overrunning the icon. */
+
+  .cs-input-wrap {
+    position: relative;
+    display: grid;
+  }
+  .cs-input-wrap__icon {
+    position: absolute;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    inline-size: 1em;
+    block-size: 1em;
+    pointer-events: none;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+  .cs-input-wrap--has-icon-left > .cs-input-wrap__icon  { inset-inline-start: var(--space-s); }
+  .cs-input-wrap--has-icon-right > .cs-input-wrap__icon { inset-inline-end:   var(--space-s); }
+  .cs-input-wrap--has-icon-left  > input,
+  .cs-input-wrap--has-icon-left  > select { padding-inline-start: calc(var(--space-s) * 2 + 1em); }
+  .cs-input-wrap--has-icon-right > input,
+  .cs-input-wrap--has-icon-right > select { padding-inline-end:   calc(var(--space-s) * 2 + 1em); }
+
+  /* ----- Full .cs-select (size + state parity with .cs-form-group__input) ----- */
+  /* Layered on top of .cs-select-wrap — add .cs-select-wrap--s / --l for sizes. */
+
+  .cs-select-wrap--s > select { --input-padding-y: var(--space-2xs); --input-padding-x: var(--space-xs); font-size: var(--text-s); }
+  .cs-select-wrap--l > select { --input-padding-y: var(--space-s);   --input-padding-x: var(--space-m);  font-size: var(--text-l); }
+
+  /* ----- Checkbox / radio (styled classes on the native input) ----- */
+  /* Apply .cs-checkbox to <input type="checkbox"> or .cs-radio to <input type="radio">.
+     Replaces the native UA style with a token-driven square/circle that flips
+     cleanly in dark mode. Uses accent-color as a baseline for older browsers. */
+
+  .cs-checkbox,
+  .cs-radio {
+    --control-size: 1.15em;
+    appearance: none;
+    inline-size: var(--control-size);
+    block-size: var(--control-size);
+    margin: 0;
+    border: var(--border-width, 1.5px) solid var(--color-border);
+    background: var(--color-surface);
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
+    vertical-align: -0.15em;
+    transition: background var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out);
+    flex-shrink: 0;
+  }
+  .cs-checkbox { border-radius: var(--radius-s); }
+  .cs-radio    { border-radius: 50%; }
+  .cs-checkbox:hover,
+  .cs-radio:hover { border-color: var(--primary); }
+  .cs-checkbox:focus-visible,
+  .cs-radio:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+  .cs-checkbox:checked,
+  .cs-radio:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  /* Checkbox tick */
+  .cs-checkbox:checked::before {
+    content: "";
+    inline-size: 0.65em;
+    block-size: 0.35em;
+    border-inline-start: 2px solid var(--color-text-on-primary);
+    border-block-end:   2px solid var(--color-text-on-primary);
+    rotate: -45deg;
+    translate: 0 -0.05em;
+  }
+  /* Radio dot */
+  .cs-radio:checked::before {
+    content: "";
+    inline-size: 0.45em;
+    block-size: 0.45em;
+    border-radius: 50%;
+    background: var(--color-text-on-primary);
+  }
+  .cs-checkbox:disabled,
+  .cs-radio:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ----- Input addons (button chains on .cs-input-group) ----- */
+  /* Existing .cs-input-group handles input + button. Extend with middle and
+     chained-button cases: siblings strip rounding on the joining edges so any
+     permutation (input|btn|btn, btn|input|btn) visually joins. */
+
+  .cs-input-group > * { min-width: 0; }
+  .cs-input-group > * + * {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    margin-inline-start: calc(var(--border-width, 1px) * -1);
+  }
+  .cs-input-group > *:not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  .cs-input-group > *:focus-visible {
+    position: relative;
+    z-index: var(--z-raised);
+  }
+
+  /* ----- Custom file upload (.cs-file) ----- */
+  /* Hides the native <input type="file"> and styles the surrounding label
+     as a branded button + filename slot. Uses :has() for the filled state.
+
+     Markup:
+       <label class="cs-file">
+         <input type="file">
+         <span class="cs-file__cta">Choose file</span>
+         <span class="cs-file__name">No file selected</span>
+       </label> */
+
+  .cs-file {
+    display: inline-flex;
+    align-items: stretch;
+    border: var(--border-width, 1px) solid var(--color-border);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--color-surface);
+  }
+  .cs-file > input[type="file"] {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    pointer-events: none;
+  }
+  .cs-file__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-m);
+    background: var(--primary);
+    color: var(--color-text-on-primary);
+    font-weight: 500;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .cs-file:hover .cs-file__cta { background: var(--primary-hover, var(--primary)); }
+  .cs-file:focus-within { outline: 2px solid var(--primary); outline-offset: var(--focus-ring-offset, 2px); }
+  .cs-file__name {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-xs) var(--space-m);
+    color: var(--color-text-muted);
+    font-size: var(--text-s);
+    max-inline-size: 16rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* --boxed: drag-and-drop dropzone variant */
+  .cs-file--boxed {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-xl);
+    border-style: dashed;
+    border-width: 2px;
+    text-align: center;
+    gap: var(--space-s);
+  }
+  .cs-file--boxed .cs-file__cta { border-radius: var(--radius-s); }
+
+  /* ----- Horizontal form group (.cs-form-group--horizontal) ----- */
+  /* Label on the inline-start, input on the inline-end, stacked on small screens.
+     Uses existing .cs-form-group surface untouched — modifier only affects layout. */
+
+  .cs-form-group--horizontal {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xs) var(--space-m);
+    align-items: center;
+  }
+  @media (min-width: 40em) {
+    .cs-form-group--horizontal {
+      grid-template-columns: var(--form-label-width, 12rem) 1fr;
+    }
+    .cs-form-group--horizontal > .cs-form-group__label {
+      text-align: end;
+      padding-block-start: var(--space-2xs);
+    }
+    .cs-form-group--horizontal > .cs-form-group__hint,
+    .cs-form-group--horizontal > .cs-form-group__error {
+      grid-column: 2;
+    }
+  }
+
+  /* ----- is-loading states (spinner inside btn/input) ----- */
+  /* Adds .cs-btn--loading or .cs-input-wrap--loading. Replaces content with a
+     trailing spinner. Preserves intrinsic width via visible text + color:
+     transparent so the button does not resize when toggled. For inputs,
+     the loading class must be on the wrapper (.cs-input-wrap) since native
+     input elements are replaced elements and don't support ::after. */
+
+  @keyframes cs-loading-spin { to { rotate: 360deg; } }
+
+  .cs-btn--loading {
+    position: relative;
+    color: transparent !important;
+    text-shadow: none !important;
+    pointer-events: none;
+  }
+  .cs-btn--loading::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 1em;
+    block-size: 1em;
+    margin: -0.5em 0 0 -0.5em;
+    border: 2px solid currentcolor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: cs-loading-spin var(--duration-slow) linear infinite;
+    color: var(--color-text);
+    opacity: 0.6;
+  }
+  .cs-btn--primary.cs-btn--loading::after {
+    color: var(--color-text-on-primary);
+    opacity: 1;
+  }
+  .cs-input-wrap--loading {
+    position: relative;
+    pointer-events: none;
+  }
+  .cs-input-wrap--loading > input {
+    color: transparent !important;
+    caret-color: transparent !important;
+  }
+  .cs-input-wrap--loading::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 1em;
+    block-size: 1em;
+    margin: -0.5em 0 0 -0.5em;
+    border: 2px solid currentcolor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: cs-loading-spin var(--duration-slow) linear infinite;
+    color: var(--color-text);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-btn--loading::after,
+    .cs-input-wrap--loading::after {
+      animation-duration: 3s;
+    }
+  }
+
+  /* ==========================================================================
+     0.3.5.0 ADDITIONS — layout + structural components
+     ==========================================================================
+     Navbar with hamburger, Level toolbar, segmented Card, segmented Modal,
+     advanced Table modifiers, sidebar Menu. All additive. */
+
+  /* ----- Navbar (full-width primary navigation bar with hamburger) ----- */
+  /* Horizontal nav with brand + collapsible menu + end slot. CSS-only burger
+     toggle via <input type="checkbox"> + :has(). At ≥48em the menu stays
+     inline; below that, the burger reveals/hides the menu.
+
+     Markup:
+       <nav class="cs-navbar">
+         <a class="cs-navbar__brand" href="/">Brand</a>
+         <input class="cs-navbar__toggle" type="checkbox" id="nav-t" aria-label="Toggle menu">
+         <label class="cs-navbar__burger" for="nav-t"><span></span><span></span><span></span></label>
+         <ul class="cs-navbar__menu">
+           <li><a class="cs-navbar__item" href="#">Features</a></li>
+           <li><a class="cs-navbar__item" href="#">Pricing</a></li>
+         </ul>
+         <div class="cs-navbar__end">
+           <a class="cs-btn--primary" href="#">Sign up</a>
+         </div>
+       </nav> */
+
+  .cs-navbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-m);
+    padding: var(--navbar-padding, var(--space-s) var(--space-l));
+    background: var(--navbar-bg, var(--color-surface));
+    border-block-end: var(--border-width, 1px) solid var(--color-border);
+    min-block-size: var(--navbar-height, 3.5rem);
+  }
+  .cs-navbar__brand {
+    font-weight: 700;
+    font-size: var(--text-l);
+    color: var(--color-text);
+    text-decoration: none;
+    margin-inline-end: auto;
+  }
+  .cs-navbar__toggle {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    pointer-events: none;
+  }
+  .cs-navbar__burger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-s);
+  }
+  .cs-navbar__burger > span {
+    display: block;
+    inline-size: 100%;
+    block-size: 2px;
+    background: currentcolor;
+    border-radius: 1px;
+    transition: transform var(--duration-fast) var(--ease-out),
+                opacity var(--duration-fast) var(--ease-out);
+    transform-origin: center;
+  }
+  .cs-navbar__toggle:focus-visible + .cs-navbar__burger {
+    outline: 2px solid var(--primary);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+  /* Animated X when checked */
+  .cs-navbar:has(.cs-navbar__toggle:checked) .cs-navbar__burger > span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .cs-navbar:has(.cs-navbar__toggle:checked) .cs-navbar__burger > span:nth-child(2) {
+    opacity: 0;
+  }
+  .cs-navbar:has(.cs-navbar__toggle:checked) .cs-navbar__burger > span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  .cs-navbar__menu {
+    display: flex;
+    align-items: center;
+    gap: var(--space-l);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .cs-navbar__item {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+  .cs-navbar__item:hover,
+  .cs-navbar__item[aria-current="page"] {
+    color: var(--color-text);
+  }
+  .cs-navbar__end {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-s);
+    margin-inline-start: auto;
+  }
+  @media (max-width: 47.99em) {
+    .cs-navbar__menu,
+    .cs-navbar__end {
+      flex-basis: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--space-s);
+      display: none;
+    }
+    .cs-navbar:has(.cs-navbar__toggle:checked) .cs-navbar__menu,
+    .cs-navbar:has(.cs-navbar__toggle:checked) .cs-navbar__end { display: flex; }
+  }
+  @media (min-width: 48em) {
+    .cs-navbar__burger { display: none; }
+  }
+  .cs-navbar--fixed-top,
+  .cs-navbar--fixed-bottom {
+    position: fixed;
+    inset-inline: 0;
+    z-index: var(--z-sticky);
+  }
+  .cs-navbar--fixed-top    { inset-block-start: 0; }
+  .cs-navbar--fixed-bottom { inset-block-end: 0; border-block-start: var(--border-width, 1px) solid var(--color-border); border-block-end: 0; }
+
+  /* ----- Header (page-top masthead block; sticky is opt-in) ----- */
+  /* Distinct from .cs-navbar (which is the nav bar inside the header).
+     .cs-header provides the masthead surface + bottom border + blur (when
+     sticky). Content composition (logo, nav, CTAs) is user-authored — or use
+     .cs-navbar inside .cs-header for the common combination.
+
+     Sticky is deliberately opt-in: headers in multi-demo pages should not
+     all try to stick at top: 0. Apply --sticky only when you actually want
+     the masthead to pin on scroll.
+
+     Markup:
+       <header class="cs-header cs-header--sticky">
+         <nav class="cs-navbar">...</nav>
+       </header> */
+
+  .cs-header {
+    background: var(--header-bg, var(--color-surface));
+    border-block-end: var(--header-border-width, var(--border-width, 1px)) solid var(--header-border-color, var(--color-border));
+    color: var(--header-color, var(--color-text));
+  }
+  .cs-header__bar {
+    padding-block: var(--header-bar-padding-block, var(--space-s));
+    padding-inline: var(--header-bar-padding-inline, var(--space-l));
+  }
+  /* --sticky pins the header on scroll. Intentionally does NOT apply
+     backdrop-filter by default — backdrop-filter creates a stacking context
+     that traps child dropdowns inside the header (they can't overlay sibling
+     sticky sections even with --z-dropdown above --z-sticky). For the
+     glassmorphism effect pair with .cs-header--glass when you know your header
+     doesn't contain dropdowns, or portal your dropdown markup outside the
+     header element. */
+  .cs-header--sticky {
+    position: sticky;
+    inset-block-start: var(--header-top, 0);
+    z-index: var(--z-sticky);
+    background: var(--header-bg-sticky, var(--color-surface));
+  }
+  /* --glass: frosted surface for sticky headers. Creates a stacking context;
+     do not use if the header contains dropdown menus that need to overlay
+     following sticky siblings. */
+  .cs-header--glass {
+    background: var(--header-bg-sticky, color-mix(in srgb, var(--color-surface) 88%, transparent));
+    backdrop-filter: var(--header-blur, blur(12px));
+    -webkit-backdrop-filter: var(--header-blur, blur(12px));
+  }
+  /* Auto-escape (two parts) for when a child dropdown is open:
+     1. Raise the sticky header to --z-dropdown so its menu still outpaints
+        following sticky sections.
+     2. On --glass, drop backdrop-filter for the duration the dropdown is
+        open. Raising z-index alone isn't enough on glass headers because
+        backdrop-filter creates a stacking context that traps descendant
+        z-index — the menu would still paint inside the filtered layer.
+     Covers .cs-nav-dropdown and .cs-dropdown; custom dropdowns can opt
+     in via [data-state="open"]. */
+  .cs-header--sticky:has(.cs-nav-dropdown[open], .cs-dropdown[open], [data-state="open"]) {
+    z-index: var(--z-dropdown);
+  }
+  .cs-header--glass:has(.cs-nav-dropdown[open], .cs-dropdown[open], [data-state="open"]) {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  /* --transparent: sits on top of a hero without surface / border.
+     Pair with data-theme="dark" on the header when the hero is dark imagery. */
+  .cs-header--transparent {
+    background: transparent;
+    border-block-end: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  /* --bordered: explicit bottom hairline even without sticky surface.
+     Uses the same header-border-* tokens as the base so instance theming
+     via --header-border-width / --header-border-color is respected. */
+  .cs-header--bordered {
+    border-block-end: var(--header-border-width, var(--border-width, 1px))
+                      solid var(--header-border-color, var(--color-border));
+  }
+
+  /* ----- Level (toolbar layout — left edge / right edge with center alignment) ----- */
+
+  .cs-level {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+  }
+  .cs-level__left,
+  .cs-level__right {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-s);
+  }
+  .cs-level__item { display: inline-flex; align-items: center; }
+  .cs-level--mobile-stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  @media (min-width: 40em) {
+    .cs-level--mobile-stack { flex-direction: row; align-items: center; }
+  }
+
+  /* ----- Segmented Card (partitioned: header / image / content / footer) ----- */
+  /* Extends .cs-card with hard partitioning. The segmented structure overrides
+     the default padding: the card itself becomes an unpadded shell, children
+     provide their own padding. Detection: a .cs-card that contains any
+     segmented sub-element strips its own padding via :has(). */
+
+  .cs-card:has(> .cs-card__header, > .cs-card__image, > .cs-card__content, > .cs-card__footer) {
+    padding: 0;
+    gap: 0;
+  }
+  .cs-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-m) var(--space-l);
+    border-block-end: var(--border-width, 1px) solid var(--color-border);
+    font-weight: 600;
+  }
+  .cs-card__image {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+  .cs-card__content {
+    padding: var(--card-padding, var(--space-l));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+  }
+  .cs-card__footer {
+    display: flex;
+    border-block-start: var(--border-width, 1px) solid var(--color-border);
+  }
+  .cs-card__footer-item {
+    flex: 1;
+    padding: var(--space-s) var(--space-m);
+    text-align: center;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: background var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+  }
+  .cs-card__footer-item + .cs-card__footer-item {
+    border-inline-start: var(--border-width, 1px) solid var(--color-border);
+  }
+  .cs-card__footer-item:hover {
+    background: var(--color-surface-2);
+    color: var(--color-text);
+  }
+
+  /* ----- Segmented Modal (.cs-modal--card with __head / __body / __foot) ----- */
+  /* Head pinned to top, body scrolls, foot pinned to bottom. Use on a
+     <dialog class="cs-modal cs-modal--card"> element — inherits the base
+     transition/backdrop styling from .cs-modal. */
+
+  .cs-modal--card {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-block-size: min(90vh, 50rem);
+  }
+  .cs-modal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding: var(--space-m) var(--space-l);
+    border-block-end: var(--border-width, 1px) solid var(--color-border);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .cs-modal__body {
+    padding: var(--space-l);
+    overflow-y: auto;
+    flex: 1;
+  }
+  .cs-modal__foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-s);
+    padding: var(--space-m) var(--space-l);
+    border-block-start: var(--border-width, 1px) solid var(--color-border);
+    background: var(--color-surface-2);
+    flex-shrink: 0;
+  }
+
+  /* ----- Table modifiers (advanced: --narrow + cell-level status colors) ----- */
+  /* Extends the existing .cs-table pattern. Cell/row classes are scoped under
+     .cs-table to avoid leaking into other contexts. */
+
+  .cs-table--narrow th,
+  .cs-table--narrow td {
+    padding: var(--space-2xs) var(--space-s);
+  }
+  .cs-table tr.is-success,
+  .cs-table td.is-success {
+    background: color-mix(in srgb, var(--success) 12%, transparent);
+  }
+  .cs-table tr.is-warning,
+  .cs-table td.is-warning {
+    background: color-mix(in srgb, var(--warning) 12%, transparent);
+  }
+  .cs-table tr.is-error,
+  .cs-table td.is-error {
+    background: color-mix(in srgb, var(--error) 12%, transparent);
+  }
+  .cs-table tr.is-primary,
+  .cs-table td.is-primary {
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+  }
+
+  /* ----- Sidebar Menu (.cs-menu — tree-style for admin panels) ----- */
+
+  .cs-menu {
+    --menu-indent: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    font-size: var(--text-s);
+  }
+  .cs-menu__label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    padding: 0 var(--space-s);
+  }
+  .cs-menu__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cs-menu__list .cs-menu__list {
+    padding-inline-start: var(--menu-indent);
+  }
+  .cs-menu__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-xs) var(--space-s);
+    border-radius: var(--radius-s);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: background var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+  }
+  .cs-menu__link:hover {
+    background: var(--color-surface-2);
+  }
+  .cs-menu__link--active,
+  .cs-menu__link[aria-current="page"] {
+    background: var(--primary);
+    color: var(--color-text-on-primary);
+  }
+
+  /* ==========================================================================
+     0.3.6.0 ADDITIONS — micro-components + toast system
+     ==========================================================================
+     Toast notifications, universal close button, joined tags, progress
+     variants, breadcrumb separators, icon-text wrapper. All additive. */
+
+  /* ----- Toast stack + toast (notification system) ----- */
+  /* Container is position: fixed in a corner via --toast-inset-*. Toasts
+     slide in with opacity + translate. Use JS to append <aside class="cs-toast">
+     into <div class="cs-toast-stack"> (helper provided in js/slashed-ui.js). */
+
+  @keyframes cs-toast-in {
+    from { opacity: 0; translate: 0 -0.5rem; }
+    to   { opacity: 1; translate: 0 0; }
+  }
+
+  .cs-toast-stack {
+    position: fixed;
+    z-index: var(--z-toast);
+    inset-block-start: var(--toast-inset-top, var(--space-l));
+    inset-inline-end:  var(--toast-inset-end, var(--space-l));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    pointer-events: none;
+    max-inline-size: min(24rem, calc(100vw - var(--space-l) * 2));
+  }
+  .cs-toast-stack--top-start    { inset-inline-end: auto; inset-inline-start: var(--toast-inset-start, var(--space-l)); }
+  .cs-toast-stack--bottom-end   { inset-block-start: auto; inset-block-end: var(--toast-inset-bottom, var(--space-l)); flex-direction: column-reverse; }
+  .cs-toast-stack--bottom-start {
+    inset-block-start: auto;
+    inset-block-end: var(--toast-inset-bottom, var(--space-l));
+    inset-inline-end: auto;
+    inset-inline-start: var(--toast-inset-start, var(--space-l));
+    flex-direction: column-reverse;
+  }
+
+  .cs-toast {
+    --toast-color: var(--primary);
+    --toast-bg: var(--color-surface);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--space-m);
+    background: var(--toast-bg);
+    color: var(--color-text);
+    border: var(--border-width, 1px) solid var(--toast-color);
+    border-inline-start: 3px solid var(--toast-color);
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-m);
+    pointer-events: auto;
+    animation: cs-toast-in var(--duration-normal) var(--ease-out);
+  }
+  .cs-toast__icon {
+    color: var(--toast-color);
+    inline-size: 1.25em;
+    block-size: 1.25em;
+    flex-shrink: 0;
+  }
+  .cs-toast__body {
+    font-size: var(--text-s);
+    min-inline-size: 0;
+  }
+  .cs-toast__title {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  .cs-toast__close {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-s);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  .cs-toast__close:hover { opacity: 1; }
+  .cs-toast--success { --toast-color: var(--success); }
+  .cs-toast--warning { --toast-color: var(--warning); }
+  .cs-toast--error   { --toast-color: var(--error);   }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-toast { animation: none; }
+  }
+
+  /* ----- Delete (universal round close button) ----- */
+  /* Standalone circular × button for notifications, modals, tags, chips.
+     Distinct from .cs-notice__close / .cs-message__close / .cs-toast__close
+     which are positioned within their parents — .cs-delete is freestanding.
+
+     HTML: <button class="cs-delete" aria-label="Dismiss"></button>
+     The × glyph is drawn with two rotated pseudo-elements (no font dependency). */
+
+  .cs-delete {
+    --delete-size: 1.25rem;
+    inline-size: var(--delete-size);
+    block-size: var(--delete-size);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: color-mix(in srgb, currentcolor 20%, transparent);
+    color: inherit;
+    cursor: pointer;
+    display: inline-grid;
+    place-content: center;
+    position: relative;
+    flex-shrink: 0;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+  .cs-delete:hover { background: color-mix(in srgb, currentcolor 35%, transparent); }
+  .cs-delete:focus-visible { outline: 2px solid currentcolor; outline-offset: var(--focus-ring-offset, 2px); }
+  .cs-delete::before,
+  .cs-delete::after {
+    content: "";
+    position: absolute;
+    inline-size: 50%;
+    block-size: 2px;
+    background: currentcolor;
+    border-radius: 1px;
+  }
+  .cs-delete::before { rotate: 45deg; }
+  .cs-delete::after  { rotate: -45deg; }
+  .cs-delete--s { --delete-size: 1rem; }
+  .cs-delete--l { --delete-size: 1.75rem; }
+
+  /* ----- Tags (joined badge pairs via .cs-tags + .cs-tags--addons) ----- */
+  /* Existing .cs-badge is a standalone pill. .cs-tags is a wrapper that
+     groups adjacent badges; --addons joins them seamlessly (GitHub/NPM
+     build:passing style). */
+
+  .cs-tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    align-items: center;
+  }
+  .cs-tags--addons { gap: 0; }
+  .cs-tags--addons > .cs-badge {
+    border-radius: 0;
+  }
+  .cs-tags--addons > .cs-badge:first-child {
+    border-start-start-radius: var(--radius-s);
+    border-end-start-radius: var(--radius-s);
+  }
+  .cs-tags--addons > .cs-badge:last-child {
+    border-start-end-radius: var(--radius-s);
+    border-end-end-radius: var(--radius-s);
+  }
+
+  /* ----- Progress color modifiers + indeterminate animation ----- */
+
+  .cs-progress--success { --progress-color: var(--success); }
+  .cs-progress--warning { --progress-color: var(--warning); }
+  .cs-progress--error   { --progress-color: var(--error);   }
+
+  @keyframes cs-progress-indeterminate {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+  /* Native <progress> without a value attribute is :indeterminate by default.
+     WebKit lets us animate ::-webkit-progress-value; Firefox needs the
+     fallback div pattern. */
+  .cs-progress:indeterminate::-webkit-progress-value {
+    inline-size: 25%;
+    animation: cs-progress-indeterminate 1.5s ease-in-out infinite;
+  }
+  .cs-progress--indeterminate > .cs-progress__fill {
+    inline-size: 25%;
+    animation: cs-progress-indeterminate 1.5s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-progress:indeterminate::-webkit-progress-value,
+    .cs-progress--indeterminate > .cs-progress__fill {
+      animation-duration: 4s;
+    }
+  }
+
+  /* ----- Breadcrumb separator modifiers ----- */
+  /* Extends existing .cs-breadcrumb with auto-generated separators between
+     items. When any --arrow/--dot/--slash/--chevron modifier is active, any
+     explicit .cs-breadcrumb__sep element is hidden (CSS provides the separator
+     so you can omit the markup, but existing markup keeps working). */
+
+  .cs-breadcrumb--arrow   { --breadcrumb-sep: "\2192"; } /* → */
+  .cs-breadcrumb--dot     { --breadcrumb-sep: "\2022"; } /* • */
+  .cs-breadcrumb--slash   { --breadcrumb-sep: "/"; }
+  .cs-breadcrumb--chevron { --breadcrumb-sep: "\203A"; } /* › */
+
+  .cs-breadcrumb--arrow,
+  .cs-breadcrumb--dot,
+  .cs-breadcrumb--slash,
+  .cs-breadcrumb--chevron {
+    gap: var(--space-s);
+  }
+  .cs-breadcrumb--arrow   .cs-breadcrumb__sep,
+  .cs-breadcrumb--dot     .cs-breadcrumb__sep,
+  .cs-breadcrumb--slash   .cs-breadcrumb__sep,
+  .cs-breadcrumb--chevron .cs-breadcrumb__sep { display: none; }
+
+  .cs-breadcrumb--arrow   .cs-breadcrumb__item + .cs-breadcrumb__item::before,
+  .cs-breadcrumb--dot     .cs-breadcrumb__item + .cs-breadcrumb__item::before,
+  .cs-breadcrumb--slash   .cs-breadcrumb__item + .cs-breadcrumb__item::before,
+  .cs-breadcrumb--chevron .cs-breadcrumb__item + .cs-breadcrumb__item::before {
+    content: var(--breadcrumb-sep);
+    opacity: 0.5;
+    margin-inline-end: var(--space-s);
+    user-select: none;
+  }
+
+  /* ----- Icon-text (guaranteed-vertical-center icon + text wrapper) ----- */
+  /* Solves the common "SVG and text on one baseline" problem without having
+     to fiddle with line-height or vertical-align per-use. The text side is
+     flex: 1 so it can wrap to multiple lines while the icon stays top-aligned
+     with the first line of text via inline-flex + align-items: baseline
+     (with first-baseline fallback). */
+
+  .cs-icon-text {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-inline-size: 0;
+  }
+  .cs-icon-text--top    { align-items: flex-start; }
+  .cs-icon-text--bottom { align-items: flex-end; }
+  .cs-icon-text > svg,
+  .cs-icon-text > .cs-icon-text__icon {
+    flex-shrink: 0;
+    inline-size: 1em;
+    block-size: 1em;
+  }
+  .cs-icon-text > span,
+  .cs-icon-text > .cs-icon-text__text {
+    min-inline-size: 0;
+  }
+
+}

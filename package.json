@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "slashed-framework-dev",
+  "description": "Maintainer-only dev tooling for the SLASHED CSS framework. The framework itself ships as raw CSS files with no build step — see README.md.",
+  "license": "MIT",
+  "author": "Jacek Granatowski (https://codeslash.net)",
+  "scripts": {
+    "lint:css": "stylelint \"css/*.css\"",
+    "build:bundle": "bin/build-bundle.sh",
+    "verify": "npm run build:bundle && git diff --exit-code -- css/slashed-full.css && npm run lint:css"
+  },
+  "devDependencies": {
+    "stylelint": "16.26.1",
+    "stylelint-config-standard": "36.0.1"
+  }
+}

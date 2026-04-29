@@ -1,0 +1,707 @@
+/* ==========================================================================
+   SLASHED Tokens — Default — v0.4.4.0
+   ========================================================================== */
+
+/* ================================================================
+   LEGACY FALLBACKS — Safari < 17.5, Chrome < 111, Firefox < 113
+   Static light-mode values only. Covers browsers that don't support
+   light-dark() or color-mix(). These are overridden immediately by
+   the modern declarations below in supporting browsers (~98% of traffic).
+   tokens-legacy.css is no longer required — this file handles all browsers.
+   ================================================================ */
+
+:root {
+  --primary:   #2563eb;
+  --secondary: #0d9488;
+  --accent:    #f59e0b;
+  --success:   #16a34a;
+  --warning:   #eab308;
+  --error:     #dc2626;
+
+  --primary-50:  #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  --primary-900: #1e3a8a;
+  --primary-950: #172554;
+  --primary-hover: #1d4ed8;
+  --primary-a10: rgba(37, 99, 235, 0.1);
+  --primary-a25: rgba(37, 99, 235, 0.25);
+  --primary-a50: rgba(37, 99, 235, 0.5);
+
+  --secondary-50:  #f0fdfa;  --secondary-100: #ccfbf1;
+  --secondary-200: #99f6e4;  --secondary-300: #5eead4;
+  --secondary-400: #2dd4bf;  --secondary-600: #0d9488;
+  --secondary-700: #0f766e;  --secondary-800: #115e59;
+  --secondary-900: #134e4a;  --secondary-950: #042f2e;
+  --secondary-hover: #0f766e;
+  --secondary-a10: rgba(13, 148, 136, 0.1);
+  --secondary-a25: rgba(13, 148, 136, 0.25);
+  --secondary-a50: rgba(13, 148, 136, 0.5);
+
+  --accent-50:  #fffbeb;  --accent-100: #fef3c7;
+  --accent-200: #fde68a;  --accent-300: #fcd34d;
+  --accent-400: #fbbf24;  --accent-600: #d97706;
+  --accent-700: #b45309;  --accent-800: #92400e;
+  --accent-900: #78350f;  --accent-950: #451a03;
+  --accent-hover: #d97706;
+  --accent-a10: rgba(245, 158, 11, 0.1);
+  --accent-a25: rgba(245, 158, 11, 0.25);
+  --accent-a50: rgba(245, 158, 11, 0.5);
+
+  --success-100: #dcfce7;  --success-600: #16a34a;
+  --warning-100: #fef9c3;  --warning-600: #ca8a04;
+  --error-100:   #fee2e2;  --error-600:   #dc2626;
+
+  --neutral-tint: 0%;
+  --neutral-50:  #f9fafb;
+  --neutral-100: #f3f4f6;
+  --neutral-200: #e5e7eb;
+  --neutral-300: #d1d5db;
+  --neutral-400: #9ca3af;
+  --neutral-500: #6b7280;
+  --neutral-600: #4b5563;
+  --neutral-700: #374151;
+  --neutral-800: #1f2937;
+  --neutral-900: #111827;
+
+  --color-bg:                   #f9fafb;
+  --color-surface:              #ffffff;
+  --color-surface-2:            #f3f4f6;
+  --color-surface-elevated:     #ffffff;
+  --color-surface-overlay:      rgba(255, 255, 255, 0.9);
+  --color-border:               #e5e7eb;
+  --color-border-subtle:        #f3f4f6;
+  --color-border-strong:        #9ca3af;
+  --color-text:                 #111827;
+  --color-text-secondary:       #374151;
+  --color-text-muted:           #4b5563;
+  --color-text-faint:           #9ca3af;
+  --color-text-disabled:        #9ca3af;
+  --color-text-on-primary:      #ffffff;
+  --color-text-on-secondary:    #ffffff;
+  --color-text-on-accent:       #111827;
+  --color-text-on-dark:         #f3f4f6;
+  --color-backdrop:             rgba(0, 0, 0, 0.5);
+  --color-selection:            rgba(37, 99, 235, 0.25);
+  --color-link:                 #2563eb;
+  --color-link-visited:         #1e40af;
+  --color-link-hover:           #1d4ed8;
+}
+
+/* ================================================================
+   MODERN TOKENS — light-dark() and color-mix() override the statics
+   above in browsers that support them (Chrome 123+, Safari 17.5+,
+   Firefox 120+). No @supports needed — cascade handles it.
+   ================================================================ */
+
+/* ==========================================================================
+   DARK MODE MECHANISM
+
+   Two mechanisms, clear boundaries:
+
+   1. light-dark() — ONLY for the 6 brand colors:
+      --primary, --secondary, --accent, --success, --warning, --error
+      These use light-dark() in :root because they are @property typed
+      <color> values that benefit from CSS transitions between themes.
+
+   2. @media + [data-theme="dark"] blocks — EVERYTHING ELSE:
+      --color-*, --primary-50/100/200, --neutral-*, --shadow-*,
+      --primary-hover, --secondary-hover, etc.
+      Edit dark values exclusively in those two blocks below.
+
+   Why not light-dark() for everything:
+      Semantic tokens like --primary-50 mix with var(--color-bg), which
+      itself flips in dark mode — causing circular evaluation.
+      Multi-layer shadows cannot use light-dark() due to comma parsing.
+   ========================================================================== */
+
+/* ===== Typed color tokens via @property =====
+   Registering brand colors as typed <color> properties enables CSS transitions
+   between values — e.g. transition: --primary 300ms for smooth theme switching.
+   initial-value is the light-mode default; light-dark() in :root overrides it at runtime.
+   Chrome 85+, Firefox 128+, Safari 16.4+ ===== */
+
+@property --primary   { syntax: '<color>'; inherits: true; initial-value: #2563eb; }
+@property --secondary { syntax: '<color>'; inherits: true; initial-value: #0d9488; }
+@property --accent    { syntax: '<color>'; inherits: true; initial-value: #f59e0b; }
+@property --success   { syntax: '<color>'; inherits: true; initial-value: #16a34a; }
+@property --warning   { syntax: '<color>'; inherits: true; initial-value: #eab308; }
+@property --error     { syntax: '<color>'; inherits: true; initial-value: #dc2626; }
+
+/* ⚠️ BRICKS / WORDPRESS REM PROTECTION
+   Some WordPress themes / Bricks templates set font-size: 62.5% (= 10px) on :root
+   or html to simplify px-to-rem math. That collapses every rem-based token
+   (--container-default 75rem → 750px, --text-m 1.0625rem → 10.6px — everything
+   looks tiny and narrow). :root:root has specificity (0,2,0): beats html rules,
+   beats same-specificity :root rules no matter their source order, and beats
+   class/attribute selectors. Standalone block so user overrides on a single :root
+   (e.g. theming --primary) still work at (0,1,0). max(16px, 1em): 1em refers to
+   the browser default; max() preserves user font-size preferences above 16px
+   (accessibility) while preventing shrinkage below. */
+:root:root { font-size: max(16px, 1em); }
+
+:root {
+  /* Intentional duplicate of slashed-core.css html { color-scheme }.
+     Both files must be self-contained — each works without the other. */
+  color-scheme: light dark;
+  --cs-loaded: 1;
+
+  /* ================================================================
+     START HERE — 8 variables to configure per project.
+     Everything else cascades automatically from these values.
+     ================================================================
+
+     1. --primary          Main brand color (light / dark value)
+     2. --secondary        Supporting brand color
+     3. --accent           Highlight / call-to-action color
+     4. --font-body        Body font stack
+     5. --font-heading     Heading font stack (defaults to --font-body)
+     6. --radius-s / --radius-m / --radius-l   Global border-radius
+     7. --container-default   Max page width (default: 75rem / 1200px)
+     8. --neutral-tint     0% = pure gray, 2-3% = brand-tinted gray
+
+     White-label: override specific tokens on :root in a consumer stylesheet.
+     Example: :root { --primary: #your-brand-color; --font-body: "Your Font", sans-serif; }
+     Note: "--cs-" is a class prefix (.cs-btn, .cs-card), not a token prefix.
+     Tokens use a flat namespace (--primary, --space-m, --radius-s, etc.).
+     ================================================================ */
+
+  /* ===== Colors — change these 6 per project ===== */
+
+  --primary:   light-dark(#2563eb, #5b8def);
+  /* Contrast on white: ~4.6:1 (WCAG AA pass). For AAA text, use --primary-700. */
+  --secondary: light-dark(#0d9488, #2dd4bf);
+  --accent:    light-dark(#f59e0b, #fbbf24);
+  --success:   light-dark(#16a34a, #4ade80);
+  --warning:   light-dark(#eab308, #facc15);
+  /* ⚠️ --warning on white: ~2.8:1 — fails WCAG for text. Use --warning-600 for text,
+     --warning-100 background with --warning-600 text for accessible warning messages. */
+  --error:     light-dark(#dc2626, #f87171);
+
+  /* ===== Primary shades (auto-update from --primary) =====
+     -100/-200 flip in dark mode; -300/-400 are light tints; -600 through -950 are dark shades.
+     ===== */
+
+  --primary-50:  color-mix(in oklch, var(--primary) 5%, white);
+  --primary-100: color-mix(in oklch, var(--primary) 10%, white);
+  --primary-200: color-mix(in oklch, var(--primary) 25%, white);
+  --primary-300: color-mix(in oklch, var(--primary) 45%, white);
+  --primary-400: color-mix(in oklch, var(--primary) 70%, white);
+  --primary-600: color-mix(in oklch, var(--primary) 80%, black);
+  --primary-700: color-mix(in oklch, var(--primary) 60%, black);
+  --primary-800: color-mix(in oklch, var(--primary) 40%, black);
+  --primary-900: color-mix(in oklch, var(--primary) 25%, black);
+  --primary-950: color-mix(in oklch, var(--primary) 15%, black);
+  --primary-hover: color-mix(in oklch, var(--primary) 85%, black);
+  /* Alpha variants use srgb intentionally — matches browser/Figma opacity convention
+     and avoids oklch hue-shift artefacts on semi-transparent overlays. */
+  --primary-a10: color-mix(in srgb, var(--primary) 10%, transparent);
+  --primary-a25: color-mix(in srgb, var(--primary) 25%, transparent);
+  --primary-a50: color-mix(in srgb, var(--primary) 50%, transparent);
+  --primary-a75: color-mix(in srgb, var(--primary) 75%, transparent);
+  --primary-a90: color-mix(in srgb, var(--primary) 90%, transparent);
+
+  /* ===== Secondary shades ===== */
+
+  --secondary-50:  color-mix(in oklch, var(--secondary) 5%, white);
+  --secondary-100: color-mix(in oklch, var(--secondary) 10%, white);
+  --secondary-200: color-mix(in oklch, var(--secondary) 25%, white);
+  --secondary-300: color-mix(in oklch, var(--secondary) 45%, white);
+  --secondary-400: color-mix(in oklch, var(--secondary) 70%, white);
+  --secondary-600: color-mix(in oklch, var(--secondary) 80%, black);
+  --secondary-700: color-mix(in oklch, var(--secondary) 60%, black);
+  --secondary-800: color-mix(in oklch, var(--secondary) 40%, black);
+  --secondary-900: color-mix(in oklch, var(--secondary) 25%, black);
+  --secondary-950: color-mix(in oklch, var(--secondary) 15%, black);
+  --secondary-hover: color-mix(in oklch, var(--secondary) 85%, black);
+  /* Alpha variants — srgb intentionally, matches browser/Figma opacity convention */
+  --secondary-a10: color-mix(in srgb, var(--secondary) 10%, transparent);
+  --secondary-a25: color-mix(in srgb, var(--secondary) 25%, transparent);
+  --secondary-a50: color-mix(in srgb, var(--secondary) 50%, transparent);
+  --secondary-a75: color-mix(in srgb, var(--secondary) 75%, transparent);
+  --secondary-a90: color-mix(in srgb, var(--secondary) 90%, transparent);
+
+  /* ===== Accent shades ===== */
+
+  --accent-50:  color-mix(in oklch, var(--accent) 5%, white);
+  --accent-100: color-mix(in oklch, var(--accent) 10%, white);
+  --accent-200: color-mix(in oklch, var(--accent) 25%, white);
+  --accent-300: color-mix(in oklch, var(--accent) 45%, white);
+  --accent-400: color-mix(in oklch, var(--accent) 70%, white);
+  --accent-600: color-mix(in oklch, var(--accent) 80%, black);
+  --accent-700: color-mix(in oklch, var(--accent) 60%, black);
+  --accent-800: color-mix(in oklch, var(--accent) 40%, black);
+  --accent-900: color-mix(in oklch, var(--accent) 25%, black);
+  --accent-950: color-mix(in oklch, var(--accent) 15%, black);
+  --accent-hover: color-mix(in oklch, var(--accent) 85%, black);
+  /* Alpha variants — srgb intentionally, matches browser/Figma opacity convention */
+  --accent-a10: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-a25: color-mix(in srgb, var(--accent) 25%, transparent);
+  --accent-a50: color-mix(in srgb, var(--accent) 50%, transparent);
+  --accent-a75: color-mix(in srgb, var(--accent) 75%, transparent);
+  --accent-a90: color-mix(in srgb, var(--accent) 90%, transparent);
+
+  /* ===== Status shades (dark values in dark blocks below) ===== */
+
+  --success-100: color-mix(in oklch, var(--success) 10%, white);
+  --success-600: color-mix(in oklch, var(--success) 80%, black);
+
+  --warning-100: color-mix(in oklch, var(--warning) 10%, white);
+  --warning-600: color-mix(in oklch, var(--warning) 80%, black);
+
+  --error-100: color-mix(in oklch, var(--error) 10%, white);
+  --error-600: color-mix(in oklch, var(--error) 80%, black);
+
+  /* ===== Neutrals (set --neutral-tint: 2-3% for brand-cohesive grays) ===== */
+
+  --neutral-tint: 0%;
+
+  --neutral-50:  color-mix(in oklch, var(--primary) var(--neutral-tint), #f9fafb);
+  --neutral-100: color-mix(in oklch, var(--primary) var(--neutral-tint), #f3f4f6);
+  --neutral-200: color-mix(in oklch, var(--primary) var(--neutral-tint), #e5e7eb);
+  --neutral-300: color-mix(in oklch, var(--primary) var(--neutral-tint), #d1d5db);
+  --neutral-400: color-mix(in oklch, var(--primary) var(--neutral-tint), #9ca3af);
+  --neutral-500: color-mix(in oklch, var(--primary) var(--neutral-tint), #6b7280);
+  --neutral-600: color-mix(in oklch, var(--primary) var(--neutral-tint), #4b5563);
+  --neutral-700: color-mix(in oklch, var(--primary) var(--neutral-tint), #374151);
+  --neutral-800: color-mix(in oklch, var(--primary) var(--neutral-tint), #1f2937);
+  --neutral-900: color-mix(in oklch, var(--primary) var(--neutral-tint), #111827);
+
+  /* ===== Semantic aliases (dark values in dark blocks below) =====
+     These are intentional design-system API. They look "redundant"
+     because most resolve through `var(--neutral-N)` etc. — but that
+     indirection IS the value: override `--color-border` once to
+     retheme every border in the framework, without disturbing the
+     palette scale. See docs/TOKENS.md "Why aliases exist". */
+
+  --color-bg:                   #f9fafb;
+  --color-surface:              white;
+  --color-surface-2:            var(--neutral-100);
+  --color-surface-elevated:     white;
+  --color-surface-overlay:      color-mix(in srgb, white 90%, transparent);
+  --color-border:               var(--neutral-200);
+  --color-border-subtle:        var(--neutral-100);
+  --color-border-strong:        var(--neutral-400);
+  --color-text:                 var(--neutral-900);
+  --color-text-secondary:       var(--neutral-700);
+  --color-text-muted:           var(--neutral-600);
+  --color-text-faint:           var(--neutral-400);
+  --color-text-disabled:        var(--neutral-400);
+  /* ⚠️ --color-text-faint: ratio ~3.4:1 on --color-bg — does NOT meet WCAG AA for body text.
+     Use for decorative/supplementary content only (placeholders, captions, timestamps).
+     For accessible body text use --color-text-muted (AA) or --color-text (AAA). */
+  --color-text-on-primary:      white;
+  --color-text-on-secondary:    white;
+  --color-text-on-accent:       var(--neutral-900);
+  --color-text-on-dark:         #f3f4f6;
+  --color-backdrop:             oklch(0 0 0 / 0.5);
+  --color-selection:            var(--primary-a25);
+  --color-link:                 var(--primary);
+  --color-link-visited:         var(--primary-800);
+  --color-link-hover:           var(--primary-700);
+
+  /* ===== Spacing (fluid, base 16→24px, 320→1440px) ===== */
+
+  --space-px:   1px;
+  --space-0-5:  0.125rem; /* 2px — micro-adjustments, icon alignment */
+  --space-2xs: clamp(0.25rem,  0.21rem + 0.18vw, 0.375rem);
+  --space-xs:  clamp(0.5rem,   0.43rem + 0.36vw, 0.75rem);
+  --space-s:   clamp(0.75rem,  0.64rem + 0.54vw, 1.125rem);
+  --space-m:   clamp(1rem,     0.86rem + 0.71vw, 1.5rem);
+  --space-l:   clamp(1.5rem,   1.29rem + 1.07vw, 2.25rem);
+  --space-xl:  clamp(2rem,     1.71rem + 1.43vw, 3rem);
+  --space-2xl: clamp(3rem,     2.57rem + 2.14vw, 4.5rem);
+  --space-3xl: clamp(4rem,     3.43rem + 2.86vw, 6rem);
+  --space-4xl: clamp(6rem,     5.14rem + 4.29vw, 9rem);
+
+  /* Semantic spacing aliases — intentional API surface, not redundant.
+     Retune the whole system by editing these (e.g. --space-gap once
+     to make every layout primitive's gap tighter). See docs/TOKENS.md. */
+  --space-section: var(--space-3xl); /* `.section` padding-block */
+  --space-content: var(--space-l);   /* `.flow`/`.stack`/`.prose` rhythm */
+  --space-gap:     var(--space-m);   /* default gap in layout primitives */
+  --space-gutter:  clamp(1rem, 0.5rem + 2vw, 2rem); /* page-edge gutter (own clamp, not alias) */
+
+  /* ===== Typography (fluid, 375→1600px, body 17→20px, ratio ~1.25) =====
+     Calibrated for viewport range 375px (modern phone) → 1600px (desktop).
+     Formula: clamp(minRem, bRem + cVw, maxRem)
+       c = 100 × (maxPx − minPx) / (1600 − 375) = (maxPx − minPx) / 12.25
+       b = (minPx − c × 3.75) / 16
+     Headings now grow continuously up to 1600px (old scale froze at ~1150px).
+     Minimums raised: text-2xs was 10px, text-xs 11px — both now at least 11/12px.
+     Body minimum raised 16→17px for better mobile readability. ===== */
+
+  --text-2xs: clamp(0.6875rem, 0.668rem + 0.082vw, 0.75rem);   /* 11→12px */
+  --text-xs:  clamp(0.75rem,   0.712rem + 0.163vw, 0.875rem);  /* 12→14px */
+  --text-s:   clamp(0.875rem,  0.837rem + 0.163vw, 1rem);      /* 14→16px */
+  --text-m:   clamp(1.0625rem, 1rem     + 0.25vw,  1.25rem);   /* 17→20px */
+  --text-l:   clamp(1.3125rem, 1.236rem + 0.327vw, 1.5625rem); /* 21→25px */
+  --text-xl:  clamp(1.5625rem, 1.429rem + 0.571vw, 2rem);      /* 25→32px */
+  --text-2xl: clamp(2rem,      1.847rem + 0.653vw, 2.5rem);    /* 32→40px */
+  --text-3xl: clamp(2.5rem,    2.232rem + 1.143vw, 3.375rem);  /* 40→54px */
+  --text-4xl: clamp(3.125rem,  2.704rem + 1.796vw, 4.5rem);    /* 50→72px */
+  --text-5xl: clamp(4rem,      3.388rem + 2.612vw, 6rem);      /* 64→96px */
+  --text-6xl: clamp(5rem,      4.235rem + 3.265vw, 7.5rem);    /* 80→120px */
+  --text-7xl: clamp(6rem,      5.082rem + 3.918vw, 9rem);      /* 96→144px */
+  --text-8xl: clamp(7.5rem,    6.122rem + 5.878vw, 12rem);     /* 120→192px */
+  --text-9xl: clamp(9rem,      7.163rem + 7.837vw, 15rem);     /* 144→240px */
+  /* text-fluid-hero: viewport-relative heading for full-bleed hero sections.
+     3rem = minimum, 10vw = preferred (viewport-relative), 12rem = maximum.
+     Use only on single-line display text — body text would be inaccessible at this scale. */
+  --text-fluid-hero: clamp(3rem, 10vw, 12rem);
+
+  /* Heading size aliases — semantic shorthand for the type scale.
+     var(--h2) reads as intent in BEM rules; var(--text-3xl) reads as
+     position on a scale. Both work, but the alias layer is the
+     framework's contract — rebind --hN to a different scale step to
+     retune heading sizes globally without touching component rules.
+     See docs/TOKENS.md "Why aliases exist". */
+  --h1: var(--text-4xl);
+  --h2: var(--text-3xl);
+  --h3: var(--text-2xl);
+  --h4: var(--text-xl);
+  --h5: var(--text-l);
+  --h6: var(--text-m);
+
+  --font-body:    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-heading: var(--font-body);
+  --font-mono:    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+
+  /* font-weight named tokens */
+  --font-weight-thin:       100;
+  --font-weight-extralight: 200;
+  --font-weight-light:      300;
+  --font-weight-normal:     400;
+  --font-weight-medium:     500;
+  --font-weight-semibold:   600;
+  --font-weight-bold:       700;
+  --font-weight-extrabold:  800;
+  --font-weight-black:      900;
+
+  --leading-tight:  1.2;
+  --leading-snug:   1.35;
+  --leading-normal: 1.5;
+  --leading-loose:  1.75;
+
+  --tracking-tighter: -0.05em;
+  --tracking-tight:   -0.02em;
+  --tracking-wide:     0.025em;
+  --tracking-wider:    0.05em;
+  --tracking-widest:   0.1em;
+
+  /* ===== Radius ===== */
+
+  --radius-xs:   0.125rem;
+  --radius-s:    0.25rem;
+  --radius-m:    0.5rem;
+  --radius-l:    0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+
+  /* ===== Border ===== */
+
+  --border-width: 1px;
+
+  /* ===== Shadows — calc()-based, dark mode overrides only --shadow-strength ===== */
+
+  --shadow-strength:   0.04;  /* light mode base opacity multiplier */
+  --shadow-strength-2: 0.08;  /* stronger layers */
+
+  --shadow-xs:    0 1px 2px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.75));
+  --shadow-s:     0 1px 2px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.5)),
+                  0 2px 6px 0 rgba(0, 0, 0, var(--shadow-strength));
+  --shadow-m:     0 1px 3px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.5)),
+                  0 4px 12px 0 rgba(0, 0, 0, var(--shadow-strength-2));
+  --shadow-l:     0 2px 4px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.4)),
+                  0 8px 24px 0 rgba(0, 0, 0, calc(var(--shadow-strength-2) * 1.5)),
+                  0 16px 48px 0 rgba(0, 0, 0, var(--shadow-strength-2));
+  --shadow-xl:    0 2px 8px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.4)),
+                  0 12px 36px 0 rgba(0, 0, 0, calc(var(--shadow-strength-2) * 1.75)),
+                  0 24px 72px 0 rgba(0, 0, 0, calc(var(--shadow-strength-2) * 1.25));
+  --shadow-float: 0 4px 12px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.5)),
+                  0 16px 48px 0 rgba(0, 0, 0, calc(var(--shadow-strength-2) * 1.75)),
+                  0 32px 80px -8px rgba(0, 0, 0, calc(var(--shadow-strength-2) * 2));
+  /* inner: inset shadow for pressed states and inset UI elements */
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  /* glow: colored ambient glow — set --glow-color per component for brand-colored glow */
+  --shadow-glow:  0 0 0 3px var(--glow-color, var(--primary-a25)),
+                  0 0 20px 0 var(--glow-color, var(--primary-a25));
+  /* colored: brand-colored drop shadow. Set --shadow-color per component:
+     style="--shadow-color: var(--primary-a50)" */
+  --shadow-colored: 0 4px 12px 0 var(--shadow-color, var(--primary-a25)),
+                    0 8px 24px 0 var(--shadow-color, var(--primary-a25));
+
+  /* ===== Z-index ===== */
+  /* Scale designed to survive WordPress admin bar (z-index: 99999) and common plugins.
+     --z-max: 999999 ensures framework UI (toasts, modals) always wins. */
+
+  --z-below:    -1;
+  --z-base:      0;
+  --z-raised:    1;
+  --z-docked:   10;
+  --z-sticky:   1100;
+  --z-dropdown: 1150; /* above sticky so menus opened from sticky headers overlay adjacent sticky sections */
+  --z-banner:   1200;
+  --z-overlay:  1300;
+  --z-modal:    1400;
+  --z-popover:  1500;
+  --z-toast:    1700;
+  --z-tooltip:  1800;
+  --z-max:      999999;
+
+  /* ===== Transitions & easings ===== */
+
+  /* Duration tokens */
+  --duration-fast:    150ms;
+  --duration-normal:  250ms;
+  --duration-slow:    400ms;
+
+  --duration-stagger: 80ms; /* for sequential stagger animations */
+
+  --ease-out:     cubic-bezier(0.25, 0, 0.15, 1);
+  --ease-in:      cubic-bezier(0.5, 0, 0.75, 0.25);
+  --ease-inout:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ===== Containers ===== */
+
+  --container-xs:    20rem;   /*  320px */
+  --container-sm:    24rem;   /*  384px */
+  --container-narrow: 40rem;  /*  640px */
+  --container-default: 75rem; /* 1200px — main content */
+  --content-width:     var(--container-default); /* semantic alias — width of the
+                                                     readable content column. Used by
+                                                     `.section` content track and
+                                                     `.w-content-*` utilities. */
+  --container-wide:   90rem;  /* 1440px */
+  --container-full:   100%;
+  --container-prose:  65ch;
+
+  /* ===== Focus ring ===== */
+
+  --focus-ring-width:  2px;
+  --focus-ring-color:  var(--primary);
+  --focus-ring-offset: 2px;
+
+  /* ===== Scroll ===== */
+
+  --header-height: 5rem;  /* override per project */
+}
+
+/* ===== Dark mode toggle =====
+   Applied to :root for global switching, or to any element for section-level theming.
+   <section data-theme="dark"> inherits dark color-scheme, causing light-dark() tokens
+   to resolve to their dark values. background-color and color must be explicit here —
+   they are not inherited automatically from :root when color-scheme changes. ===== */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+[data-theme="light"] {
+  color-scheme: light;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* ===== Dark mode shadows — override strength tokens only ===== */
+/* calc() in :root shadow tokens handles the rest automatically. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --shadow-strength:   0.12;
+    --shadow-strength-2: 0.24;
+  }
+}
+
+[data-theme="dark"] {
+  --shadow-strength:   0.12;
+  --shadow-strength-2: 0.24;
+}
+
+/* ===== Dark mode neutrals (only relevant when --neutral-tint > 0%) ===== */
+/* When tint is 0% (default) these are identical to the light values — no visual effect.
+   When tint > 0%, without these overrides the neutrals would mix primary into light grays
+   even in dark mode. These ensure tinted neutrals use dark base values in dark mode. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --neutral-50:  color-mix(in oklch, var(--primary) var(--neutral-tint), #111827);
+    --neutral-100: color-mix(in oklch, var(--primary) var(--neutral-tint), #1f2937);
+    --neutral-200: color-mix(in oklch, var(--primary) var(--neutral-tint), #374151);
+    --neutral-300: color-mix(in oklch, var(--primary) var(--neutral-tint), #4b5563);
+    --neutral-400: color-mix(in oklch, var(--primary) var(--neutral-tint), #6b7280);
+    --neutral-500: color-mix(in oklch, var(--primary) var(--neutral-tint), #9ca3af);
+    --neutral-600: color-mix(in oklch, var(--primary) var(--neutral-tint), #d1d5db);
+    --neutral-700: color-mix(in oklch, var(--primary) var(--neutral-tint), #e5e7eb);
+    --neutral-800: color-mix(in oklch, var(--primary) var(--neutral-tint), #f3f4f6);
+    --neutral-900: color-mix(in oklch, var(--primary) var(--neutral-tint), #f9fafb);
+  }
+}
+
+[data-theme="dark"] {
+  --neutral-50:  color-mix(in oklch, var(--primary) var(--neutral-tint), #111827);
+  --neutral-100: color-mix(in oklch, var(--primary) var(--neutral-tint), #1f2937);
+  --neutral-200: color-mix(in oklch, var(--primary) var(--neutral-tint), #374151);
+  --neutral-300: color-mix(in oklch, var(--primary) var(--neutral-tint), #4b5563);
+  --neutral-400: color-mix(in oklch, var(--primary) var(--neutral-tint), #6b7280);
+  --neutral-500: color-mix(in oklch, var(--primary) var(--neutral-tint), #9ca3af);
+  --neutral-600: color-mix(in oklch, var(--primary) var(--neutral-tint), #d1d5db);
+  --neutral-700: color-mix(in oklch, var(--primary) var(--neutral-tint), #e5e7eb);
+  --neutral-800: color-mix(in oklch, var(--primary) var(--neutral-tint), #f3f4f6);
+  --neutral-900: color-mix(in oklch, var(--primary) var(--neutral-tint), #f9fafb);
+}
+
+/* ==========================================================================
+   DARK MODE DEFINITIONS — active, required for full dark mode support
+
+   Why these exist separately from light-dark() in :root:
+   Tokens like --color-bg: light-dark(#f9fafb, var(--neutral-900)) do not work
+   because --neutral-900 itself flips in dark mode. The dark arg of light-dark()
+   evaluates to the flipped (light) value, giving effectively no change.
+
+   These hardcoded overrides apply on:
+   - @media (prefers-color-scheme: dark) — for system/auto mode
+   - [data-theme="dark"] — for JS-forced dark mode
+
+   They remain inert when [data-theme="light"] is set (which pins to light).
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --primary:   #5b8def;
+    --secondary: #2dd4bf;
+    --accent:    #fbbf24;
+    --success:   #4ade80;
+    --warning:   #facc15;
+    --error:     #f87171;
+
+    --neutral-50:  color-mix(in oklch, var(--primary) var(--neutral-tint), #111827);
+    --neutral-100: color-mix(in oklch, var(--primary) var(--neutral-tint), #1f2937);
+    --neutral-200: color-mix(in oklch, var(--primary) var(--neutral-tint), #374151);
+    --neutral-300: color-mix(in oklch, var(--primary) var(--neutral-tint), #4b5563);
+    --neutral-400: color-mix(in oklch, var(--primary) var(--neutral-tint), #6b7280);
+    --neutral-500: color-mix(in oklch, var(--primary) var(--neutral-tint), #9ca3af);
+    --neutral-600: color-mix(in oklch, var(--primary) var(--neutral-tint), #d1d5db);
+    --neutral-700: color-mix(in oklch, var(--primary) var(--neutral-tint), #e5e7eb);
+    --neutral-800: color-mix(in oklch, var(--primary) var(--neutral-tint), #f3f4f6);
+    --neutral-900: color-mix(in oklch, var(--primary) var(--neutral-tint), #f9fafb);
+
+    --color-bg:               #111827;
+    --color-surface:          #1f2937;
+    --color-surface-2:        #374151;
+    --color-surface-elevated: #374151;
+    --color-surface-overlay:  color-mix(in srgb, #111827 90%, transparent);
+    --color-border:           #374151;
+    --color-border-subtle:    #1f2937;
+    --color-border-strong:    #6b7280;
+    --color-text:             #f3f4f6;
+    --color-text-secondary:   #d1d5db;
+    --color-text-muted:       #9ca3af;
+    --color-text-faint:       #6b7280;
+    --color-text-disabled:    #4b5563;
+    --color-backdrop:         oklch(0 0 0 / 0.5);
+    --color-selection:        var(--primary-a50);
+    --color-link:             var(--primary);
+    --color-link-visited:     var(--primary-200);
+    --color-link-hover:       var(--primary-300);
+
+    --primary-hover:   color-mix(in oklch, var(--primary)   85%, white);
+    --secondary-hover: color-mix(in oklch, var(--secondary) 85%, white);
+    --accent-hover:    color-mix(in oklch, var(--accent)    85%, white);
+
+    --primary-50:    color-mix(in oklch, var(--primary) 10%, var(--color-bg));
+    --primary-100:   color-mix(in oklch, var(--primary) 20%, var(--color-surface));
+    --primary-200:   color-mix(in oklch, var(--primary) 35%, var(--color-surface-2));
+    --secondary-50:  color-mix(in oklch, var(--secondary) 10%, var(--color-bg));
+    --secondary-100: color-mix(in oklch, var(--secondary) 20%, var(--color-surface));
+    --accent-50:     color-mix(in oklch, var(--accent) 10%, var(--color-bg));
+    --accent-100:    color-mix(in oklch, var(--accent) 20%, var(--color-surface));
+
+    --success-100: color-mix(in oklch, var(--success) 20%, #1f2937);
+    --success-600: color-mix(in oklch, var(--success) 40%, white);
+    --warning-100: color-mix(in oklch, var(--warning) 20%, #1f2937);
+    --warning-600: color-mix(in oklch, var(--warning) 40%, white);
+    --error-100:   color-mix(in oklch, var(--error)   20%, #1f2937);
+    --error-600:   color-mix(in oklch, var(--error)   40%, white);
+
+    --shadow-strength:   0.12;
+    --shadow-strength-2: 0.24;
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --primary:   #5b8def;
+  --secondary: #2dd4bf;
+  --accent:    #fbbf24;
+  --success:   #4ade80;
+  --warning:   #facc15;
+  --error:     #f87171;
+
+  --neutral-50:  color-mix(in oklch, var(--primary) var(--neutral-tint), #111827);
+  --neutral-100: color-mix(in oklch, var(--primary) var(--neutral-tint), #1f2937);
+  --neutral-200: color-mix(in oklch, var(--primary) var(--neutral-tint), #374151);
+  --neutral-300: color-mix(in oklch, var(--primary) var(--neutral-tint), #4b5563);
+  --neutral-400: color-mix(in oklch, var(--primary) var(--neutral-tint), #6b7280);
+  --neutral-500: color-mix(in oklch, var(--primary) var(--neutral-tint), #9ca3af);
+  --neutral-600: color-mix(in oklch, var(--primary) var(--neutral-tint), #d1d5db);
+  --neutral-700: color-mix(in oklch, var(--primary) var(--neutral-tint), #e5e7eb);
+  --neutral-800: color-mix(in oklch, var(--primary) var(--neutral-tint), #f3f4f6);
+  --neutral-900: color-mix(in oklch, var(--primary) var(--neutral-tint), #f9fafb);
+
+  --color-bg:               #111827;
+  --color-surface:          #1f2937;
+  --color-surface-2:        #374151;
+  --color-surface-elevated: #374151;
+  --color-surface-overlay:  color-mix(in srgb, #111827 90%, transparent);
+  --color-border:           #374151;
+  --color-border-subtle:    #1f2937;
+  --color-border-strong:    #6b7280;
+  --color-text:             #f3f4f6;
+  --color-text-secondary:   #d1d5db;
+  --color-text-muted:       #9ca3af;
+  --color-text-faint:       #6b7280;
+  --color-text-disabled:    #4b5563;
+  --color-backdrop:         oklch(0 0 0 / 0.5);
+  --color-selection:        var(--primary-a50);
+  --color-link:             var(--primary);
+  --color-link-visited:     var(--primary-200);
+  --color-link-hover:       var(--primary-300);
+
+  --primary-hover:   color-mix(in oklch, var(--primary)   85%, white);
+  --secondary-hover: color-mix(in oklch, var(--secondary) 85%, white);
+  --accent-hover:    color-mix(in oklch, var(--accent)    85%, white);
+
+  --primary-50:    color-mix(in oklch, var(--primary) 10%, var(--color-bg));
+  --primary-100:   color-mix(in oklch, var(--primary) 20%, var(--color-surface));
+  --primary-200:   color-mix(in oklch, var(--primary) 35%, var(--color-surface-2));
+  --secondary-50:  color-mix(in oklch, var(--secondary) 10%, var(--color-bg));
+  --secondary-100: color-mix(in oklch, var(--secondary) 20%, var(--color-surface));
+  --accent-50:     color-mix(in oklch, var(--accent) 10%, var(--color-bg));
+  --accent-100:    color-mix(in oklch, var(--accent) 20%, var(--color-surface));
+
+  --success-100: color-mix(in oklch, var(--success) 20%, #1f2937);
+  --success-600: color-mix(in oklch, var(--success) 40%, white);
+  --warning-100: color-mix(in oklch, var(--warning) 20%, #1f2937);
+  --warning-600: color-mix(in oklch, var(--warning) 40%, white);
+  --error-100:   color-mix(in oklch, var(--error)   20%, #1f2937);
+  --error-600:   color-mix(in oklch, var(--error)   40%, white);
+
+  --shadow-strength:   0.12;
+  --shadow-strength-2: 0.24;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+}
