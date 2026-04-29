@@ -61,16 +61,16 @@
   --------------------------------------------------------------- */
   function initModals() {
     document.addEventListener('click', function (e) {
-      var openModals = document.querySelectorAll('dialog.cs-modal[open]');
-      openModals.forEach(function (dialog) {
-        var rect = dialog.getBoundingClientRect();
-        var clickedBackdrop =
-          e.target === dialog &&
-          (e.clientX < rect.left || e.clientX > rect.right ||
-           e.clientY < rect.top  || e.clientY > rect.bottom);
-        var clickedOutsideTree = !dialog.contains(e.target);
-        if (clickedBackdrop || clickedOutsideTree) dialog.close();
-      });
+      var openModals = Array.from(document.querySelectorAll('dialog.cs-modal[open]'));
+      var dialog = openModals[openModals.length - 1];
+      if (!dialog) return;
+      var rect = dialog.getBoundingClientRect();
+      var clickedBackdrop =
+        e.target === dialog &&
+        (e.clientX < rect.left || e.clientX > rect.right ||
+         e.clientY < rect.top  || e.clientY > rect.bottom);
+      var clickedOutsideTree = !dialog.contains(e.target);
+      if (clickedBackdrop || clickedOutsideTree) dialog.close();
     });
     /* Escape is handled natively by <dialog> — no JS needed */
   }
@@ -171,7 +171,9 @@
       document.body.appendChild(stack);
     }
     var el = document.createElement('aside');
-    el.className = 'cs-toast' + (opts.variant ? ' cs-toast--' + opts.variant : '');
+    var allowedVariants = { success: true, warning: true, error: true };
+    var variant = typeof opts.variant === 'string' ? opts.variant.trim() : '';
+    el.className = 'cs-toast' + (allowedVariants[variant] ? ' cs-toast--' + variant : '');
     el.setAttribute('role', 'status');
     var bodySpan = document.createElement('span');
     bodySpan.className = 'cs-toast__body';
