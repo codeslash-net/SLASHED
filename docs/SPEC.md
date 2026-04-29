@@ -14,23 +14,20 @@ The name is an acronym:
 
 | Letter | Word | What it means |
 |--------|------|---------------|
-| S | Structured | Cascade layers, BEM, and design tokens — every rule has a named, predictable home and nothing collides by accident. |
+| S | Standalone | Zero build step, zero npm, zero bundler: one `<link>` tag and the framework is fully operational. |
 | L | Lean | Every class earns its place across real use cases; decoration ships in a separate opt-in file rather than bloating the core. |
 | A | Agnostic | The same stylesheet runs unchanged in WordPress, Bricks, Astro, plain HTML, or anything else without modification. |
-| S | Standalone | Zero build step, zero npm, zero bundler: one `<link>` tag and the framework is fully operational. |
+| S | Structured | Cascade layers, BEM, and design tokens — every rule has a named, predictable home and nothing collides by accident. |
 | H | Hybrid | Layout primitives, components, and utilities coexist because real UIs need all three, and the boundary between them is explicit, not blurry. |
 | E | Edgeless | The framework never blocks the consumer from doing what they need — there is always a clean path around or through it, by design. |
 | D | Deterministic | Given the same token inputs and included files, the same markup produces the same visual result across environments and load order. |
 
 ### Seven pillars
 
-**1. Structured.** Cascade layers (`@layer`) enforce specificity order across
-eight explicitly ranked layers: `reset → base → layout → components →
-utilities → visual → a11y → overrides`. BEM naming is enforced in components.
-Token hierarchy is documented. Everything has a place and a reason. No
-specificity wars, no hacks, no `!important` in normal rules (the only
-exceptions are a handful of `!important` in the `a11y` layer where forced-colors
-and reduced-motion overrides require it, and two print rules).
+**1. Standalone.** No build step. No Node.js. No npm. No runtime dependencies.
+The consumer downloads CSS files and links them. That is the entire install
+process. This is a deliberate architectural decision, not a limitation — it
+is what makes SLASHED work anywhere and stay working indefinitely.
 
 **2. Lean.** No class exists speculatively. Every framework class was promoted
 from a pattern that appeared 3+ times across unrelated use cases and could
@@ -44,10 +41,13 @@ any tool, plugin, host, or ecosystem. Framework integrations (Bricks override
 layer, WP plugin) are additive and opt-in — the core works without any of
 them.
 
-**4. Standalone.** No build step. No Node.js. No npm. No runtime dependencies.
-The consumer downloads CSS files and links them. That is the entire install
-process. This is a deliberate architectural decision, not a limitation — it
-is what makes SLASHED work anywhere and stay working indefinitely.
+**4. Structured.** Cascade layers (`@layer`) enforce specificity order across
+eight explicitly ranked layers: `reset → base → layout → components →
+utilities → visual → a11y → overrides`. BEM naming is enforced in components.
+Token hierarchy is documented. Everything has a place and a reason. No
+specificity wars, no hacks, no `!important` in normal rules (the only
+exceptions are a handful of `!important` in the `a11y` layer where forced-colors
+and reduced-motion overrides require it, and two print rules).
 
 **5. Hybrid.** Three authoring layers combine into one coherent system: layout
 primitives (`.stack`, `.cover`, `.bento`), BEM components (`.cs-card`,

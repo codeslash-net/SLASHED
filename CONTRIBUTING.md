@@ -10,7 +10,7 @@ Four core CSS source files + one optional visual-utility file + one optional JS 
 Source files are hand-authored; `slashed-full.css` is a generated bundle
 (see `bin/build-bundle.sh`) and must never be edited directly.
 
-The name stands for: Structured, Lean, Agnostic, Standalone, Hybrid,
+The name stands for: Standalone, Lean, Agnostic, Structured, Hybrid,
 Edgeless, Deterministic. See `docs/SPEC.md` § Identity & Philosophy for
 the full explanation of each word. When making any change to the framework,
 verify that it is consistent with all seven of these properties — especially

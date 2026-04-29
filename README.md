@@ -1,15 +1,15 @@
 # SLASHED
 
-**S**tructured · **L**ean · **A**gnostic · **S**tandalone · **H**ybrid · **E**dgeless · **D**eterministic
+**S**tandalone · **L**ean · **A**gnostic · **S**tructured · **H**ybrid · **E**dgeless · **D**eterministic
 
 A buildless CSS framework for WordPress, Bricks Builder, and static sites. BEM-first, token-driven, cascade-layered, zero-dependency.
 
 | | |
 |---|---|
-| **Structured** | Cascade layers, BEM, and design tokens — every rule has a named, predictable home and nothing collides by accident. |
+| **Standalone** | Zero build step, zero npm, zero bundler: one `<link>` tag and the framework is fully operational. |
 | **Lean** | Every class earns its place across real use cases; decoration ships in a separate opt-in file rather than bloating the core. |
 | **Agnostic** | The same stylesheet runs unchanged in WordPress, Bricks, Astro, plain HTML, or anything else without modification. |
-| **Standalone** | Zero build step, zero npm, zero bundler: one `<link>` tag and the framework is fully operational. |
+| **Structured** | Cascade layers, BEM, and design tokens — every rule has a named, predictable home and nothing collides by accident. |
 | **Hybrid** | Layout primitives, components, and utilities coexist because real UIs need all three, and the boundary between them is explicit, not blurry. |
 | **Edgeless** | The framework never blocks the consumer from doing what they need — there is always a clean path around or through it, by design. |
 | **Deterministic** | The same markup always produces the same visual result, regardless of load order, environment, or which subset of files you include. |

@@ -86,10 +86,10 @@ before it ships. The principles map directly to the SLASHED acronym.
 If a proposed change conflicts with any of them, it does not ship regardless
 of how useful it seems in isolation.
 
-**Structured.** Cascade layers enforce specificity order. BEM naming is
-consistent across all components. Token hierarchy is explicit. New components
-follow the same layer, naming, and token conventions as existing ones.
-Nothing is ad hoc.
+**Standalone.** No build step. No Node.js. No npm. No runtime dependencies.
+The consumer links a CSS file. That is the full install. Any proposed change
+that introduces a build step, a preprocessor, or a runtime dependency on the
+consumer side is permanently out of scope — not "not yet", permanently.
 
 **Lean.** Every class earns its place. No class is added speculatively — a
 pattern must appear 3+ times across unrelated blueprint categories (in the
@@ -105,10 +105,10 @@ a dependency. A change that ties core CSS to a specific platform, plugin, or
 build tool violates this principle. In five years, the platform landscape
 will be different; the core framework must still work unchanged.
 
-**Standalone.** No build step. No Node.js. No npm. No runtime dependencies.
-The consumer links a CSS file. That is the full install. Any proposed change
-that introduces a build step, a preprocessor, or a runtime dependency on the
-consumer side is permanently out of scope — not "not yet", permanently.
+**Structured.** Cascade layers enforce specificity order. BEM naming is
+consistent across all components. Token hierarchy is explicit. New components
+follow the same layer, naming, and token conventions as existing ones.
+Nothing is ad hoc.
 
 **Hybrid.** The framework combines three authoring layers (layout primitives,
 BEM components, utility classes) with two interactivity paths (pure-CSS
