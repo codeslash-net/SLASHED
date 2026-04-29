@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Acronym expansion updated to reflect the framework's evolved philosophy.
   **Old:** Structured Lightweight Agnostic Speedy Hybrid Essential
-  Dependency-free. **New:** Structured Lean Agnostic Standalone Hybrid
+  Dependency-free. **New:** Standalone Lean Agnostic Structured Hybrid
   Edgeless Deterministic. All public API (class names, tokens, file names)
   is unchanged — this is a documentation/philosophy update only.
 
