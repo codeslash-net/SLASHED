@@ -61,13 +61,15 @@
   --------------------------------------------------------------- */
   function initModals() {
     document.addEventListener('click', function (e) {
-      var dialog = e.target.closest('dialog.cs-modal');
-      if (!dialog) return;
-      var rect = dialog.getBoundingClientRect();
-      var clickedOutside =
-        e.clientX < rect.left || e.clientX > rect.right ||
-        e.clientY < rect.top  || e.clientY > rect.bottom;
-      if (clickedOutside) dialog.close();
+      var openModals = document.querySelectorAll('dialog.cs-modal[open]');
+      openModals.forEach(function (dialog) {
+        if (dialog.contains(e.target)) return;
+        var rect = dialog.getBoundingClientRect();
+        var clickedOutside =
+          e.clientX < rect.left || e.clientX > rect.right ||
+          e.clientY < rect.top  || e.clientY > rect.bottom;
+        if (clickedOutside) dialog.close();
+      });
     });
     /* Escape is handled natively by <dialog> — no JS needed */
   }

@@ -239,8 +239,9 @@
       outline-offset: 0;
     }
     
+    @media (hover: hover) {
       &:hover { border-color: var(--color-border-strong, #9ca3af); }
-    
+    }
   }
 
   textarea {
@@ -365,7 +366,9 @@
     transition: scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
   
+  @media (hover: hover) {
     input[type="range"]::-webkit-slider-thumb:hover { scale: 1.15; }
+  }
   
   input[type="range"]::-moz-range-thumb {
     width: 1.25rem;
@@ -378,7 +381,9 @@
     transition: scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
   
+  @media (hover: hover) {
     input[type="range"]::-moz-range-thumb:hover { scale: 1.15; }
+  }
   
   input[type="range"]::-moz-range-track {
     height: 0.25rem;
@@ -415,9 +420,11 @@
     transition: background-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
   
+  @media (hover: hover) {
     input[type="file"]::file-selector-button:hover {
       background: color-mix(in srgb, var(--color-surface-2, #f3f4f6) 60%, var(--neutral-300, #d1d5db));
     }
+  }
   
 
   /* ----- Color input ----- */
@@ -1114,11 +1121,6 @@
       /* Same minmax pattern — keeps row-span-2 dominance while accommodating content */
       grid-auto-rows: minmax(var(--bento-row, 14rem), auto);
     }
-    .bento > .col-span-3,
-    .bento > .col-span-4,
-    .bento > .col-span-full {
-      grid-column: 1 / -1;
-    }
   }
 
   /* Preset column variants */
@@ -1341,8 +1343,11 @@
      (opt-in layer) alongside their base rules — they are no-ops without that file. */
 
   @media (prefers-reduced-data: reduce) {
-    *[style*="background-image"] { background-image: none !important; }
-    .mask-fade                   { mask-image: none; }
+    /* Scope to SLASHED-owned decorative elements to avoid stripping author-owned backgrounds. */
+    :is([class*="cs-"], [class*="bg-"], [data-slashed-bg])[style*="background-image"] {
+      background-image: none !important;
+    }
+    .mask-fade { mask-image: none; }
   }
 
   /* ----- Motion preference utilities -----
@@ -1427,9 +1432,19 @@
 
 @layer slashed.overrides {
 
-  /* Bento responsive collapse — must beat utility span classes (.col-span-2 etc.)
-     which live in slashed.utilities. Unlayered user BEM still overrides this. */
-  @container (max-width: 30em) {
+  /* Bento 2-col medium breakpoint: col-span-3/4/full collapse to full-width.
+     Lives here so it beats slashed.utilities span classes without !important. */
+  @container (min-width: 30em) and (max-width: 48em) {
+    .bento > .col-span-3,
+    .bento > .col-span-4,
+    .bento > .col-span-full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Bento single-col collapse below 30em.
+     Uses 29.9999em to avoid overlap with the 30em medium-breakpoint query. */
+  @container (max-width: 29.9999em) {
     .bento {
       grid-auto-rows: auto;
     }

@@ -254,7 +254,7 @@ Skip components and utilities — use framework just for tokens + layout primiti
 Edit the files directly or concatenate only the parts you want:
 
 ```bash
-cat css/tokens-default.css css/slashed-core.css > my-slim-slashed.css
+cat slashed/css/tokens-default.css slashed/css/slashed-core.css > my-slim-slashed.css
 ```
 
 No build step required.
@@ -277,7 +277,7 @@ After installation, verify SLASHED is loaded by inspecting an element in DevTool
 
 **Only some styles applying** → Cascade order issue. Make sure SLASHED loads before your overrides.
 
-**Text from `.text-*` / any rem-based class looks tiny in Bricks** → Bricks ships `html { font-size: 62.5% }` by default, which shrinks every rem-based value (including the framework's design tokens). Fix in Bricks admin: **Theme Styles → Typography → HTML font size → set to 100%**, then regenerate your typography/spacing scales. The framework also defends against this via `:root:root { font-size: max(16px, 1em) }` in `tokens-default.css`; if that defense isn't taking effect, verify `slashed-full.css` (or `tokens-default.css`) is actually being enqueued on the frontend.
+**Text from `.text-*` or any rem-based class looks tiny in Bricks** → Bricks ships `html { font-size: 62.5% }` by default, which shrinks every rem-based value (including the framework's design tokens). Fix in Bricks admin: **Theme Styles → Typography → HTML font size → set to 100%**, then regenerate your typography/spacing scales. The framework also defends against this via `:root:root { font-size: max(16px, 1em) }` in `tokens-default.css`; if that defense isn't taking effect, verify `slashed-full.css` (or `tokens-default.css`) is actually being enqueued on the frontend.
 
 **Bricks/Oxygen elements styled weird** → Expected; builders may override framework styles on their own elements. See the "Navigation: which approach for which context" section in the project README for builder-specific guidance.
 
