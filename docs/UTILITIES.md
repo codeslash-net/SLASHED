@@ -306,6 +306,12 @@ Single primitive driven by an inline instance token:
 
 ### Width
 
+Three axes with explicit prefix:
+
+- **Parent-relative fractions** — share of the parent box.
+- **Viewport-relative** — share of the viewport width.
+- **Content-width-relative** — share of `--content-width`, auto-centered.
+
 | Class | Value |
 |-------|-------|
 | `.w-full` | `width: 100%` |
@@ -313,7 +319,9 @@ Single primitive driven by an inline instance token:
 | `.w-fit` | `width: fit-content` |
 | `.w-min` | `width: min-content` |
 | `.w-max` | `width: max-content` |
-| `.w-25`, `.w-33`, `.w-50`, `.w-66`, `.w-75` | Percentages |
+| `.w-1/2`, `.w-1/3`, `.w-2/3`, `.w-1/4`, `.w-3/4` | Parent-relative fractions |
+| `.w-vw-10` … `.w-vw-100` | Viewport width in 10% steps |
+| `.w-content-1/4`, `.w-content-1/3`, `.w-content-1/2`, `.w-content-2/3`, `.w-content-3/4`, `.w-content-full` | Content-track fractions, centered |
 
 ### Height
 

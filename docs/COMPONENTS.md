@@ -1083,4 +1083,4 @@ For custom dropdown components, opt into the same auto-escape by setting `[data-
 
 ## Version
 
-This reference reflects framework **v0.4.5.0**. Changelog per component in [CHANGELOG.md](../CHANGELOG.md).
+This reference reflects framework **v0.4.6.0**. Changelog per component in [CHANGELOG.md](../CHANGELOG.md).

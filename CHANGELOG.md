@@ -12,6 +12,87 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [unreleased]
 
+## [0.4.6.0] — 2026-04-30 — Container token rename, width utility refactor, docs audit
+
+Resolves issue #3 sections 6 and 7. Two breaking changes shipped without
+deprecation aliases (pre-1.0 caveat — see `docs/DEPRECATION-POLICY.md`).
+Migration is a search-and-replace on consumer wireframes; the maps below
+are exhaustive.
+
+### Breaking
+
+- Container tokens — `--container-xs`, `--container-sm`, `--container-narrow`
+  removed. `--container-prose` (already 65ch) replaces `--container-narrow`
+  semantically. New tokens `--container-dialog` (20rem) and
+  `--container-form` (24rem) replace `xs` / `sm`.
+
+  | Old | New |
+  |---|---|
+  | `--container-xs` (20rem) | `--container-dialog` (20rem) |
+  | `--container-sm` (24rem) | `--container-form` (24rem) |
+  | `--container-narrow` (40rem) | `--container-prose` (65ch — already in tokens) |
+
+- Container modifier classes — `.container--xs`, `.container--sm`,
+  `.container--narrow` removed.
+
+  | Old | New |
+  |---|---|
+  | `.container--xs` | `.container--dialog` |
+  | `.container--sm` | `.container--form` |
+  | `.container--narrow` | `.container--prose` |
+
+- Width utilities — fractional `.w-*` and `.w-content-*` reorganised into
+  three explicit axes with prefix-based names. Old numeric variants
+  removed.
+
+  | Old | New |
+  |---|---|
+  | `.w-25` | `.w-1/4` |
+  | `.w-33` | `.w-1/3` |
+  | `.w-50` | `.w-1/2` |
+  | `.w-66` | `.w-2/3` |
+  | `.w-75` | `.w-3/4` |
+  | `.w-content-25` | `.w-content-1/4` |
+  | `.w-content-33` | `.w-content-1/3` |
+  | `.w-content-50` | `.w-content-1/2` |
+  | `.w-content-66` | `.w-content-2/3` |
+  | `.w-content-75` | `.w-content-3/4` |
+  | _(no equivalent)_ | `.w-vw-10` … `.w-vw-100` (steps of 10) |
+
+  The slash is escaped in CSS source (`.w-1\/2 { … }`) and unescaped in
+  HTML (`class="w-1/2"`) — the same convention used by Tailwind. Three
+  axes are now distinct: parent-relative (fractions), viewport-relative
+  (`.w-vw-*`), content-width-relative (`.w-content-*`).
+
+### Changed
+
+- `css/slashed-core.css` — `dialog` base width changed from
+  `var(--container-narrow, 40rem)` to `var(--container-prose, 65ch)`.
+  Visual width shifts a few rem either way depending on body font size;
+  the `ch` unit follows readable line-length more correctly than a fixed
+  rem value.
+- `css/slashed-components.css` — `.cs-section-header` default
+  `--section-header-max` changed from `--container-narrow` to
+  `--container-prose`. Same reasoning.
+
+### Added
+
+- `css/slashed-utilities.css` — `.w-vw-10` … `.w-vw-100` viewport-width
+  scale in 10% steps.
+
+### Documentation
+
+- `cheatsheet.html` — Width section expanded to show all three axes.
+  Container variants list updated (`dialog/form/prose/wide/full`).
+- `docs/UTILITIES.md` — Width table replaces single-line percentage
+  entry with the three-axis table; intro note explains the distinction.
+
+### Regenerated
+
+- `css/slashed-full.css` regenerated at v0.4.6.0 state.
+
+---
+
 ## [0.4.5.0] — 2026-04-30 — Cleanup pass: layered selectors, dark contrast, native `<dialog>` semantics, `.grid-N` container queries
 
 Resolves issue #3 sections 1, 3, 4, 5, and the layout-half of section 2.

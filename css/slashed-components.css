@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Components — v0.4.5.0
+   SLASHED Components — v0.4.6.0
    Interactive UI components, form patterns, animation patterns.
    Requires: slashed-core.css (or slashed-full.css)
    ========================================================================== */
@@ -426,11 +426,11 @@
   /* ----- Section header ----- */
   /* The most repeated pattern on marketing sites: eyebrow + heading + lead text.
      Centered by default. Use --left modifier for left-aligned sections.
-     Customizable: --section-header-max (default: --container-narrow) */
+     Customizable: --section-header-max (default: --container-prose) */
 
   .cs-section-header {
     text-align: center;
-    max-width: var(--section-header-max, var(--container-narrow, 40rem));
+    max-width: var(--section-header-max, var(--container-prose, 65ch));
     margin-inline: auto;
   }
 

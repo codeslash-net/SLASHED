@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Full Bundle — v0.4.5.0
+   SLASHED Full Bundle — v0.4.6.0
    Concatenation of: tokens-default + slashed-core + slashed-components + slashed-utilities
    Does NOT include slashed-utilities-visual.css (opt-in separately).
    Does NOT include slashed-experimental.css (opt-in separately; see INSTALLATION.md).
@@ -7,7 +7,7 @@
    ========================================================================== */
 
 /* ==========================================================================
-   SLASHED Tokens — Default — v0.4.5.0
+   SLASHED Tokens — Default — v0.4.6.0
    ========================================================================== */
 
 /* ================================================================
@@ -477,19 +477,18 @@
   --ease-inout:   cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ===== Containers ===== */
+  /* ===== Containers — semantic, intent-named ===== */
 
-  --container-xs:    20rem;   /*  320px */
-  --container-sm:    24rem;   /*  384px */
-  --container-narrow: 40rem;  /*  640px */
-  --container-default: 75rem; /* 1200px — main content */
+  --container-dialog:  20rem;  /*  320px — dialogs, popovers, narrow sidebars */
+  --container-form:    24rem;  /*  384px — single-column forms */
+  --container-prose:   65ch;   /*  ≈40rem — readable line length for body text */
+  --container-default: 75rem;  /* 1200px — main content */
   --content-width:     var(--container-default); /* semantic alias — width of the
                                                      readable content column. Used by
                                                      `.section` content track and
                                                      `.w-content-*` utilities. */
-  --container-wide:   90rem;  /* 1440px */
-  --container-full:   100%;
-  --container-prose:  65ch;
+  --container-wide:    90rem;  /* 1440px */
+  --container-full:    100%;
 
   /* ===== Focus ring ===== */
 
@@ -726,7 +725,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Core — v0.4.5.0
+   SLASHED Core — v0.4.6.0
    Reset, base element defaults, layout primitives, a11y, print.
    Baseline: Chrome 123+, Firefox 120+, Safari 17.5+, Edge 123+ (graceful fallbacks for Safari 16.2–17.4)
    ========================================================================== */
@@ -1233,8 +1232,8 @@
 
   dialog {
     margin: auto;
-    width: min(calc(100% - 2 * var(--space-gutter, 1rem)), var(--container-narrow, 40rem));
-    max-width: min(90vw, var(--container-narrow, 40rem));
+    width: min(calc(100% - 2 * var(--space-gutter, 1rem)), var(--container-prose, 65ch));
+    max-width: min(90vw, var(--container-prose, 65ch));
     padding: var(--space-l, 1.5rem);
     border-radius: var(--radius-l, 0.75rem);
     box-shadow: var(--shadow-float, 0 16px 48px rgba(0, 0, 0, 0.12));
@@ -1498,12 +1497,11 @@
     margin-inline: auto;
     padding-inline: var(--space-gutter);
   }
-  .container--xs     { max-width: var(--container-xs); }
-  .container--sm     { max-width: var(--container-sm); }
-  .container--narrow { max-width: var(--container-narrow); }
+  .container--dialog { max-width: var(--container-dialog); }
+  .container--form   { max-width: var(--container-form); }
+  .container--prose  { max-width: var(--container-prose); }
   .container--wide   { max-width: var(--container-wide); }
   .container--full   { max-width: var(--container-full); }
-  .container--prose  { max-width: var(--container-prose); }
 
   /* ----- Content grid (breakout pattern) ----- */
   /* ⚠️ --breakout-width must be >= --content-width.
@@ -2199,7 +2197,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Components — v0.4.5.0
+   SLASHED Components — v0.4.6.0
    Interactive UI components, form patterns, animation patterns.
    Requires: slashed-core.css (or slashed-full.css)
    ========================================================================== */
@@ -2626,11 +2624,11 @@
   /* ----- Section header ----- */
   /* The most repeated pattern on marketing sites: eyebrow + heading + lead text.
      Centered by default. Use --left modifier for left-aligned sections.
-     Customizable: --section-header-max (default: --container-narrow) */
+     Customizable: --section-header-max (default: --container-prose) */
 
   .cs-section-header {
     text-align: center;
-    max-width: var(--section-header-max, var(--container-narrow, 40rem));
+    max-width: var(--section-header-max, var(--container-prose, 65ch));
     margin-inline: auto;
   }
 
@@ -5353,7 +5351,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Utilities — v0.4.5.0
+   SLASHED Utilities — v0.4.6.0
    Layout, functional, and inline typographic composition utilities.
 
    PHILOSOPHY:
@@ -5750,7 +5748,12 @@
   .row-span-3    { grid-row: span 3; }
   .row-span-4    { grid-row: span 4; }
 
-  /* ----- Sizing ----- */
+  /* ----- Sizing — three axes with explicit prefix -----
+     Parent-relative fractions  →  .w-1/2, .w-1/3, .w-2/3, .w-1/4, .w-3/4
+     Viewport-relative          →  .w-vw-10 … .w-vw-100 (steps of 10)
+     Content-width-relative     →  .w-content-1/4 … .w-content-3/4, .w-content-full
+     Intrinsic                  →  .w-full, .w-auto, .w-fit, .w-min, .w-max
+     The slash is escaped in CSS (\/) and used unescaped in HTML (class="w-1/2"). */
 
   .w-full  { width: 100%; }
   .w-auto  { width: auto; }
@@ -5760,19 +5763,34 @@
   .h-fit   { height: fit-content; }
   .min-w-full { min-width: 100%; }
   .max-h-full { max-height: 100%; }
-  .w-75   { width: 75%; }
-  .w-66   { width: 66.666%; }
-  .w-50   { width: 50%; }
-  .w-33   { width: 33.333%; }
-  .w-25   { width: 25%; }
 
-  /* Content-width-relative widths — centers with max-inline-size as % of --content-width */
-  .w-content-25   { width: 100%; max-inline-size: calc(var(--content-width) * 0.25);  margin-inline: auto; }
-  .w-content-33   { width: 100%; max-inline-size: calc(var(--content-width) * 0.333); margin-inline: auto; }
-  .w-content-50   { width: 100%; max-inline-size: calc(var(--content-width) * 0.5);   margin-inline: auto; }
-  .w-content-66   { width: 100%; max-inline-size: calc(var(--content-width) * 0.666); margin-inline: auto; }
-  .w-content-75   { width: 100%; max-inline-size: calc(var(--content-width) * 0.75);  margin-inline: auto; }
-  .w-content-full { width: 100%; max-inline-size: var(--content-width);               margin-inline: auto; }
+  /* Parent-relative fractions */
+  .w-1\/2  { width: 50%; }
+  .w-1\/3  { width: 33.3333%; }
+  .w-2\/3  { width: 66.6667%; }
+  .w-1\/4  { width: 25%; }
+  .w-3\/4  { width: 75%; }
+
+  /* Viewport-relative — for hero sections, full-bleed elements, breakouts.
+     Use sparingly: vw ignores ancestor padding/scrollbars. */
+  .w-vw-10  { width: 10vw; }
+  .w-vw-20  { width: 20vw; }
+  .w-vw-30  { width: 30vw; }
+  .w-vw-40  { width: 40vw; }
+  .w-vw-50  { width: 50vw; }
+  .w-vw-60  { width: 60vw; }
+  .w-vw-70  { width: 70vw; }
+  .w-vw-80  { width: 80vw; }
+  .w-vw-90  { width: 90vw; }
+  .w-vw-100 { width: 100vw; }
+
+  /* Content-width-relative — centers with max-inline-size as fraction of --content-width */
+  .w-content-1\/4  { width: 100%; max-inline-size: calc(var(--content-width) * 0.25);   margin-inline: auto; }
+  .w-content-1\/3  { width: 100%; max-inline-size: calc(var(--content-width) * 0.3333); margin-inline: auto; }
+  .w-content-1\/2  { width: 100%; max-inline-size: calc(var(--content-width) * 0.5);    margin-inline: auto; }
+  .w-content-2\/3  { width: 100%; max-inline-size: calc(var(--content-width) * 0.6667); margin-inline: auto; }
+  .w-content-3\/4  { width: 100%; max-inline-size: calc(var(--content-width) * 0.75);   margin-inline: auto; }
+  .w-content-full  { width: 100%; max-inline-size: var(--content-width);                margin-inline: auto; }
 
   .h-full   { height: 100%; }
   .h-auto   { height: auto; }
