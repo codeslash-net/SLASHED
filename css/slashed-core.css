@@ -1357,8 +1357,14 @@
      (opt-in layer) alongside their base rules — they are no-ops without that file. */
 
   @media (prefers-reduced-data: reduce) {
-    /* Scope to SLASHED-owned decorative elements to avoid stripping author-owned backgrounds. */
-    :is([class*="cs-"], [class*="bg-"], [data-slashed-bg])[style*="background-image"] {
+    /* Scope to SLASHED-owned decorative elements to avoid stripping author-owned backgrounds.
+       Whole-token matching (^="cs-" / *=" cs-" instead of *="cs-") so unrelated classes
+       like "btn-cs-primary" or "shop-cs-card" are not caught by substring overlap. */
+    :is(
+      [class^="cs-"], [class*=" cs-"],
+      [class^="bg-"], [class*=" bg-"],
+      [data-slashed-bg]
+    )[style*="background-image"] {
       background-image: none !important;
     }
     .mask-fade { mask-image: none; }

@@ -610,9 +610,11 @@
     --color-text-disabled:    #4b5563;
     /* Hardcoded contrast on brand surfaces — without these, light-mode values
        (white / var(--neutral-900)) cascade and fail in dark mode where
-       --neutral-900 flips to light. Required for FF 120-127 (no Relative
-       Color Syntax). T9 will replace with oklch(from ...) auto-pairing. */
-    --color-text-on-primary:   #ffffff;
+       --neutral-900 flips to light. Dark text wins because dark-mode brand
+       fills (--primary #5b8def, --secondary #2dd4bf, --accent #fbbf24) all
+       sit too light for white text to clear AA. T9 will replace with
+       oklch(from ...) auto-pairing. */
+    --color-text-on-primary:   #111827;
     --color-text-on-secondary: #111827;
     --color-text-on-accent:    #111827;
     --color-backdrop:         oklch(0 0 0 / 0.5);
@@ -680,7 +682,7 @@
   --color-text-faint:       #6b7280;
   --color-text-disabled:    #4b5563;
   /* Hardcoded contrast on brand surfaces — see comment in prefers-color-scheme block. */
-  --color-text-on-primary:   #ffffff;
+  --color-text-on-primary:   #111827;
   --color-text-on-secondary: #111827;
   --color-text-on-accent:    #111827;
   --color-backdrop:         oklch(0 0 0 / 0.5);
