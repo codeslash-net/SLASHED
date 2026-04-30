@@ -14,7 +14,7 @@ A buildless CSS framework for WordPress, Bricks Builder, and static sites. BEM-f
 | **Edgeless** | The framework never blocks the consumer from doing what they need — there is always a clean path around or through it, by design. |
 | **Deterministic** | The same markup always produces the same visual result, regardless of load order, environment, or which subset of files you include. |
 
-**Version:** 0.4.4.0 (pre-1.0, API still evolving — see [Path to 1.0](docs/SPEC.md#path-to-10) for what needs to settle before semver kicks in). [`ROADMAP.md`](ROADMAP.md) lists what's not yet shipped.
+**Version:** 0.4.5.0 (pre-1.0, API still evolving — see [Path to 1.0](docs/SPEC.md#path-to-10) for what needs to settle before semver kicks in). [`ROADMAP.md`](ROADMAP.md) lists what's not yet shipped.
 
 ---
 

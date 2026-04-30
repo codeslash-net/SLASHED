@@ -18,7 +18,7 @@ Lean (does this class earn its place?), Edgeless (does this block the
 consumer from doing something they need?), and Deterministic (does this
 produce a predictable, consistent result?).
 
-Current version: 0.4.4.0 (pre-1.0).
+Current version: 0.4.5.0 (pre-1.0).
 
 ## Layout of the repo
 
