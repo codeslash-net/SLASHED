@@ -503,11 +503,17 @@
   }
 
   /* ----- Dialog ----- */
+  /* Default width tracks --container-dialog (20rem) — narrow confirmation
+     pattern. Override per-instance with the --dialog-max-width custom property
+     for substantive dialogs:
+       <dialog style="--dialog-max-width: var(--container-prose)">…</dialog>
+     or globally on consumer :root. */
 
   dialog {
+    --dialog-max-width: var(--container-dialog, 20rem);
     margin: auto;
-    width: min(calc(100% - 2 * var(--space-gutter, 1rem)), var(--container-prose, 65ch));
-    max-width: min(90vw, var(--container-prose, 65ch));
+    width: min(calc(100% - 2 * var(--space-gutter, 1rem)), var(--dialog-max-width));
+    max-width: min(90vw, var(--dialog-max-width));
     padding: var(--space-l, 1.5rem);
     border-radius: var(--radius-l, 0.75rem);
     box-shadow: var(--shadow-float, 0 16px 48px rgba(0, 0, 0, 0.12));
@@ -1129,7 +1135,7 @@
      needing !important; unlayered user BEM still wins over any @layer. */
 
   /* 2-column layout between 30em and 48em */
-  @container (min-width: 30em) and (max-width: 48em) {
+  @container (min-width: 30em) and (max-width: 47.99em) {
     .bento {
       grid-template-columns: repeat(2, 1fr);
       /* Same minmax pattern — keeps row-span-2 dominance while accommodating content */
@@ -1454,7 +1460,7 @@
 
   /* Bento 2-col medium breakpoint: col-span-3/4/full collapse to full-width.
      Lives here so it beats slashed.utilities span classes without !important. */
-  @container (min-width: 30em) and (max-width: 48em) {
+  @container (min-width: 30em) and (max-width: 47.99em) {
     .bento > .col-span-3,
     .bento > .col-span-4,
     .bento > .col-span-full {
