@@ -54,7 +54,9 @@
      xl:  80em  (1280px)  →  find: (min-width: 80em)
 
    VS Code: Ctrl+H → enable regex → find each value → replace all.
-   This file only — core.css breakpoints (grid-2, etc.) are separate.
+   This is the ONLY file with hardcoded breakpoint values.
+   slashed-core.css layout primitives use @container queries
+   and do not need to be updated when changing breakpoints.
    ================================================================ */
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
