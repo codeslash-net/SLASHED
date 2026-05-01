@@ -16,7 +16,8 @@
 (function () {
   'use strict';
 
-  var _tabsUid = 0; /* persistent across initTabsAccessible() re-runs */
+  var _tabsUid  = 0; /* persistent across initTabsAccessible() re-runs */
+  var _fgerrUid = 0; /* persistent across initFormGroups() re-runs */
 
   /* ---------------------------------------------------------------
      1. Nav dropdown — aria-expanded + full keyboard accessibility
@@ -143,9 +144,21 @@
       if (!e.target || e.target.tagName !== 'DIALOG') return;
       var target = restoreTarget;
       restoreTarget = null;
-      if (target && document.body.contains(target)) {
+      if (!target || !document.body.contains(target)) return;
+      /* Delay until the exit animation finishes so focus doesn't land
+         behind a still-visible backdrop. Falls back to 150 ms. */
+      var dialog = e.target;
+      var done = false;
+      function doFocus() {
+        if (done) return;
+        done = true;
+        dialog.removeEventListener('transitionend', doFocus);
+        dialog.removeEventListener('animationend',  doFocus);
         target.focus();
       }
+      dialog.addEventListener('transitionend', doFocus, { once: true });
+      dialog.addEventListener('animationend',  doFocus, { once: true });
+      setTimeout(doFocus, 160);
     }, true);
   }
 
@@ -278,8 +291,9 @@
           tab.setAttribute('role', 'tab');
           tab.setAttribute('aria-selected', active ? 'true' : 'false');
           tab.setAttribute('tabindex', active ? '0' : '-1');
-          if (panels[i]) panels[i].setAttribute('aria-hidden', active ? 'false' : 'true');
+            if (panels[i]) panels[i].setAttribute('aria-hidden', active ? 'false' : 'true');
         });
+        syncTabs(tabs);
       }
       applyAriaFromChecked();
 
@@ -394,7 +408,7 @@
     errors.forEach(function (error, i) {
       error.setAttribute('aria-live', 'polite');
       error.setAttribute('aria-atomic', 'true');
-      if (!error.id) error.id = 'cs-fgerr-' + i;
+      if (!error.id) error.id = 'cs-fgerr-' + (++_fgerrUid);
       var group = error.closest('.cs-form-group');
       var input = group && group.querySelector(
         '.cs-form-group__input, ' +
