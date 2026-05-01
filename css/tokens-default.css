@@ -29,7 +29,6 @@
   --primary-900: #1e3a8a;
   --primary-950: #172554;
   --primary-hover: #1d4ed8;
-  --primary-a10: rgba(37, 99, 235, 0.1);
   --primary-a25: rgba(37, 99, 235, 0.25);
   --primary-a50: rgba(37, 99, 235, 0.5);
 
@@ -39,7 +38,6 @@
   --secondary-700: #0f766e;  --secondary-800: #115e59;
   --secondary-900: #134e4a;  --secondary-950: #042f2e;
   --secondary-hover: #0f766e;
-  --secondary-a10: rgba(13, 148, 136, 0.1);
   --secondary-a25: rgba(13, 148, 136, 0.25);
   --secondary-a50: rgba(13, 148, 136, 0.5);
 
@@ -49,7 +47,6 @@
   --accent-700: #b45309;  --accent-800: #92400e;
   --accent-900: #78350f;  --accent-950: #451a03;
   --accent-hover: #d97706;
-  --accent-a10: rgba(245, 158, 11, 0.1);
   --accent-a25: rgba(245, 158, 11, 0.25);
   --accent-a50: rgba(245, 158, 11, 0.5);
 
@@ -200,11 +197,9 @@
   --primary-hover: color-mix(in oklch, var(--primary) 85%, black);
   /* Alpha variants use srgb intentionally — matches browser/Figma opacity convention
      and avoids oklch hue-shift artefacts on semi-transparent overlays. */
-  --primary-a10: color-mix(in srgb, var(--primary) 10%, transparent);
   --primary-a25: color-mix(in srgb, var(--primary) 25%, transparent);
   --primary-a50: color-mix(in srgb, var(--primary) 50%, transparent);
   --primary-a75: color-mix(in srgb, var(--primary) 75%, transparent);
-  --primary-a90: color-mix(in srgb, var(--primary) 90%, transparent);
 
   /* ===== Secondary shades ===== */
 
@@ -220,11 +215,9 @@
   --secondary-950: color-mix(in oklch, var(--secondary) 15%, black);
   --secondary-hover: color-mix(in oklch, var(--secondary) 85%, black);
   /* Alpha variants — srgb intentionally, matches browser/Figma opacity convention */
-  --secondary-a10: color-mix(in srgb, var(--secondary) 10%, transparent);
   --secondary-a25: color-mix(in srgb, var(--secondary) 25%, transparent);
   --secondary-a50: color-mix(in srgb, var(--secondary) 50%, transparent);
   --secondary-a75: color-mix(in srgb, var(--secondary) 75%, transparent);
-  --secondary-a90: color-mix(in srgb, var(--secondary) 90%, transparent);
 
   /* ===== Accent shades ===== */
 
@@ -240,11 +233,9 @@
   --accent-950: color-mix(in oklch, var(--accent) 15%, black);
   --accent-hover: color-mix(in oklch, var(--accent) 85%, black);
   /* Alpha variants — srgb intentionally, matches browser/Figma opacity convention */
-  --accent-a10: color-mix(in srgb, var(--accent) 10%, transparent);
   --accent-a25: color-mix(in srgb, var(--accent) 25%, transparent);
   --accent-a50: color-mix(in srgb, var(--accent) 50%, transparent);
   --accent-a75: color-mix(in srgb, var(--accent) 75%, transparent);
-  --accent-a90: color-mix(in srgb, var(--accent) 90%, transparent);
 
   /* ===== Status shades (dark values in dark blocks below) ===== */
 
