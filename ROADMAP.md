@@ -3,7 +3,7 @@
 > Forward-looking only. Shipped work lives in [`CHANGELOG.md`](CHANGELOG.md).
 > Reviewed at every framework version bump.
 >
-> **Last reviewed:** v0.4.6.0 (2026-04-30).
+> **Last reviewed:** v0.4.6.0 (2026-05-01).
 
 This file is the single authoritative list of what is *not yet shipped*. If
 something is here and has since shipped, move it to the corresponding
@@ -604,40 +604,6 @@ only — reduced scope compared to previous description.
 
 ---
 
-### `0.5.0.0` — Token cleanup and API rationalisation
-
-**Theme:** remaining token API cleanup and JS accessibility gap-close.
-T4/C1/C2/C3/K3 shipped early in 0.4.5–0.4.6 as part of the issue #3
-cleanup pass; the items below are what remains. Breaking changes to token
-names are intentional — the scope justifies the MAJOR bump to `0.5`.
-
-**Implementation order:**
-
-1. `tokens-default.css` — T1, T2, T3, T5, T6, T7, T8, T9
-   (T4 shipped in 0.4.6.0)
-2. `slashed-components.css` — K1, K2
-   (C1, C2, C3, K3 shipped in 0.4.5.0 / 0.4.6.0)
-3. `slashed-utilities.css` — U1, U2
-4. `docs/BRICKS.md` — D1
-5. Rebuild `slashed-full.css` via `bin/build-bundle.sh`
-6. Audit wireframes for removed token names (`.text-7xl`,
-   `--font-weight-bold`, etc.) — fix or record as migration notes in
-   CHANGELOG.
-
-**Summary of remaining changes:**
-
-| Action | Remaining | Already shipped |
-|---|---|---|
-| Tokens removed | 18 (T1–T3) | 4 (T4 — container renames, 0.4.6.0) |
-| Tokens added | 3 (`--z-above`, `--duration-enter`, `--duration-exit`) | 2 (`--container-wide`, `--container-full`, 0.4.6.0) |
-| Tokens renamed | 1 (`--font-weight-bold` → `--font-weight-heading`) | 3 (container tokens, 0.4.6.0) |
-| Utility classes removed | 4 (`.text-6xl` through `.text-9xl`) | — |
-| Modifier classes removed/added/renamed | — | All 7 (0.4.6.0) |
-| CSS files to update | 2 (`tokens-default.css`, `slashed-components.css`) | 2 (`slashed-core.css`, `slashed-utilities.css`) |
-| Docs files new | 1 (`docs/BRICKS.md`) | — |
-
----
-
 #### T1 — Remove `--font-weight-*` (8 tokens), rename 1
 
 **File:** `css/tokens-default.css`
@@ -747,31 +713,6 @@ Insert between `--z-docked` and `--z-sticky`:
 
 Update the comment on the z-index scale to clarify that `--z-sticky` and above
 intentionally do not beat the WP admin bar (99999) — only `--z-max` does.
-
----
-
-#### T9 — Auto-pairing `--color-text-on-*`
-
-**File:** `css/tokens-default.css`
-
-Add after the `@supports` block:
-
-```css
-@supports (color: oklch(from red 0 0 0)) {
-  :root {
-    --color-text-on-primary:
-      oklch(from var(--primary) clamp(0.1, (0.6 - l) * 999, 1) 0 0);
-    --color-text-on-secondary:
-      oklch(from var(--secondary) clamp(0.1, (0.6 - l) * 999, 1) 0 0);
-    --color-text-on-accent:
-      oklch(from var(--accent) clamp(0.1, (0.6 - l) * 999, 1) 0 0);
-  }
-}
-```
-
-Existing `white` / `var(--neutral-900)` fallbacks remain for older browsers.
-(This item was also planned in `0.4.5.0` — it ships here together with the
-rest of the token rationalisation pass.)
 
 ---
 
