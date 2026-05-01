@@ -16,10 +16,14 @@
 (function () {
   'use strict';
 
+  var _tabsUid  = 0; /* persistent across initTabsAccessible() re-runs */
+  var _fgerrUid = 0; /* persistent across initFormGroups() re-runs */
+
   /* ---------------------------------------------------------------
-     1. Nav dropdown — aria-expanded + keyboard accessibility
+     1. Nav dropdown — aria-expanded + full keyboard accessibility
      Enhances .cs-nav-dropdown (<details>-based) with proper ARIA.
-     Adds: aria-expanded sync, Escape to close, click-outside close.
+     Adds: aria-expanded sync, Escape, click-outside, Arrow keys,
+           Home/End, first-letter navigation.
   --------------------------------------------------------------- */
   function initNavDropdowns() {
     var dropdowns = document.querySelectorAll('.cs-nav-dropdown');
@@ -29,9 +33,57 @@
       var summary = details.querySelector('summary');
       if (!summary) return;
       summary.setAttribute('aria-expanded', details.open ? 'true' : 'false');
+      summary.setAttribute('aria-haspopup', 'true');
 
       details.addEventListener('toggle', function () {
         summary.setAttribute('aria-expanded', details.open ? 'true' : 'false');
+      });
+
+      summary.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowDown') return;
+        e.preventDefault();
+        e.stopPropagation();
+        details.open = true;
+        var links = Array.from(details.querySelectorAll('.cs-nav-dropdown__link'));
+        if (links.length) links[0].focus();
+      });
+
+      details.addEventListener('keydown', function (e) {
+        if (!details.open) return;
+        var links = Array.from(details.querySelectorAll('.cs-nav-dropdown__link'));
+        if (!links.length) return;
+        var idx = links.indexOf(document.activeElement);
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (idx === -1 || idx === links.length - 1) links[0].focus();
+          else links[idx + 1].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (idx <= 0) links[links.length - 1].focus();
+          else links[idx - 1].focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          links[0].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          links[links.length - 1].focus();
+        } else if (e.key === 'Escape') {
+          e.stopPropagation();
+          details.open = false;
+          summary.focus();
+        } else if (e.key === 'Tab') {
+          details.open = false;
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+          var char = e.key.toLowerCase();
+          var start = idx >= 0 ? idx + 1 : 0;
+          function startsWithChar(l) {
+            var text = (l.textContent || '').trim();
+            return text && text.charAt(0).toLowerCase() === char;
+          }
+          var found = links.slice(start).find(startsWithChar) || links.find(startsWithChar);
+          if (found) { e.preventDefault(); found.focus(); }
+        }
       });
     });
 
@@ -75,7 +127,44 @@
   }
 
   /* ---------------------------------------------------------------
-     3. Stagger — auto-set --_i index on children
+     3. Modal focus restore — return focus to trigger on dialog close.
+     Native <dialog> traps focus inside and handles Escape; the gap
+     is restoring focus to the element that opened the dialog.
+     Call once: slashedUI.initModalFocusRestore()
+  --------------------------------------------------------------- */
+  function initModalFocusRestore() {
+    var restoreTarget = null;
+
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-modal-trigger]');
+      if (trigger) restoreTarget = trigger;
+    });
+
+    document.addEventListener('close', function (e) {
+      if (!e.target || e.target.tagName !== 'DIALOG') return;
+      var target = restoreTarget;
+      restoreTarget = null;
+      if (!target || !document.body.contains(target)) return;
+      /* Delay until the exit animation finishes so focus doesn't land
+         behind a still-visible backdrop. Falls back to 150 ms. */
+      var dialog = e.target;
+      var done = false;
+      function doFocus(ev) {
+        if (ev && ev.target !== dialog) return;
+        if (done) return;
+        done = true;
+        dialog.removeEventListener('transitionend', doFocus);
+        dialog.removeEventListener('animationend',  doFocus);
+        target.focus();
+      }
+      dialog.addEventListener('transitionend', doFocus);
+      dialog.addEventListener('animationend',  doFocus);
+      setTimeout(doFocus, 160);
+    }, true);
+  }
+
+  /* ---------------------------------------------------------------
+     5. Stagger — auto-set --_i index on children
      CSS platform gap: sibling-index() is not yet cross-browser,
      so we set --_i from JS for stagger animations. Unrelated to the
      flexbox/grid `gap` property, which is natively supported.
@@ -159,7 +248,99 @@
   }
 
   /* ---------------------------------------------------------------
-     6. Toast — append a toast into a .cs-toast-stack with auto-dismiss.
+     6. Tabs accessible — WAI-ARIA Tabs keyboard pattern.
+     Opt-in enhancement on top of the CSS-only radio/label tab pattern.
+     Call instead of or alongside initTabs().
+     Adds: role="tab", aria-selected, roving tabindex, Arrow/Home/End.
+  --------------------------------------------------------------- */
+  function initTabsAccessible() {
+    document.querySelectorAll('.cs-tabs').forEach(function (tabs) {
+      if (tabs.dataset.csTabsInited) return;
+      tabs.dataset.csTabsInited = '1';
+      var uid = ++_tabsUid;
+
+      var list = tabs.querySelector(':scope > .cs-tabs__list');
+      if (!list) return;
+      var isVertical = tabs.classList.contains('cs-tabs--vertical');
+      list.setAttribute('role', 'tablist');
+      if (isVertical) list.setAttribute('aria-orientation', 'vertical');
+      var items  = Array.from(list.querySelectorAll(':scope > .cs-tabs__tab'));
+      if (!items.length) return;
+      var panels = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__panels > .cs-tabs__panel'));
+
+      /* Wire stable IDs and tab↔panel relationships once */
+      items.forEach(function (tab, i) {
+        if (!tab.id) tab.id = 'cs-tab-' + uid + '-' + i;
+        var panel = panels[i];
+        if (!panel) return;
+        if (!panel.id) panel.id = 'cs-panel-' + uid + '-' + i;
+        tab.setAttribute('aria-controls', panel.id);
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', tab.id);
+      });
+
+      function applyAriaFromChecked() {
+        var activeIdx = items.findIndex(function (tab) {
+          var radio = tab.querySelector('input[type="radio"]');
+          return !!(radio && radio.checked);
+        });
+        if (activeIdx < 0) activeIdx = 0;
+        items.forEach(function (tab, i) {
+          var radio = tab.querySelector('input[type="radio"]');
+          if (radio) radio.tabIndex = -1;
+          var active = i === activeIdx;
+          tab.setAttribute('role', 'tab');
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+          tab.setAttribute('tabindex', active ? '0' : '-1');
+            if (panels[i]) panels[i].setAttribute('aria-hidden', active ? 'false' : 'true');
+        });
+        syncTabs(tabs);
+      }
+      applyAriaFromChecked();
+
+      function selectTab(idx) {
+        items.forEach(function (tab, i) {
+          var radio = tab.querySelector('input[type="radio"]');
+          var active = i === idx;
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+          tab.setAttribute('tabindex', active ? '0' : '-1');
+          if (radio) radio.tabIndex = -1;
+          if (active && radio) radio.checked = true;
+          if (panels[i]) panels[i].setAttribute('aria-hidden', active ? 'false' : 'true');
+        });
+        items[idx].focus();
+        syncTabs(tabs);
+      }
+
+      list.addEventListener('keydown', function (e) {
+        var idx = items.indexOf(document.activeElement);
+        if (idx === -1) return;
+        var last = items.length - 1;
+        var nextKey = isVertical ? 'ArrowDown' : 'ArrowRight';
+        var prevKey = isVertical ? 'ArrowUp'   : 'ArrowLeft';
+        if (e.key === nextKey) { e.preventDefault(); selectTab(idx < last ? idx + 1 : 0); }
+        else if (e.key === prevKey) { e.preventDefault(); selectTab(idx > 0 ? idx - 1 : last); }
+        else if (e.key === 'Home') { e.preventDefault(); selectTab(0); }
+        else if (e.key === 'End') { e.preventDefault(); selectTab(last); }
+      });
+
+      list.addEventListener('change', function (e) {
+        if (e.target && e.target.matches('input[type="radio"]')) {
+          applyAriaFromChecked();
+          syncTabs(tabs);
+        }
+      });
+
+      list.addEventListener('click', function (e) {
+        var tab = e.target.closest('.cs-tabs__tab');
+        var idx = tab ? items.indexOf(tab) : -1;
+        if (idx !== -1) selectTab(idx);
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     7. Toast — append a toast into a .cs-toast-stack with auto-dismiss.
      Usage:
        slashedUI.toast('Saved');
        slashedUI.toast({ title: 'Uploaded', body: 'report.pdf', variant: 'success', duration: 3000 });
@@ -178,7 +359,7 @@
     var allowedVariants = { success: true, warning: true, error: true };
     var variant = typeof opts.variant === 'string' ? opts.variant.trim() : '';
     el.className = 'cs-toast' + (allowedVariants[variant] ? ' cs-toast--' + variant : '');
-    el.setAttribute('role', 'status');
+    el.setAttribute('role', opts.urgency === 'assertive' ? 'alert' : 'status');
     var bodySpan = document.createElement('span');
     bodySpan.className = 'cs-toast__body';
     if (opts.title != null) {
@@ -216,6 +397,44 @@
   }
 
   /* ---------------------------------------------------------------
+     Form groups — aria-live wiring for error messages.
+     .cs-form-group__error becomes visible via CSS :user-invalid but
+     screen readers don't announce CSS-only visibility changes.
+     Uses aria-errormessage (only active when aria-invalid="true") so
+     errors are not announced for currently valid fields. Validation
+     logic should toggle aria-invalid="true"/"false" on the input.
+  --------------------------------------------------------------- */
+  function initFormGroups() {
+    var errors = document.querySelectorAll('.cs-form-group__error');
+    errors.forEach(function (error, i) {
+      error.setAttribute('aria-live', 'polite');
+      error.setAttribute('aria-atomic', 'true');
+      if (!error.id) error.id = 'cs-fgerr-' + (++_fgerrUid);
+      var group = error.closest('.cs-form-group');
+      var input = group && group.querySelector(
+        '.cs-form-group__input, ' +
+        'input:not([type="hidden"]):not([hidden]):not([disabled]), ' +
+        'textarea:not([hidden]):not([disabled]), ' +
+        'select:not([hidden]):not([disabled])'
+      );
+      if (input && !input.hasAttribute('data-cs-fg-init')) {
+        input.setAttribute('data-cs-fg-init', '');
+        input.setAttribute('aria-errormessage', error.id);
+        function syncAriaInvalid() {
+          if (!('validity' in input)) return;
+          if (input.validity.valid) input.removeAttribute('aria-invalid');
+          else input.setAttribute('aria-invalid', 'true');
+        }
+        input.addEventListener('blur', syncAriaInvalid);
+        input.addEventListener('input', syncAriaInvalid);
+        input.addEventListener('change', syncAriaInvalid);
+        input.addEventListener('invalid', syncAriaInvalid);
+        syncAriaInvalid();
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------
      Init — run all enhancements on DOMContentLoaded
   --------------------------------------------------------------- */
   function init() {
@@ -224,6 +443,7 @@
     initTabs();
     initStagger();
     initRangeFill();
+    initFormGroups();
   }
 
   if (document.readyState === 'loading') {
@@ -233,16 +453,22 @@
   }
 
   /* Expose public helpers for dynamic content re-runs, toasts, range
-     re-paints, and programmatic modal close:
+     re-paints, programmatic modal close, and accessible tab keyboard nav:
      slashedUI.initStagger(containerElement)
-     slashedUI.toast({ title, body, variant, duration })
+     slashedUI.toast({ title, body, variant, urgency, duration })
      slashedUI.updateRange(rangeInputElement)
-     slashedUI.closeModal(dialogElement) */
+     slashedUI.closeModal(dialogElement)
+     slashedUI.initTabsAccessible()
+     slashedUI.initModalFocusRestore()
+     slashedUI.initFormGroups() */
   window.slashedUI = Object.assign(window.slashedUI || {}, {
     initStagger: initStagger,
     toast: toast,
     updateRange: updateRange,
-    closeModal: closeModal
+    closeModal: closeModal,
+    initTabsAccessible: initTabsAccessible,
+    initModalFocusRestore: initModalFocusRestore,
+    initFormGroups: initFormGroups
   });
 
 })();

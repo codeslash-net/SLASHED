@@ -18,7 +18,7 @@ Override the layer that matches the *meaning* of the change you want:
 │   These are the design system. Override to retheme.             │
 ├─────────────────────────────────────────────────────────────────┤
 │ Primitive tokens — raw scales                                   │
-│   --primary, --neutral-100…900, --space-2xs…4xl, --text-2xs…9xl,│
+│   --primary, --neutral-100…900, --space-2xs…4xl, --text-2xs…5xl, │
 │   --container-default, --radius-s…2xl, --shadow-s…float,        │
 │   --duration-fast, --ease-out, …                                │
 │   Override to redesign the underlying scale.                    │

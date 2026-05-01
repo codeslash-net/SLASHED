@@ -54,7 +54,10 @@
      xl:  80em  (1280px)  →  find: (min-width: 80em)
 
    VS Code: Ctrl+H → enable regex → find each value → replace all.
-   This file only — core.css breakpoints (grid-2, etc.) are separate.
+   Both slashed-utilities.css and slashed-core.css contain hardcoded
+   @media breakpoints — update both files when changing these values.
+   Exception: slashed-core.css layout primitives (.stack, .cover, etc.)
+   use @container queries and are not affected by breakpoint changes.
    ================================================================ */
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
@@ -226,32 +229,29 @@
   .text-3xl { font-size: var(--text-3xl); }
   .text-4xl { font-size: var(--text-4xl); }
   .text-5xl { font-size: var(--text-5xl); }
-  .text-6xl { font-size: var(--text-6xl); }
-  .text-7xl { font-size: var(--text-7xl); }
-  .text-8xl { font-size: var(--text-8xl); }
-  .text-9xl { font-size: var(--text-9xl); }
+
   .text-fluid-hero { font-size: var(--text-fluid-hero); }
 
   /* ----- Typography: semantic heading scale ----- */
   /* Use when semantic heading level and visual size must differ.
      e.g. <p class="h2">Large display text that is not an h2</p> */
 
-  .h1 { font-size: var(--h1); line-height: var(--leading-tight); font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h2 { font-size: var(--h2); line-height: var(--leading-tight); font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h3 { font-size: var(--h3); line-height: var(--leading-tight); font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h4 { font-size: var(--h4); line-height: var(--leading-snug);  font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h5 { font-size: var(--h5); line-height: var(--leading-snug);  font-weight: var(--font-weight-semibold, 600); }
-  .h6 { font-size: var(--h6); line-height: var(--leading-normal); font-weight: var(--font-weight-semibold, 600); }
+  .h1 { font-size: var(--h1); line-height: var(--leading-tight); font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h2 { font-size: var(--h2); line-height: var(--leading-tight); font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h3 { font-size: var(--h3); line-height: var(--leading-tight); font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h4 { font-size: var(--h4); line-height: var(--leading-snug);  font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h5 { font-size: var(--h5); line-height: var(--leading-snug);  font-weight: var(--font-weight-heading, 700); }
+  .h6 { font-size: var(--h6); line-height: var(--leading-normal); font-weight: var(--font-weight-heading, 700); }
 
   /* ----- Typography: weight ----- */
 
-  .font-light     { font-weight: var(--font-weight-light, 300); }
-  .font-normal    { font-weight: var(--font-weight-normal, 400); }
-  .font-medium    { font-weight: var(--font-weight-medium, 500); }
-  .font-semi      { font-weight: var(--font-weight-semibold, 600); }
-  .font-bold      { font-weight: var(--font-weight-bold, 700); }
-  .font-extrabold { font-weight: var(--font-weight-extrabold, 800); }
-  .font-black     { font-weight: var(--font-weight-black, 900); }
+  .font-light     { font-weight: 300; }
+  .font-normal    { font-weight: 400; }
+  .font-medium    { font-weight: 500; }
+  .font-semi      { font-weight: 600; }
+  .font-bold      { font-weight: var(--font-weight-heading, 700); }
+  .font-extrabold { font-weight: 800; }
+  .font-black     { font-weight: 900; }
 
   /* ----- Typography: style, transform, decoration ----- */
 
@@ -396,6 +396,20 @@
   .row-span-3    { grid-row: span 3; }
   .row-span-4    { grid-row: span 4; }
 
+  /* Bento responsive collapse — placed here so .bento > .col-span-* (specificity 0,2,0)
+     beats plain .col-span-* (0,1,0) within the same layer without !important. */
+  @container (min-width: 30em) and (max-width: 47.99em) {
+    .bento > .col-span-3,
+    .bento > .col-span-4,
+    .bento > .col-span-5,
+    .bento > .col-span-6,
+    .bento > .col-span-full { grid-column: 1 / -1; }
+  }
+  @container (max-width: 29.9999em) {
+    .bento                   { grid-auto-rows: auto; }
+    .bento > *               { grid-column: 1 / -1; grid-row: auto; }
+  }
+
   /* ----- Sizing — three axes with explicit prefix -----
      Parent-relative fractions  →  .w-1/2, .w-1/3, .w-2/3, .w-1/4, .w-3/4
      Viewport-relative          →  .w-vw-10 … .w-vw-100 (steps of 10)
@@ -476,6 +490,7 @@
   .z-base      { z-index: var(--z-base); }
   .z-raised    { z-index: var(--z-raised); }
   .z-docked    { z-index: var(--z-docked); }
+  .z-above     { z-index: var(--z-above); }
   .z-dropdown  { z-index: var(--z-dropdown); }
   .z-sticky    { z-index: var(--z-sticky); }
   .z-banner    { z-index: var(--z-banner); }

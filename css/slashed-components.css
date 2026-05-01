@@ -28,10 +28,14 @@
     .cs-disclosure::details-content {
       height: 0;
       overflow: hidden;
-      transition: height var(--duration-normal, 250ms) var(--ease-out, ease-out),
-                  content-visibility var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+      transition: height var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
     }
-    .cs-disclosure[open]::details-content { height: auto; }
+    .cs-disclosure[open]::details-content {
+      height: auto;
+      transition: height var(--duration-enter, 250ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
+    }
   }
 
   /* ----- Accordion (details/summary) ----- */
@@ -83,10 +87,14 @@
     .cs-accordion::details-content {
       height: 0;
       overflow: hidden;
-      transition: height var(--duration-normal, 250ms) var(--ease-out, ease-out),
-                  content-visibility var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+      transition: height var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
     }
-    .cs-accordion[open]::details-content { height: auto; }
+    .cs-accordion[open]::details-content {
+      height: auto;
+      transition: height var(--duration-enter, 250ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
+    }
   }
   /* ----- Modal (dialog + animation) ----- */
   /* .cs-modal extends the base <dialog> styles with entrance animation and backdrop blur.
@@ -96,22 +104,34 @@
   .cs-modal {
     opacity: 0;
     translate: 0 var(--space-m, 1rem);
-    transition: opacity var(--duration-normal, 250ms) var(--ease-out, ease-out),
-                translate var(--duration-normal, 250ms) var(--ease-out, ease-out),
-                overlay var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete,
-                display var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+    transition: opacity var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                translate var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                overlay var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete,
+                display var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
   }
-  .cs-modal[open] { opacity: 1; translate: 0 0; }
+  .cs-modal[open] {
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity var(--duration-enter, 250ms) var(--ease-out, ease-out),
+                translate var(--duration-enter, 250ms) var(--ease-out, ease-out),
+                overlay var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete,
+                display var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
+  }
   @starting-style { .cs-modal[open] { opacity: 0; translate: 0 var(--space-m, 1rem); } }
   .cs-modal::backdrop {
     background: var(--color-backdrop, oklch(0 0 0 / 0.5));
     backdrop-filter: blur(4px);
     opacity: 0;
-    transition: opacity var(--duration-normal, 250ms) var(--ease-out, ease-out),
-                overlay var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete,
-                display var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+    transition: opacity var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                overlay var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete,
+                display var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
   }
-  .cs-modal[open]::backdrop { opacity: 1; }
+  .cs-modal[open]::backdrop {
+    opacity: 1;
+    transition: opacity var(--duration-enter, 250ms) var(--ease-out, ease-out),
+                overlay var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete,
+                display var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
+  }
   @starting-style { .cs-modal[open]::backdrop { opacity: 0; } }
 
   /* ----- Button patterns ----- */
@@ -437,7 +457,7 @@
   .cs-section-header__heading {
     font-size: var(--h2);
     line-height: var(--leading-tight, 1.2);
-    font-weight: var(--font-weight-bold, 700);
+    font-weight: var(--font-weight-heading, 700);
     text-wrap: balance;
     color: var(--color-text);
     margin-block: var(--space-xs) var(--space-s);

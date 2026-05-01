@@ -1,0 +1,24 @@
+name: Bundle check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  bundle-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Regenerate bundle
+        run: bash bin/build-bundle.sh
+
+      - name: Verify bundle is up to date
+        run: |
+          if ! git diff --exit-code css/slashed-full.css; then
+            echo ""
+            echo "css/slashed-full.css is out of date."
+            echo "Run: bash bin/build-bundle.sh"
+            echo "Then commit the result."
+            exit 1
+          fi
