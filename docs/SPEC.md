@@ -74,7 +74,7 @@ stylesheet, no class toggling required.
 
 ### What SLASHED is not
 
-- Not a component library. Section starters are copy-paste snippets, not managed components.
+- Not a managed component library. `.cs-*` BEM blocks are CSS styling primitives shipped in `slashed-components.css`, not versioned components with APIs or props. Full page-section templates are called **Blueprints** — copy-paste HTML snippets distributed outside the core framework; consumers own them entirely once pasted.
 - Not for application UI. It targets multi-section visual sites — landing pages, marketing, blogs, storefronts — not dashboards or SaaS interfaces. (Decorative utility ergonomics are available via the opt-in `slashed-utilities-visual.css` if a specific project needs them.)
 - Not WordPress-only. WordPress/Bricks is the primary platform, but the framework is portable by design — it works anywhere CSS works.
 - Not a JavaScript framework. Interactive behaviors use native HTML elements (`<details>`, `<dialog>`, `[popover]`). Zero JS ships in core CSS files. An optional `js/slashed-ui.js` is available for accessibility enhancements and CSS platform gaps (aria-expanded sync, stagger initializer, range fill, modal click-outside). Load it only if you need these enhancements.

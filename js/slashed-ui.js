@@ -256,6 +256,8 @@
         });
         if (activeIdx < 0) activeIdx = 0;
         items.forEach(function (tab, i) {
+          var radio = tab.querySelector('input[type="radio"]');
+          if (radio) radio.tabIndex = -1;
           var active = i === activeIdx;
           tab.setAttribute('role', 'tab');
           tab.setAttribute('aria-selected', active ? 'true' : 'false');
@@ -270,6 +272,7 @@
           var active = i === idx;
           tab.setAttribute('aria-selected', active ? 'true' : 'false');
           tab.setAttribute('tabindex', active ? '0' : '-1');
+          if (radio) radio.tabIndex = -1;
           if (active && radio) radio.checked = true;
         });
         items[idx].focus();
@@ -293,6 +296,11 @@
           applyAriaFromChecked();
           syncTabs(tabs);
         }
+      });
+
+      list.addEventListener('click', function (e) {
+        var tab = e.target.closest('.cs-tabs__tab');
+        if (tab && list.contains(tab)) selectTab(items.indexOf(tab));
       });
     });
   }
@@ -372,6 +380,14 @@
       var input = group && group.querySelector('.cs-form-group__input, input, textarea, select');
       if (input) {
         input.setAttribute('aria-errormessage', error.id);
+        function syncAriaInvalid() {
+          if (!('validity' in input)) return;
+          if (input.validity.valid) input.removeAttribute('aria-invalid');
+          else input.setAttribute('aria-invalid', 'true');
+        }
+        input.addEventListener('blur', syncAriaInvalid);
+        input.addEventListener('input', syncAriaInvalid);
+        input.addEventListener('change', syncAriaInvalid);
       }
     });
   }

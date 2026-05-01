@@ -716,7 +716,9 @@
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
 
-/* slashed.overrides: empty — reserved for user styles that must win over all framework layers. */
+/* slashed.overrides: highest-priority layer. Framework uses it for rules that must beat
+   slashed.utilities (e.g., Bento responsive collapse). Consumers may also place their own
+   overrides here — rules in this layer outrank all other slashed.* layers. */
 
 @layer slashed.reset {
 
@@ -2200,7 +2202,9 @@
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
 
-/* slashed.overrides: empty — reserved for user styles that must win over all framework layers. */
+/* slashed.overrides: highest-priority layer. Framework uses it for rules that must beat
+   slashed.utilities (e.g., Bento responsive collapse). Consumers may also place their own
+   overrides here — rules in this layer outrank all other slashed.* layers. */
 
 /* ==========================================================================
    COMPONENTS
