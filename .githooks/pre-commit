@@ -1,0 +1,4 @@
+#!/bin/sh
+# Auto-rebuild css/slashed-full.css before every commit.
+# Activated by: git config core.hooksPath .githooks
+bash bin/build-bundle.sh && git add css/slashed-full.css
