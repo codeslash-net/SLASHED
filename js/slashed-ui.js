@@ -397,6 +397,7 @@
         input.addEventListener('change', syncAriaInvalid);
         input.addEventListener('invalid', syncAriaInvalid);
         syncAriaInvalid();
+      }
     });
   }
 
