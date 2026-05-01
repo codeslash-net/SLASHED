@@ -236,22 +236,22 @@
   /* Use when semantic heading level and visual size must differ.
      e.g. <p class="h2">Large display text that is not an h2</p> */
 
-  .h1 { font-size: var(--h1); line-height: var(--leading-tight); font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h2 { font-size: var(--h2); line-height: var(--leading-tight); font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h3 { font-size: var(--h3); line-height: var(--leading-tight); font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h4 { font-size: var(--h4); line-height: var(--leading-snug);  font-weight: var(--font-weight-bold, 700); text-wrap: balance; }
-  .h5 { font-size: var(--h5); line-height: var(--leading-snug);  font-weight: var(--font-weight-semibold, 600); }
-  .h6 { font-size: var(--h6); line-height: var(--leading-normal); font-weight: var(--font-weight-semibold, 600); }
+  .h1 { font-size: var(--h1); line-height: var(--leading-tight); font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h2 { font-size: var(--h2); line-height: var(--leading-tight); font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h3 { font-size: var(--h3); line-height: var(--leading-tight); font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h4 { font-size: var(--h4); line-height: var(--leading-snug);  font-weight: var(--font-weight-heading, 700); text-wrap: balance; }
+  .h5 { font-size: var(--h5); line-height: var(--leading-snug);  font-weight: 600; }
+  .h6 { font-size: var(--h6); line-height: var(--leading-normal); font-weight: 600; }
 
   /* ----- Typography: weight ----- */
 
-  .font-light     { font-weight: var(--font-weight-light, 300); }
-  .font-normal    { font-weight: var(--font-weight-normal, 400); }
-  .font-medium    { font-weight: var(--font-weight-medium, 500); }
-  .font-semi      { font-weight: var(--font-weight-semibold, 600); }
-  .font-bold      { font-weight: var(--font-weight-bold, 700); }
-  .font-extrabold { font-weight: var(--font-weight-extrabold, 800); }
-  .font-black     { font-weight: var(--font-weight-black, 900); }
+  .font-light     { font-weight: 300; }
+  .font-normal    { font-weight: 400; }
+  .font-medium    { font-weight: 500; }
+  .font-semi      { font-weight: 600; }
+  .font-bold      { font-weight: var(--font-weight-heading, 700); }
+  .font-extrabold { font-weight: 800; }
+  .font-black     { font-weight: 900; }
 
   /* ----- Typography: style, transform, decoration ----- */
 
