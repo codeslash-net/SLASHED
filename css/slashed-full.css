@@ -2222,10 +2222,14 @@
     .cs-disclosure::details-content {
       height: 0;
       overflow: hidden;
+      transition: height var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
+    }
+    .cs-disclosure[open]::details-content {
+      height: auto;
       transition: height var(--duration-enter, 250ms) var(--ease-out, ease-out),
                   content-visibility var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
     }
-    .cs-disclosure[open]::details-content { height: auto; }
   }
 
   /* ----- Accordion (details/summary) ----- */
@@ -2277,10 +2281,14 @@
     .cs-accordion::details-content {
       height: 0;
       overflow: hidden;
+      transition: height var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
+    }
+    .cs-accordion[open]::details-content {
+      height: auto;
       transition: height var(--duration-enter, 250ms) var(--ease-out, ease-out),
                   content-visibility var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
     }
-    .cs-accordion[open]::details-content { height: auto; }
   }
   /* ----- Modal (dialog + animation) ----- */
   /* .cs-modal extends the base <dialog> styles with entrance animation and backdrop blur.
@@ -5835,6 +5843,7 @@
   .z-base      { z-index: var(--z-base); }
   .z-raised    { z-index: var(--z-raised); }
   .z-docked    { z-index: var(--z-docked); }
+  .z-above     { z-index: var(--z-above); }
   .z-dropdown  { z-index: var(--z-dropdown); }
   .z-sticky    { z-index: var(--z-sticky); }
   .z-banner    { z-index: var(--z-banner); }

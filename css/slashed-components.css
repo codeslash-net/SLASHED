@@ -28,10 +28,14 @@
     .cs-disclosure::details-content {
       height: 0;
       overflow: hidden;
+      transition: height var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
+    }
+    .cs-disclosure[open]::details-content {
+      height: auto;
       transition: height var(--duration-enter, 250ms) var(--ease-out, ease-out),
                   content-visibility var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
     }
-    .cs-disclosure[open]::details-content { height: auto; }
   }
 
   /* ----- Accordion (details/summary) ----- */
@@ -83,10 +87,14 @@
     .cs-accordion::details-content {
       height: 0;
       overflow: hidden;
+      transition: height var(--duration-exit, 150ms) var(--ease-out, ease-out),
+                  content-visibility var(--duration-exit, 150ms) var(--ease-out, ease-out) allow-discrete;
+    }
+    .cs-accordion[open]::details-content {
+      height: auto;
       transition: height var(--duration-enter, 250ms) var(--ease-out, ease-out),
                   content-visibility var(--duration-enter, 250ms) var(--ease-out, ease-out) allow-discrete;
     }
-    .cs-accordion[open]::details-content { height: auto; }
   }
   /* ----- Modal (dialog + animation) ----- */
   /* .cs-modal extends the base <dialog> styles with entrance animation and backdrop blur.

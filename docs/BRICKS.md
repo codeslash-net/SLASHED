@@ -13,7 +13,7 @@ them with your Bricks breakpoints:
 
 1. Open `slashed-utilities.css`.
 2. Find-replace each breakpoint value:
-   ```
+   ```text
    sm:  30em  →  find: (min-width: 30em)
    md:  48em  →  find: (min-width: 48em)
    lg:  64em  →  find: (min-width: 64em)

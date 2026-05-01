@@ -73,11 +73,11 @@
         } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
           var char = e.key.toLowerCase();
           var start = idx >= 0 ? idx + 1 : 0;
-          var found = links.slice(start).find(function (l) {
-            return l.textContent.trim()[0].toLowerCase() === char;
-          }) || links.find(function (l) {
-            return l.textContent.trim()[0].toLowerCase() === char;
-          });
+          function startsWithChar(l) {
+            var text = (l.textContent || '').trim();
+            return text && text.charAt(0).toLowerCase() === char;
+          }
+          var found = links.slice(start).find(startsWithChar) || links.find(startsWithChar);
           if (found) { e.preventDefault(); found.focus(); }
         }
       });
@@ -245,13 +245,20 @@
       var items = Array.from(list.querySelectorAll(':scope > .cs-tabs__tab'));
       if (!items.length) return;
 
-      items.forEach(function (tab, i) {
-        var radio = tab.querySelector('input[type="radio"]');
-        var active = radio ? radio.checked : i === 0;
-        tab.setAttribute('role', 'tab');
-        tab.setAttribute('aria-selected', active ? 'true' : 'false');
-        tab.setAttribute('tabindex', active ? '0' : '-1');
-      });
+      function applyAriaFromChecked() {
+        var activeIdx = items.findIndex(function (tab) {
+          var radio = tab.querySelector('input[type="radio"]');
+          return !!(radio && radio.checked);
+        });
+        if (activeIdx < 0) activeIdx = 0;
+        items.forEach(function (tab, i) {
+          var active = i === activeIdx;
+          tab.setAttribute('role', 'tab');
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+          tab.setAttribute('tabindex', active ? '0' : '-1');
+        });
+      }
+      applyAriaFromChecked();
 
       function selectTab(idx) {
         items.forEach(function (tab, i) {
@@ -273,6 +280,13 @@
         else if (e.key === 'ArrowLeft') { e.preventDefault(); selectTab(idx > 0 ? idx - 1 : last); }
         else if (e.key === 'Home') { e.preventDefault(); selectTab(0); }
         else if (e.key === 'End') { e.preventDefault(); selectTab(last); }
+      });
+
+      list.addEventListener('change', function (e) {
+        if (e.target && e.target.matches('input[type="radio"]')) {
+          applyAriaFromChecked();
+          syncTabs(tabs);
+        }
       });
     });
   }
@@ -351,9 +365,9 @@
       var input = group && group.querySelector('.cs-form-group__input, input, textarea, select');
       if (input) {
         var existing = input.getAttribute('aria-describedby');
-        if (!existing || existing.indexOf(error.id) === -1) {
-          input.setAttribute('aria-describedby', existing ? existing + ' ' + error.id : error.id);
-        }
+        var ids = existing ? existing.trim().split(/\s+/) : [];
+        if (ids.indexOf(error.id) === -1) ids.push(error.id);
+        input.setAttribute('aria-describedby', ids.join(' '));
       }
     });
   }
