@@ -3,7 +3,7 @@
 > Forward-looking only. Shipped work lives in [`CHANGELOG.md`](CHANGELOG.md).
 > Reviewed at every framework version bump.
 >
-> **Last reviewed:** v0.4.4.0 (2026-04-28).
+> **Last reviewed:** v0.4.6.0 (2026-04-30).
 
 This file is the single authoritative list of what is *not yet shipped*. If
 something is here and has since shipped, move it to the corresponding
@@ -171,16 +171,7 @@ a specific value override it with a local token.
 
 ---
 
-## Upcoming versions
-
----
-
-### `0.4.5.0` — Battle-test pass #2 and framework gaps
-
-**Theme:** audit-driven additions only. Nothing ships in this version
-without evidence from a battle-test audit conducted against the
-`slashed-blueprints` library. The audit output is a hard precondition for
-every conditional item below.
+## Pending work
 
 ---
 
@@ -383,15 +374,6 @@ values.
 
 ---
 
-### `0.4.6.0` — WCAG-AAA JS path, accessibility, and CSS modernization
-
-**Theme:** close the gap between the pure-CSS path and the full WCAG AAA
-keyboard/screen-reader experience. Also land the CSS modernization items
-that are now within SLASHED's browser baseline. No breaking changes to the
-public CSS API surface.
-
----
-
 #### Component rename: `cs-skeleton-line` → `cs-skeleton__line`
 
 **File:** `css/slashed-components.css`.
@@ -577,10 +559,10 @@ components if that is cleaner.
 
 ---
 
-### CSS modernization track — ongoing through 0.4.x
+### CSS modernization track — ongoing
 
 Items in this track do not have a fixed version assignment. They should
-be evaluated and landed in whichever 0.5.x minor version is current when
+be evaluated and landed in whichever minor version is current when
 browser support is confirmed. Each item includes the current support
 status and the condition for shipping.
 
@@ -653,46 +635,46 @@ configure them without a find-replace across the file. Until then the
 documented workaround (find-replace in that file only) stands. Do not
 add a PostCSS simulation step — buildless is a hard constraint.
 
-**Scope note (updated `0.5.0.0`):** `slashed-core.css` layout primitives now
+**Scope note (updated `0.4.5.0`):** `slashed-core.css` layout primitives now
 use `@container` queries (see C2) and no longer contain hardcoded breakpoints.
 The `@custom-media` problem is therefore limited to `slashed-utilities.css`
 only — reduced scope compared to previous description.
 
 ---
 
-### `0.5.0.0` — Token cleanup, container queries, and API rationalisation
+### `0.5.0.0` — Token cleanup and API rationalisation
 
-**Theme:** token API cleanup and layout-layer modernization. Breaking changes
-to token names and modifier-class names are intentional — the scope and nature
-of the changes justify the MAJOR bump to `0.5`. Consumers upgrading from
-`0.4.x` should consult `docs/MIGRATING-0.3-TO-1.0.md` for the full list of
-renames and removals.
+**Theme:** remaining token API cleanup and JS accessibility gap-close.
+T4/C1/C2/C3/K3 shipped early in 0.4.5–0.4.6 as part of the issue #3
+cleanup pass; the items below are what remains. Breaking changes to token
+names are intentional — the scope justifies the MAJOR bump to `0.5`.
+Consumers upgrading from `0.4.x` should consult
+`docs/MIGRATING-0.3-TO-1.0.md` for the full list of renames and removals.
 
 **Implementation order:**
 
-1. `tokens-default.css` — T1 through T9 (all tokens first; the rest cascades)
-2. `slashed-core.css` — C1, C2, C3
-3. `slashed-components.css` — K1, K2, K3
-4. `slashed-utilities.css` — U1, U2
-5. `ROADMAP.md` + `docs/BRICKS.md` — D1, D2
-6. Rebuild `slashed-full.css` via `bin/build-bundle.sh`
-7. Audit wireframes for removed token and class names (`.container--narrow`,
-   `.text-7xl`, `--font-weight-bold`, etc.) — fix or record as migration notes
-   in CHANGELOG.
+1. `tokens-default.css` — T1, T2, T3, T5, T6, T7, T8, T9
+   (T4 shipped in 0.4.6.0)
+2. `slashed-components.css` — K1, K2
+   (C1, C2, C3, K3 shipped in 0.4.5.0 / 0.4.6.0)
+3. `slashed-utilities.css` — U1, U2
+4. `docs/BRICKS.md` — D1
+5. Rebuild `slashed-full.css` via `bin/build-bundle.sh`
+6. Audit wireframes for removed token names (`.text-7xl`,
+   `--font-weight-bold`, etc.) — fix or record as migration notes in
+   CHANGELOG.
 
-**Summary of changes:**
+**Summary of remaining changes:**
 
-| Action | Count |
-|---|---|
-| Tokens removed | 23 |
-| Tokens added | 6 (`--container-wide`, `--container-full`, `--z-above`, `--duration-enter`, `--duration-exit`, `--font-weight-heading`) |
-| Tokens renamed | 4 (3 containers + `--font-weight-bold` → `--font-weight-heading`) |
-| Utility classes removed | 4 (`.text-6xl` through `.text-9xl`) |
-| Modifier classes removed | 2 (`.container--xs`, `.container--sm`) |
-| Modifier classes added | 2 (`.container--wide`, `.container--full`) |
-| Modifier classes renamed | 3 (`.container--narrow/xs/sm` → `prose/dialog/form`) |
-| CSS files changed | 4 |
-| Docs files new | 1 (`docs/BRICKS.md`) |
+| Action | Remaining | Already shipped |
+|---|---|---|
+| Tokens removed | 19 (T1–T3, T5) | 4 (T4 — container renames, 0.4.6.0) |
+| Tokens added | 4 (`--z-above`, `--duration-enter`, `--duration-exit`, `--font-weight-heading`) | 2 (`--container-wide`, `--container-full`, 0.4.6.0) |
+| Tokens renamed | 1 (`--font-weight-bold` → `--font-weight-heading`) | 3 (container tokens, 0.4.6.0) |
+| Utility classes removed | 4 (`.text-6xl` through `.text-9xl`) | — |
+| Modifier classes removed/added/renamed | — | All 7 (0.4.6.0) |
+| CSS files to update | 2 (`tokens-default.css`, `slashed-components.css`) | 2 (`slashed-core.css`, `slashed-utilities.css`) |
+| Docs files new | 1 (`docs/BRICKS.md`) | — |
 
 ---
 
@@ -746,23 +728,6 @@ Remove:
 
 Scale ends at `--text-5xl` (64–96 px). `--text-fluid-hero` serves hero
 sections.
-
----
-
-#### T4 — Rename container tokens to semantic names
-
-**File:** `css/tokens-default.css`
-
-Remove and replace:
-
-```text
---container-xs: 20rem      →  --container-dialog: 20rem
---container-sm: 24rem      →  --container-form:   24rem
---container-narrow: 40rem  →  --container-prose:  40rem
---container-default: 75rem →  (unchanged)
-                           +  --container-wide: 90rem   (new)
-                           +  --container-full: none    (new — fixes the missing full-width token)
-```
 
 ---
 
@@ -850,54 +815,6 @@ rest of the token rationalisation pass.)
 
 ---
 
-#### C1 — Update container modifier class names
-
-**File:** `css/slashed-core.css`
-
-```text
-.container--xs      →  .container--dialog
-.container--sm      →  .container--form
-.container--narrow  →  .container--prose
-                    +  .container--wide  { max-width: var(--container-wide); }
-                    +  .container--full  { max-width: var(--container-full); }
-```
-
----
-
-#### C2 — Replace `@media` with `@container` in layout primitives
-
-**File:** `css/slashed-core.css`
-
-Applies to: `.grid-2` through `.grid-12`, `.grid-sidebar`, `.grid-1-1`,
-`.grid-1-2`, `.grid-1-3`, `.grid-2-1`.
-
-Each selector gains `container-type: inline-size`. All
-`@media (min-width: …)` rules inside the layout layer for these classes are
-replaced with identical `@container (min-width: …)` rules.
-
-Add comment:
-
-```css
-/* container-type: inline-size — grid responds to its own width, not viewport.
-   Correct behaviour in sidebars, Bricks columns, and nested layouts.
-   .cq-inline on a .grid-* element is redundant (both set container-type). */
-```
-
-**End state:** `slashed-core.css` contains no `@media` rules with hardcoded
-breakpoint values. The only file with hardcoded breakpoints remains
-`slashed-utilities.css`.
-
----
-
-#### C3 — Update `--container-narrow` references → `--container-prose`
-
-**File:** `css/slashed-core.css`
-
-Search for `var(--container-narrow` and replace with `var(--container-prose`.
-Affects `.cs-section-header` and `.prose` max-width declarations at minimum.
-
----
-
 #### K1 — Replace `--font-weight-bold` and derivatives in components
 
 **File:** `css/slashed-components.css`
@@ -916,14 +833,6 @@ open/close, popover. Replace:
 
 - Entry animations → `var(--duration-enter)`
 - Exit animations → `var(--duration-exit)`
-
----
-
-#### K3 — Update `--container-narrow` references → `--container-prose`
-
-**File:** `css/slashed-components.css`
-
-Identical to C3 — search and replace throughout the file.
 
 ---
 
@@ -969,19 +878,6 @@ Sections to include:
 - Prefer `cq-*` utility classes over `md:` / `lg:` when styling inside Bricks
 - Layout primitives after C2 are container-aware and do not require
   breakpoint synchronisation
-
----
-
-#### D2 — Update this roadmap
-
-- **Issue #21 (`@custom-media`)** — update the description in the
-  "Plan for 2026" track: `slashed-core.css` no longer contains breakpoints
-  after C2; the problem is now limited to `slashed-utilities.css`. Reduced
-  scope.
-- **API freeze review** — remove the `--shadow-inner: 0.06` bullet from the
-  Path to 1.0 checklist; fixed in T6.
-- **Auto-pairing** — move the `--color-text-on-*` item from pending to the
-  "Explicitly NOT on the roadmap" section, noting it shipped in `0.5.0.0`.
 
 ---
 
@@ -1081,6 +977,31 @@ when planning the version that will become 1.0.
 Items that have been proposed in the past but are not pending. Documented
 here to prevent re-addition.
 
+- **Container token rename (T4)** — shipped in `0.4.6.0`.
+  `--container-xs/sm/narrow` → `--container-dialog/form/prose`; added
+  `--container-wide` (90rem) and `--container-full` (none).
+- **Container modifier class rename (C1)** — shipped in `0.4.6.0`.
+  `.container--xs/sm/narrow` → `.container--dialog/form/prose/wide/full`.
+- **Grid `@container` queries (C2)** — shipped in `0.4.5.0`. `.grid-N`
+  layout primitives now set `container-type: inline-size` and respond to
+  their own width, not the viewport. `slashed-core.css` is now breakpoint-
+  free; `slashed-utilities.css` is the only file with hardcoded values.
+- **`--container-narrow` → `--container-prose` references (C3, K3)** —
+  shipped in `0.4.6.0`. All in-source `var(--container-narrow)` calls
+  updated in both `slashed-core.css` and `slashed-components.css`.
+- **Width utility refactor** — shipped in `0.4.6.0`. Fractional `.w-*`
+  renamed to slash notation (`.w-1/2`, `.w-1/3`, etc.); `.w-content-*`
+  same; `.w-vw-10` … `.w-vw-100` added as the viewport-relative scale
+  (the pre-ship name in this roadmap was `.w-10`/`-20`/…/`-90` — landed
+  as `.w-vw-*` to avoid axis ambiguity).
+- **`.cs-table--responsive`** — shipped in `0.4.5.0`. `display: block;
+  overflow-x: auto;` modifier for horizontal-scroll tables.
+- **`initModals` click-outside fix** — shipped in `0.4.5.0`. Handler now
+  checks `event.target === dialog` exclusively.
+- **`slashedUI.updateRange(input)` public API** — shipped in `0.4.5.0`.
+  Extracted from the private `update()` closure inside `initRangeFill`.
+- **`.cs-nav-dropdown::details-content`** — shipped in `0.4.5.0`. Smooth
+  height animation on mobile (≤47.99em) for the mobile accordion path.
 - **Auto-pairing `--color-text-on-*`** — shipped in `0.5.0.0` (T9).
   `oklch(from var(--primary) …)` formula inside `@supports` guard; static
   `white` / `var(--neutral-900)` fallbacks remain for Firefox 120–127.
