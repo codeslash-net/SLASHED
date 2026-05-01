@@ -628,8 +628,8 @@ names are intentional — the scope justifies the MAJOR bump to `0.5`.
 
 | Action | Remaining | Already shipped |
 |---|---|---|
-| Tokens removed | 19 (T1–T3, T5) | 4 (T4 — container renames, 0.4.6.0) |
-| Tokens added | 4 (`--z-above`, `--duration-enter`, `--duration-exit`, `--font-weight-heading`) | 2 (`--container-wide`, `--container-full`, 0.4.6.0) |
+| Tokens removed | 18 (T1–T3) | 4 (T4 — container renames, 0.4.6.0) |
+| Tokens added | 3 (`--z-above`, `--duration-enter`, `--duration-exit`) | 2 (`--container-wide`, `--container-full`, 0.4.6.0) |
 | Tokens renamed | 1 (`--font-weight-bold` → `--font-weight-heading`) | 3 (container tokens, 0.4.6.0) |
 | Utility classes removed | 4 (`.text-6xl` through `.text-9xl`) | — |
 | Modifier classes removed/added/renamed | — | All 7 (0.4.6.0) |
