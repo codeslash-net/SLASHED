@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Components — v0.4.4.0
+   SLASHED Components — v0.4.6.0
    Interactive UI components, form patterns, animation patterns.
    Requires: slashed-core.css (or slashed-full.css)
    ========================================================================== */
@@ -426,11 +426,11 @@
   /* ----- Section header ----- */
   /* The most repeated pattern on marketing sites: eyebrow + heading + lead text.
      Centered by default. Use --left modifier for left-aligned sections.
-     Customizable: --section-header-max (default: --container-narrow) */
+     Customizable: --section-header-max (default: --container-prose) */
 
   .cs-section-header {
     text-align: center;
-    max-width: var(--section-header-max, var(--container-narrow, 40rem));
+    max-width: var(--section-header-max, var(--container-prose, 65ch));
     margin-inline: auto;
   }
 
@@ -492,19 +492,15 @@
 
   /* ----- Input group ----- */
 
+  /* Children retain full borders. Joining is done by the negative margin
+     in the addons block below (margin-inline-start: -1px on > * + *), so
+     overlapping borders collapse to a single 1px line and the last child
+     keeps its trailing border intact. */
   .cs-input-group { display: flex; }
   .cs-input-group > input,
   .cs-input-group > select {
     flex: 1;
     min-width: 0;
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
-    border-inline-end: 0;
-  }
-  .cs-input-group > button,
-  .cs-input-group > [role="button"] {
-    border-start-start-radius: 0;
-    border-end-start-radius: 0;
   }
 
   /* ----- Divider (line-text-line) ----- */
@@ -618,8 +614,7 @@
   .cs-form-group__input[type="search"],
   .cs-form-group__input[type="password"],
   .cs-form-group__input[type="number"],
-  textarea.cs-form-group__input,
-  select.cs-form-group__input {
+  .cs-form-group__input:is(textarea, select) {
     padding: var(--input-padding-y, var(--space-xs)) var(--input-padding-x, var(--space-s));
     border: var(--border-width, 1px) solid var(--input-border, var(--color-border));
     border-radius: var(--input-radius, var(--radius-m));
@@ -828,9 +823,14 @@
   .cs-table--hoverable tbody tr {
     transition: background-color var(--duration-fast) var(--ease-out);
   }
-  
+
     .cs-table--hoverable tbody tr:hover { background: var(--color-surface-2); }
-  
+
+  /* display: block + overflow-x: auto required for reliable horizontal scroll on
+     narrow viewports — overflow-x alone on a <table> element does not create a
+     scroll container across browsers. Same pattern used by .prose table. */
+  .cs-table--responsive { display: block; overflow-x: auto; max-width: 100%; }
+
 
   /* ----- Feature list (checkmark-prefixed list) ----- */
   /* Tag-agnostic — works on <ul>, <ol>, or <div>. Marker uses ::before with unicode,
@@ -993,17 +993,16 @@
 
   /* ----- Nav link (plain navigation link, matches parent in dropdowns) ----- */
   /* Use on plain <a> in navigation alongside cs-nav-dropdown for visual consistency.
-     Uses `a.cs-nav-link` selector (specificity 0,1,1) to override base `a` and `a:visited`
-     which would otherwise apply framework's link color. */
-  a.cs-nav-link {
+     Lives in @layer slashed.components, beats base `a` / `a:visited` by layer order. */
+  .cs-nav-link {
     text-decoration: none;
     color: var(--color-text-muted);
     padding-block: var(--space-2xs);
     transition: color var(--duration-fast) var(--ease-out);
   }
-  a.cs-nav-link:hover,
-  a.cs-nav-link:visited:hover { color: var(--color-text); }
-  a.cs-nav-link:visited { color: var(--color-text-muted); }
+  .cs-nav-link:hover,
+  .cs-nav-link:visited:hover { color: var(--color-text); }
+  .cs-nav-link:visited { color: var(--color-text-muted); }
 
   /* ----- Nav dropdown (submenu for primary navigation) ----- */
   /* Uses native <details>/<summary> — zero JS required for basic operation.
@@ -1070,19 +1069,19 @@
 
   /* Parent link — matches .cs-nav-link styling.
      padding-block extends click target to full nav height.
-     Using a.-scoped selector (specificity 0,1,1) to override base `a` styles. */
-  a.cs-nav-dropdown__parent {
+     Lives in @layer slashed.components, beats base `a` / `a:visited` by layer order. */
+  .cs-nav-dropdown__parent {
     text-decoration: none;
     color: var(--color-text-muted);
     padding-block: var(--space-2xs);
     transition: color var(--duration-fast) var(--ease-out);
   }
-  a.cs-nav-dropdown__parent:hover,
-  a.cs-nav-dropdown__parent:visited:hover,
-  .cs-nav-dropdown[open] > summary > a.cs-nav-dropdown__parent {
+  .cs-nav-dropdown__parent:hover,
+  .cs-nav-dropdown__parent:visited:hover,
+  .cs-nav-dropdown[open] > summary > .cs-nav-dropdown__parent {
     color: var(--color-text);
   }
-  a.cs-nav-dropdown__parent:visited { color: var(--color-text-muted); }
+  .cs-nav-dropdown__parent:visited { color: var(--color-text-muted); }
 
   .cs-nav-dropdown__menu {
     list-style: none;
@@ -1143,6 +1142,21 @@
       padding-inline-start: var(--space-m);
       padding-block: var(--space-xs);
       gap: var(--space-2xs);
+    }
+
+    /* Animated expand on mobile only. Cannot apply globally because
+       overflow: hidden on ::details-content would clip the desktop popover
+       which uses position: absolute below — popover would be cut to height: 0
+       of its details parent. Future: reimplement desktop using popover API +
+       anchor positioning, then this rule can apply globally. */
+    @supports selector(details::details-content) {
+      .cs-nav-dropdown::details-content {
+        height: 0;
+        overflow: hidden;
+        transition: height var(--duration-normal, 250ms) var(--ease-out, ease-out),
+                    content-visibility var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+      }
+      .cs-nav-dropdown[open]::details-content { height: auto; }
     }
   }
 

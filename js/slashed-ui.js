@@ -56,27 +56,22 @@
   }
 
   /* ---------------------------------------------------------------
-     2. Modal — click-outside to close, Escape to close
-     Enhances .cs-modal (<dialog>-based).
+     2. Modal — click-outside to close.
+     The browser sets event.target to the <dialog> element itself when the
+     click lands on the backdrop pseudo-element. That is the only reliable
+     signal — rect comparison and tree containment are heuristics that
+     misfire on borders, scrollbars, and portal-rendered popovers.
+     Escape is handled natively by <dialog>.
   --------------------------------------------------------------- */
   function initModals() {
     document.addEventListener('click', function (e) {
-      var openModals = Array.from(document.querySelectorAll('dialog.cs-modal[open]'));
-      var dialog = null;
-      for (var i = openModals.length - 1; i >= 0; i--) {
-        if (openModals[i].matches(':modal')) { dialog = openModals[i]; break; }
-      }
-      if (!dialog) dialog = openModals[openModals.length - 1];
-      if (!dialog) return;
-      var rect = dialog.getBoundingClientRect();
-      var clickedBackdrop =
-        e.target === dialog &&
-        (e.clientX < rect.left || e.clientX > rect.right ||
-         e.clientY < rect.top  || e.clientY > rect.bottom);
-      var clickedOutsideTree = !dialog.contains(e.target);
-      if (clickedBackdrop || clickedOutsideTree) dialog.close();
+      var dialog = document.querySelector('dialog.cs-modal:modal');
+      if (dialog && e.target === dialog) dialog.close();
     });
-    /* Escape is handled natively by <dialog> — no JS needed */
+  }
+
+  function closeModal(dialog) {
+    if (dialog && typeof dialog.close === 'function') dialog.close();
   }
 
   /* ---------------------------------------------------------------
@@ -106,24 +101,26 @@
          );
        }
   --------------------------------------------------------------- */
-  function initRangeFill() {
-    function update(input) {
-      var minRaw = parseFloat(input.min);
-      var maxRaw = parseFloat(input.max);
-      var valRaw = parseFloat(input.value);
-      var min = Number.isFinite(minRaw) ? minRaw : 0;
-      var max = Number.isFinite(maxRaw) ? maxRaw : 100;
-      var val = Number.isFinite(valRaw) ? valRaw : 0;
-      var denom = max - min;
-      if (denom === 0) {
-        input.style.setProperty('--_fill', '0%');
-      } else {
-        input.style.setProperty('--_fill', ((val - min) / denom * 100) + '%');
-      }
+  function updateRange(input) {
+    if (!input) return;
+    var minRaw = parseFloat(input.min);
+    var maxRaw = parseFloat(input.max);
+    var valRaw = parseFloat(input.value);
+    var min = Number.isFinite(minRaw) ? minRaw : 0;
+    var max = Number.isFinite(maxRaw) ? maxRaw : 100;
+    var val = Number.isFinite(valRaw) ? valRaw : 0;
+    var denom = max - min;
+    if (denom === 0) {
+      input.style.setProperty('--_fill', '0%');
+    } else {
+      input.style.setProperty('--_fill', ((val - min) / denom * 100) + '%');
     }
-    document.querySelectorAll('input[type="range"]').forEach(update);
+  }
+
+  function initRangeFill() {
+    document.querySelectorAll('input[type="range"]').forEach(updateRange);
     document.addEventListener('input', function (e) {
-      if (e.target.type === 'range') update(e.target);
+      if (e.target.type === 'range') updateRange(e.target);
     });
   }
 
@@ -235,9 +232,17 @@
     init();
   }
 
-  /* Expose public helpers for dynamic content re-runs and toasts:
+  /* Expose public helpers for dynamic content re-runs, toasts, range
+     re-paints, and programmatic modal close:
      slashedUI.initStagger(containerElement)
-     slashedUI.toast({ title, body, variant, duration }) */
-  window.slashedUI = Object.assign(window.slashedUI || {}, { initStagger: initStagger, toast: toast });
+     slashedUI.toast({ title, body, variant, duration })
+     slashedUI.updateRange(rangeInputElement)
+     slashedUI.closeModal(dialogElement) */
+  window.slashedUI = Object.assign(window.slashedUI || {}, {
+    initStagger: initStagger,
+    toast: toast,
+    updateRange: updateRange,
+    closeModal: closeModal
+  });
 
 })();

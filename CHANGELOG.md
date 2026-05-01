@@ -12,18 +12,212 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [unreleased]
 
+### Fixed (review pass on PR #4)
+
+- `css/tokens-default.css` — `--color-text-on-primary` in dark mode
+  changed from `#ffffff` to `#111827`. White on dark-mode primary
+  (`#5b8def`) was 3.24:1, failing WCAG AA. Dark text is 5.48:1.
+- `css/slashed-core.css` `prefers-reduced-data` selector tightened from
+  `[class*="cs-"]` / `[class*="bg-"]` (substring match, false-positives
+  on names like `btn-cs-primary`) to whole-token matching with
+  `[class^="cs-"], [class*=" cs-"]`.
+- `css/slashed-core.css` `.bento` `@container` queries — `(max-width:
+  48em)` tightened to `(max-width: 47.99em)` on both occurrences (medium
+  bento layout and span-collapse override). Aligns with the
+  `47.99em` convention used elsewhere in the framework and prevents
+  the medium rule from leaking into the `48em` breakpoint.
+- `css/slashed-core.css` `dialog` element — width now derives from
+  `--container-dialog` (20rem) via a new `--dialog-max-width` instance
+  custom property. The previous default routed through
+  `--container-prose` (65ch), which made the new `--container-dialog`
+  token meaningless for the very element it was named for. Consumers
+  who want wider dialogs can override per-instance:
+  `<dialog style="--dialog-max-width: var(--container-prose)">…</dialog>`.
+  This shrinks the default `<dialog>` width from ~40rem to 20rem; if
+  your app has substantive dialogs, set `--dialog-max-width` (per
+  instance or globally on `:root`) to your preferred token.
+- `docs/COMPONENTS.md` `.cs-nav-link` paragraph rewritten — no longer
+  claims the rule is authored as `a.cs-nav-link` with specificity
+  0,1,1; documents the class-only authoring and the cascade-layer
+  mechanism.
+
+## [0.4.6.0] — 2026-04-30 — Container token rename, width utility refactor, docs audit
+
+Resolves issue #3 sections 6 and 7. Two breaking changes shipped without
+deprecation aliases (pre-1.0 caveat — see `docs/DEPRECATION-POLICY.md`).
+Migration is a search-and-replace on consumer wireframes; the maps below
+are exhaustive.
+
+### Breaking
+
+- Container tokens — `--container-xs`, `--container-sm`, `--container-narrow`
+  removed. `--container-prose` (already 65ch) replaces `--container-narrow`
+  semantically. New tokens `--container-dialog` (20rem) and
+  `--container-form` (24rem) replace `xs` / `sm`.
+
+  | Old | New |
+  |---|---|
+  | `--container-xs` (20rem) | `--container-dialog` (20rem) |
+  | `--container-sm` (24rem) | `--container-form` (24rem) |
+  | `--container-narrow` (40rem) | `--container-prose` (65ch — already in tokens) |
+
+- Container modifier classes — `.container--xs`, `.container--sm`,
+  `.container--narrow` removed.
+
+  | Old | New |
+  |---|---|
+  | `.container--xs` | `.container--dialog` |
+  | `.container--sm` | `.container--form` |
+  | `.container--narrow` | `.container--prose` |
+
+- Width utilities — fractional `.w-*` and `.w-content-*` reorganised into
+  three explicit axes with prefix-based names. Old numeric variants
+  removed.
+
+  | Old | New |
+  |---|---|
+  | `.w-25` | `.w-1/4` |
+  | `.w-33` | `.w-1/3` |
+  | `.w-50` | `.w-1/2` |
+  | `.w-66` | `.w-2/3` |
+  | `.w-75` | `.w-3/4` |
+  | `.w-content-25` | `.w-content-1/4` |
+  | `.w-content-33` | `.w-content-1/3` |
+  | `.w-content-50` | `.w-content-1/2` |
+  | `.w-content-66` | `.w-content-2/3` |
+  | `.w-content-75` | `.w-content-3/4` |
+  | _(no equivalent)_ | `.w-vw-10` … `.w-vw-100` (steps of 10) |
+
+  The slash is escaped in CSS source (`.w-1\/2 { … }`) and unescaped in
+  HTML (`class="w-1/2"`) — the same convention used by Tailwind. Three
+  axes are now distinct: parent-relative (fractions), viewport-relative
+  (`.w-vw-*`), content-width-relative (`.w-content-*`).
+
 ### Changed
 
+- `css/slashed-core.css` — `dialog` base width changed from
+  `var(--container-narrow, 40rem)` to `var(--container-prose, 65ch)`.
+  Visual width shifts a few rem either way depending on body font size;
+  the `ch` unit follows readable line-length more correctly than a fixed
+  rem value.
+- `css/slashed-components.css` — `.cs-section-header` default
+  `--section-header-max` changed from `--container-narrow` to
+  `--container-prose`. Same reasoning.
+
+### Added
+
+- `css/slashed-utilities.css` — `.w-vw-10` … `.w-vw-100` viewport-width
+  scale in 10% steps.
+
+### Documentation
+
+- `cheatsheet.html` — Width section expanded to show all three axes.
+  Container variants list updated (`dialog/form/prose/wide/full`).
+- `docs/UTILITIES.md` — Width table replaces single-line percentage
+  entry with the three-axis table; intro note explains the distinction.
+
+### Regenerated
+
+- `css/slashed-full.css` regenerated at v0.4.6.0 state.
+
+---
+
+## [0.4.5.0] — 2026-04-30 — Cleanup pass: layered selectors, dark contrast, native `<dialog>` semantics, `.grid-N` container queries
+
+Resolves issue #3 sections 1, 3, 4, 5, and the layout-half of section 2.
+Section 6 (container token rename) and section 7 (utility audit + width
+scale) ship in 0.4.6.0.
+
+### Breaking
+
+- `css/slashed-core.css` — fixed grids (`.grid-1` … `.grid-12`,
+  `.grid-sidebar`, `.grid-1-1`, `.grid-1-2`, `.grid-1-3`, `.grid-2-1`)
+  now establish their own `container-type: inline-size` and use
+  `@container (min-width: …)` instead of `@media`. Layouts inside narrow
+  parents (Bricks columns, sidebars, modal bodies) collapse to fewer
+  columns based on their actual width, not the viewport. This is the
+  intended behaviour and aligns with the framework's "intrinsic layout"
+  pillar — but consumers who relied on the previous viewport-based
+  collapse will see different breakpoints on nested usage. Standard
+  remedy: none required if the grid is direct child of a full-width
+  container; otherwise widen the parent or pick a smaller grid.
+- `js/slashed-ui.js` — `initModals` no longer closes the modal on clicks
+  outside the dialog's DOM tree. The browser already routes backdrop
+  clicks to `event.target === <dialog>`; that is now the sole signal.
+  Portal-rendered popovers (autocomplete, tooltips, Select-style menus)
+  attached to `document.body` from inside a modal will no longer
+  accidentally close the modal.
+
+### Changed
+
+- `css/slashed-components.css` — `.cs-nav-link`, `.cs-nav-link:hover`,
+  `.cs-nav-link:visited`, `.cs-nav-link:visited:hover` lost the `a.`
+  prefix. Same for `.cs-nav-dropdown__parent` and its variants. Cascade
+  layer order is sufficient to beat base `a` / `a:visited` styles —
+  the tag prefix was redundant.
+- `css/slashed-components.css` — `textarea.cs-form-group__input,
+  select.cs-form-group__input` rule consolidated into
+  `.cs-form-group__input:is(textarea, select)` and joined into the
+  shared selector list with the `[type="…"]` variants. No tag prefix.
+- `css/slashed-components.css` — `.cs-input-group > input,
+  .cs-input-group > select` no longer strip `border-inline-end` or
+  squash trailing radii. The negative `margin-inline-start: -1px` on
+  `.cs-input-group > * + *` (already in the addons block) is the only
+  joining mechanism, so all permutations (`input|btn`, `btn|input`,
+  `input|input|btn`, `btn|btn|input`) collapse to a single 1px seam,
+  the trailing element keeps its full border, and `:focus-visible`
+  draws a complete outline.
+- `css/tokens-default.css` — dark mode (`@media (prefers-color-scheme:
+  dark) :root:not([data-theme="light"])` and `[data-theme="dark"]`) now
+  hardcodes `--color-text-on-primary`, `--color-text-on-secondary`, and
+  `--color-text-on-accent`. Without these the light-mode values
+  (`var(--neutral-900)` etc.) would cascade into dark mode where
+  `--neutral-900` flips to a near-white value, producing light-on-yellow
+  contrast failures. T9 in 0.5.0 will replace these constants with
+  `oklch(from …)` auto-pairing on engines that support Relative Color
+  Syntax; the constants serve as the universal fallback.
+- `js/slashed-ui.js` — `initModals` is now a four-line handler around
+  `document.querySelector('dialog.cs-modal:modal')` and
+  `event.target === dialog`. The previous mix of bounding-rect math
+  and tree-containment checks is removed.
+- `js/slashed-ui.js` — `initRangeFill`'s inner `update()` extracted to a
+  module-scope `updateRange(input)` so it can be invoked directly. The
+  auto-attach behaviour on `input[type="range"]` is unchanged.
+
+### Added
+
+- `css/slashed-components.css` — `.cs-table--responsive` modifier:
+  `display: block; overflow-x: auto; max-width: 100%;`. Same horizontal-
+  scroll pattern already used by `.prose table`. Apply alongside
+  existing `.cs-table--*` modifiers when a table needs to scroll on
+  narrow viewports.
+- `css/slashed-components.css` — `.cs-nav-dropdown::details-content`
+  rule for browsers that support the pseudo-element (Chrome 131+,
+  Firefox 133+, Safari 18.2+). Animates the height transition on
+  mobile (≤47.99em) so the dropdown expands smoothly instead of
+  snapping. The rule is intentionally scoped to mobile because
+  `overflow: hidden` on `::details-content` would clip the desktop
+  popover, which uses `position: absolute`. A future major may
+  reimplement the desktop dropdown on Popover API + anchor
+  positioning, at which point the rule can lift the media query.
+- `js/slashed-ui.js` — `slashedUI.updateRange(input)` and
+  `slashedUI.closeModal(dialog)` exposed on `window.slashedUI` for
+  programmatic invocation from dynamic content (form re-render,
+  programmatic dismiss, etc.).
+
+### Documentation
+
+- `docs/DEPRECATION-POLICY.md` filled in (was a TBD skeleton). Defines the framework's three-phase policy — Announce → Alias → Remove — for renames and removals on the public surface (tokens, `.cs-*` classes, layout primitives, utilities, instance custom properties, cascade-layer order). Pragmatic, buildless-friendly: aliases live as in-source CSS rules with a `/* Deprecated since vX.Y.Z, removed in vA.B.C */` comment, no new cascade layer, no `console.warn`. Minimum aliasing window is one full minor release. Pre-1.0 reserves the right to break outside this process; post-1.0 it becomes binding.
+- `docs/SPEC.md` § "Path to 1.0" — added a 10th bullet, "Cheatsheet content audit." Every entry in `cheatsheet.html` must map to a real selector or `--*` declaration in `css/*.css`, verified by a CI grep script before 1.0. Protects against silent documentation drift as the cheatsheet grows.
 - Acronym expansion updated to reflect the framework's evolved philosophy.
   **Old:** Structured Lightweight Agnostic Speedy Hybrid Essential
   Dependency-free. **New:** Standalone Lean Agnostic Structured Hybrid
   Edgeless Deterministic. All public API (class names, tokens, file names)
   is unchanged — this is a documentation/philosophy update only.
 
-### Documentation
+### Regenerated
 
-- `docs/DEPRECATION-POLICY.md` filled in (was a TBD skeleton). Defines the framework's three-phase policy — Announce → Alias → Remove — for renames and removals on the public surface (tokens, `.cs-*` classes, layout primitives, utilities, instance custom properties, cascade-layer order). Pragmatic, buildless-friendly: aliases live as in-source CSS rules with a `/* Deprecated since vX.Y.Z, removed in vA.B.C */` comment, no new cascade layer, no `console.warn`. Minimum aliasing window is one full minor release. Pre-1.0 reserves the right to break outside this process; post-1.0 it becomes binding.
-- `docs/SPEC.md` § "Path to 1.0" — added a 10th bullet, "Cheatsheet content audit." Every entry in `cheatsheet.html` must map to a real selector or `--*` declaration in `css/*.css`, verified by a CI grep script before 1.0. Protects against silent documentation drift as the cheatsheet grows.
+- `css/slashed-full.css` regenerated at v0.4.5.0 state.
 
 ## [0.4.4.0] — 2026-04-28 — `.cs-banner` and `.cs-marquee` components
 

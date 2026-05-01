@@ -275,7 +275,7 @@ List of disclosures with shared borders. Smooth open/close animation requires `:
 
 ### `.cs-nav-link`
 
-Plain nav link styled to match dropdown anchors. Authored as `a.cs-nav-link` (specificity 0,1,1) to override base `a` and `a:visited`.
+Plain nav link styled to match dropdown anchors. Authored as `.cs-nav-link` (class-only) and lives in `@layer slashed.components`, so it beats base `a` / `a:visited` by cascade-layer order regardless of selector specificity. Apply to any element that should look like a nav link — most commonly `<a>`, but `<button>` works too.
 
 ```html
 <a class="cs-nav-link" href="/products">Products</a>
@@ -1083,4 +1083,4 @@ For custom dropdown components, opt into the same auto-escape by setting `[data-
 
 ## Version
 
-This reference reflects framework **v0.4.4.0**. Changelog per component in [CHANGELOG.md](../CHANGELOG.md).
+This reference reflects framework **v0.4.6.0**. Changelog per component in [CHANGELOG.md](../CHANGELOG.md).

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Full Bundle — v0.4.4.0
+   SLASHED Full Bundle — v0.4.6.0
    Concatenation of: tokens-default + slashed-core + slashed-components + slashed-utilities
    Does NOT include slashed-utilities-visual.css (opt-in separately).
    Does NOT include slashed-experimental.css (opt-in separately; see INSTALLATION.md).
@@ -7,7 +7,7 @@
    ========================================================================== */
 
 /* ==========================================================================
-   SLASHED Tokens — Default — v0.4.4.0
+   SLASHED Tokens — Default — v0.4.6.0
    ========================================================================== */
 
 /* ================================================================
@@ -477,19 +477,18 @@
   --ease-inout:   cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ===== Containers ===== */
+  /* ===== Containers — semantic, intent-named ===== */
 
-  --container-xs:    20rem;   /*  320px */
-  --container-sm:    24rem;   /*  384px */
-  --container-narrow: 40rem;  /*  640px */
-  --container-default: 75rem; /* 1200px — main content */
+  --container-dialog:  20rem;  /*  320px — dialogs, popovers, narrow sidebars */
+  --container-form:    24rem;  /*  384px — single-column forms */
+  --container-prose:   65ch;   /*  ≈40rem — readable line length for body text */
+  --container-default: 75rem;  /* 1200px — main content */
   --content-width:     var(--container-default); /* semantic alias — width of the
                                                      readable content column. Used by
                                                      `.section` content track and
                                                      `.w-content-*` utilities. */
-  --container-wide:   90rem;  /* 1440px */
-  --container-full:   100%;
-  --container-prose:  65ch;
+  --container-wide:    90rem;  /* 1440px */
+  --container-full:    100%;
 
   /* ===== Focus ring ===== */
 
@@ -617,6 +616,15 @@
     --color-text-muted:       #9ca3af;
     --color-text-faint:       #6b7280;
     --color-text-disabled:    #4b5563;
+    /* Hardcoded contrast on brand surfaces — without these, light-mode values
+       (white / var(--neutral-900)) cascade and fail in dark mode where
+       --neutral-900 flips to light. Dark text wins because dark-mode brand
+       fills (--primary #5b8def, --secondary #2dd4bf, --accent #fbbf24) all
+       sit too light for white text to clear AA. T9 will replace with
+       oklch(from ...) auto-pairing. */
+    --color-text-on-primary:   #111827;
+    --color-text-on-secondary: #111827;
+    --color-text-on-accent:    #111827;
     --color-backdrop:         oklch(0 0 0 / 0.5);
     --color-selection:        var(--primary-a50);
     --color-link:             var(--primary);
@@ -681,6 +689,10 @@
   --color-text-muted:       #9ca3af;
   --color-text-faint:       #6b7280;
   --color-text-disabled:    #4b5563;
+  /* Hardcoded contrast on brand surfaces — see comment in prefers-color-scheme block. */
+  --color-text-on-primary:   #111827;
+  --color-text-on-secondary: #111827;
+  --color-text-on-accent:    #111827;
   --color-backdrop:         oklch(0 0 0 / 0.5);
   --color-selection:        var(--primary-a50);
   --color-link:             var(--primary);
@@ -715,7 +727,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Core — v0.4.4.0
+   SLASHED Core — v0.4.6.0
    Reset, base element defaults, layout primitives, a11y, print.
    Baseline: Chrome 123+, Firefox 120+, Safari 17.5+, Edge 123+ (graceful fallbacks for Safari 16.2–17.4)
    ========================================================================== */
@@ -955,8 +967,9 @@
       outline-offset: 0;
     }
     
+    @media (hover: hover) {
       &:hover { border-color: var(--color-border-strong, #9ca3af); }
-    
+    }
   }
 
   textarea {
@@ -1047,18 +1060,27 @@
   }
 
   /* ----- Range slider ----- */
-  /* Fully cross-browser styled. No fill gradient — requires JS to update CSS variable.
-     Use --range-thumb-color to customise the thumb color per instance. */
+  /* Fully cross-browser styled. Fill gradient painted by JS via --_fill (set by slashed-ui.js).
+     Use --range-thumb-color / --range-fill-color to customise colors per instance. */
 
   input[type="range"] {
     appearance: none;
     -webkit-appearance: none;
     inline-size: 100%;
     height: 0.25rem;
-    background: var(--color-border, #e5e7eb);
+    background: linear-gradient(
+      to right,
+      var(--range-fill-color, var(--primary, #2563eb)) var(--_fill, 0%),
+      var(--color-border, #e5e7eb) var(--_fill, 0%)
+    );
     border-radius: var(--radius-full, 9999px);
     cursor: pointer;
     transition: background var(--duration-fast, 150ms) var(--ease-out, ease-out);
+  }
+  input[type="range"]::-moz-range-progress {
+    background: var(--range-fill-color, var(--primary, #2563eb));
+    height: 0.25rem;
+    border-radius: var(--radius-full, 9999px);
   }
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -1072,7 +1094,9 @@
     transition: scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
   
+  @media (hover: hover) {
     input[type="range"]::-webkit-slider-thumb:hover { scale: 1.15; }
+  }
   
   input[type="range"]::-moz-range-thumb {
     width: 1.25rem;
@@ -1085,7 +1109,9 @@
     transition: scale var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
   
+  @media (hover: hover) {
     input[type="range"]::-moz-range-thumb:hover { scale: 1.15; }
+  }
   
   input[type="range"]::-moz-range-track {
     height: 0.25rem;
@@ -1122,9 +1148,11 @@
     transition: background-color var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
   
+  @media (hover: hover) {
     input[type="file"]::file-selector-button:hover {
       background: color-mix(in srgb, var(--color-surface-2, #f3f4f6) 60%, var(--neutral-300, #d1d5db));
     }
+  }
   
 
   /* ----- Color input ----- */
@@ -1203,11 +1231,17 @@
   }
 
   /* ----- Dialog ----- */
+  /* Default width tracks --container-dialog (20rem) — narrow confirmation
+     pattern. Override per-instance with the --dialog-max-width custom property
+     for substantive dialogs:
+       <dialog style="--dialog-max-width: var(--container-prose)">…</dialog>
+     or globally on consumer :root. */
 
   dialog {
+    --dialog-max-width: var(--container-dialog, 20rem);
     margin: auto;
-    width: min(calc(100% - 2 * var(--space-gutter, 1rem)), var(--container-narrow, 40rem));
-    max-width: min(90vw, var(--container-narrow, 40rem));
+    width: min(calc(100% - 2 * var(--space-gutter, 1rem)), var(--dialog-max-width));
+    max-width: min(90vw, var(--dialog-max-width));
     padding: var(--space-l, 1.5rem);
     border-radius: var(--radius-l, 0.75rem);
     box-shadow: var(--shadow-float, 0 16px 48px rgba(0, 0, 0, 0.12));
@@ -1440,9 +1474,15 @@
 @layer slashed.layout {
 
   /* ================================================================
-     BREAKPOINTS used in this layer (grid-2 through grid-12, grids,
-     sidebar, alternate, etc.) — same values as slashed-utilities.css.
-     If you change breakpoints in utilities, change them here too.
+     BREAKPOINTS used in this layer.
+
+     Fixed and ratio grids (.grid-N, .grid-sidebar, .grid-1-1, .grid-1-2,
+     .grid-1-3, .grid-2-1) use @container queries and respond to their
+     own width — correct behaviour in sidebars, Bricks columns, and
+     nested layouts. .cq-inline on a grid is redundant.
+
+     Other rules in this layer (.alternate, etc.) still use @media.
+     If you change breakpoints, keep them in sync with slashed-utilities.css.
 
      md: 48em (768px)  →  find: (min-width: 48em)
      sm: 30em (480px)  →  find: (min-width: 30em)
@@ -1465,12 +1505,11 @@
     margin-inline: auto;
     padding-inline: var(--space-gutter);
   }
-  .container--xs     { max-width: var(--container-xs); }
-  .container--sm     { max-width: var(--container-sm); }
-  .container--narrow { max-width: var(--container-narrow); }
+  .container--dialog { max-width: var(--container-dialog); }
+  .container--form   { max-width: var(--container-form); }
+  .container--prose  { max-width: var(--container-prose); }
   .container--wide   { max-width: var(--container-wide); }
   .container--full   { max-width: var(--container-full); }
-  .container--prose  { max-width: var(--container-prose); }
 
   /* ----- Content grid (breakout pattern) ----- */
   /* ⚠️ --breakout-width must be >= --content-width.
@@ -1480,6 +1519,7 @@
   .content-grid {
     --content-width: var(--container-default);
     --breakout-width: var(--container-wide);
+
     display: grid;
     grid-template-columns:
       [full-start] minmax(var(--space-gutter), 1fr)
@@ -1496,6 +1536,7 @@
 
   .auto-grid {
     --grid-min: 16rem;
+
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(var(--grid-min), 100%), 1fr));
     gap: var(--space-gap);
@@ -1522,14 +1563,15 @@
 
   .grid-1, .grid-2, .grid-3, .grid-4, .grid-5, .grid-6,
   .grid-7, .grid-8, .grid-9, .grid-10, .grid-11, .grid-12 {
+    container-type: inline-size;
     display: grid;
     gap: var(--space-gap);
   }
-  @media (min-width: 30em) {
+  @container (min-width: 30em) {
     .grid-4, .grid-5, .grid-6,
     .grid-7, .grid-8, .grid-9, .grid-10, .grid-11, .grid-12 { grid-template-columns: repeat(2, 1fr); }
   }
-  @media (min-width: 48em) {
+  @container (min-width: 48em) {
     .grid-2  { grid-template-columns: repeat(2, 1fr); }
     .grid-3  { grid-template-columns: repeat(3, 1fr); }
     .grid-4  { grid-template-columns: repeat(4, 1fr); }
@@ -1545,15 +1587,23 @@
 
   /* ----- Grid sidebar ----- */
 
-  .grid-sidebar { display: grid; gap: var(--space-gap); }
-  @media (min-width: 48em) {
+  .grid-sidebar {
+    container-type: inline-size;
+    display: grid;
+    gap: var(--space-gap);
+  }
+  @container (min-width: 48em) {
     .grid-sidebar { grid-template-columns: var(--sidebar-width, 18rem) 1fr; }
   }
 
-  /* ----- Ratio grids (mobile: stacked, ≥48em: ratio) ----- */
+  /* ----- Ratio grids (narrow: stacked, ≥48em container width: ratio) ----- */
 
-  .grid-1-1, .grid-1-3, .grid-1-2, .grid-2-1 { display: grid; gap: var(--space-gap); }
-  @media (min-width: 48em) {
+  .grid-1-1, .grid-1-3, .grid-1-2, .grid-2-1 {
+    container-type: inline-size;
+    display: grid;
+    gap: var(--space-gap);
+  }
+  @container (min-width: 48em) {
     .grid-1-1 { grid-template-columns: 1fr 1fr; }
     .grid-1-3 { grid-template-columns: 1fr 3fr; }
     .grid-1-2 { grid-template-columns: 1fr 2fr; }
@@ -1693,7 +1743,9 @@
     transition: opacity var(--duration-fast, 150ms) var(--ease-out, ease-out),
                 visibility var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
-  .group:hover > .group-show,
+  @media (hover: hover) {
+    .group:hover > .group-show { opacity: 1; visibility: visible; }
+  }
   .group:has(:focus-visible) > .group-show { opacity: 1; visibility: visible; }
 
   /* ----- Overlay ----- */
@@ -1773,6 +1825,7 @@
   .imposter--fixed { position: fixed; }
   .imposter--contain {
     --imposter-margin: var(--space-m);
+
     max-inline-size: calc(100% - var(--imposter-margin) * 2);
     max-block-size:  calc(100% - var(--imposter-margin) * 2);
     overflow: auto;
@@ -1805,28 +1858,16 @@
     gap: var(--bento-gap, var(--space-gap));
   }
 
-  /* Collapse to single column below 30em container width */
-  @container (max-width: 30em) {
-    .bento {
-      grid-auto-rows: auto;
-    }
-    .bento > * {
-      grid-column: 1 / -1 !important;
-      grid-row: auto !important;
-    }
-  }
+  /* Collapse to single column below 30em container width.
+     Rules live in slashed.overrides so they beat utility span classes without
+     needing !important; unlayered user BEM still wins over any @layer. */
 
   /* 2-column layout between 30em and 48em */
-  @container (min-width: 30em) and (max-width: 48em) {
+  @container (min-width: 30em) and (max-width: 47.99em) {
     .bento {
       grid-template-columns: repeat(2, 1fr);
       /* Same minmax pattern — keeps row-span-2 dominance while accommodating content */
       grid-auto-rows: minmax(var(--bento-row, 14rem), auto);
-    }
-    .bento > .col-span-3,
-    .bento > .col-span-4,
-    .bento > .col-span-full {
-      grid-column: 1 / -1;
     }
   }
 
@@ -1912,15 +1953,17 @@
 
   .hover-text {
     --hover-text: var(--primary-700, #1d4ed8);
+
     transition: color var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
 
   .hover-shadow {
     --hover-shadow: var(--shadow-l, 0 8px 24px 0 rgb(0 0 0 / 0.12));
+
     transition: box-shadow var(--duration-fast, 150ms) var(--ease-out, ease-out);
   }
 
-  
+  @media (hover: hover) {
     .hover-lift:hover   { box-shadow: var(--hover-lift-shadow, var(--shadow-m)); translate: 0 var(--hover-lift-y, -2px); }
     .hover-fade:hover   { opacity: 0.7; }
     .hover-bg:hover     { background-color: var(--hover-bg, var(--color-surface-2)); }
@@ -1928,7 +1971,8 @@
     .hover-border:hover { border-color: var(--hover-border, var(--primary)); }
     .hover-text:hover   { color: var(--hover-text); }
     .hover-shadow:hover { box-shadow: var(--hover-shadow); }
-  
+  }
+
 
   /* Keyboard focus mirrors hover — outside @media (hover: hover) so keyboard users
      on touch devices also receive feedback. Additive: focus-visible outline still applies. */
@@ -2047,8 +2091,17 @@
      (opt-in layer) alongside their base rules — they are no-ops without that file. */
 
   @media (prefers-reduced-data: reduce) {
-    *[style*="background-image"] { background-image: none !important; }
-    .mask-fade                   { mask-image: none; }
+    /* Scope to SLASHED-owned decorative elements to avoid stripping author-owned backgrounds.
+       Whole-token matching (^="cs-" / *=" cs-" instead of *="cs-") so unrelated classes
+       like "btn-cs-primary" or "shop-cs-card" are not caught by substring overlap. */
+    :is(
+      [class^="cs-"], [class*=" cs-"],
+      [class^="bg-"], [class*=" bg-"],
+      [data-slashed-bg]
+    )[style*="background-image"] {
+      background-image: none !important;
+    }
+    .mask-fade { mask-image: none; }
   }
 
   /* ----- Motion preference utilities -----
@@ -2062,6 +2115,8 @@
     .motion-safe\:animate-slide-up  { animation: slide-up var(--duration-normal) var(--ease-out) both; }
     .motion-safe\:animate-scale-in  { animation: scale-in var(--duration-normal) var(--ease-out) both; }
     .motion-safe\:animate-spin      { animation: spin 1s linear infinite; }
+  }
+  @media (prefers-reduced-motion: no-preference) and (hover: hover) {
     .motion-safe\:hover-lift:hover  { box-shadow: var(--hover-lift-shadow, var(--shadow-m)); translate: 0 var(--hover-lift-y, -2px); }
   }
 
@@ -2110,9 +2165,10 @@
   /* Prevent code blocks from overflowing the page margin */
   pre {
     white-space: pre-wrap;
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: anywhere;
     border: 1px solid #000 !important;
-    opacity: 0.3;
+    opacity: 1;
   }
 }
 
@@ -2128,10 +2184,34 @@
      }
    ========================================================================== */
 
-@layer slashed.overrides {}
+@layer slashed.overrides {
+
+  /* Bento 2-col medium breakpoint: col-span-3/4/full collapse to full-width.
+     Lives here so it beats slashed.utilities span classes without !important. */
+  @container (min-width: 30em) and (max-width: 47.99em) {
+    .bento > .col-span-3,
+    .bento > .col-span-4,
+    .bento > .col-span-full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Bento single-col collapse below 30em.
+     Uses 29.9999em to avoid overlap with the 30em medium-breakpoint query. */
+  @container (max-width: 29.9999em) {
+    .bento {
+      grid-auto-rows: auto;
+    }
+    .bento > * {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+  }
+
+}
 
 /* ==========================================================================
-   SLASHED Components — v0.4.4.0
+   SLASHED Components — v0.4.6.0
    Interactive UI components, form patterns, animation patterns.
    Requires: slashed-core.css (or slashed-full.css)
    ========================================================================== */
@@ -2558,11 +2638,11 @@
   /* ----- Section header ----- */
   /* The most repeated pattern on marketing sites: eyebrow + heading + lead text.
      Centered by default. Use --left modifier for left-aligned sections.
-     Customizable: --section-header-max (default: --container-narrow) */
+     Customizable: --section-header-max (default: --container-prose) */
 
   .cs-section-header {
     text-align: center;
-    max-width: var(--section-header-max, var(--container-narrow, 40rem));
+    max-width: var(--section-header-max, var(--container-prose, 65ch));
     margin-inline: auto;
   }
 
@@ -2624,19 +2704,15 @@
 
   /* ----- Input group ----- */
 
+  /* Children retain full borders. Joining is done by the negative margin
+     in the addons block below (margin-inline-start: -1px on > * + *), so
+     overlapping borders collapse to a single 1px line and the last child
+     keeps its trailing border intact. */
   .cs-input-group { display: flex; }
   .cs-input-group > input,
   .cs-input-group > select {
     flex: 1;
     min-width: 0;
-    border-start-end-radius: 0;
-    border-end-end-radius: 0;
-    border-inline-end: 0;
-  }
-  .cs-input-group > button,
-  .cs-input-group > [role="button"] {
-    border-start-start-radius: 0;
-    border-end-start-radius: 0;
   }
 
   /* ----- Divider (line-text-line) ----- */
@@ -2750,8 +2826,7 @@
   .cs-form-group__input[type="search"],
   .cs-form-group__input[type="password"],
   .cs-form-group__input[type="number"],
-  textarea.cs-form-group__input,
-  select.cs-form-group__input {
+  .cs-form-group__input:is(textarea, select) {
     padding: var(--input-padding-y, var(--space-xs)) var(--input-padding-x, var(--space-s));
     border: var(--border-width, 1px) solid var(--input-border, var(--color-border));
     border-radius: var(--input-radius, var(--radius-m));
@@ -2960,9 +3035,14 @@
   .cs-table--hoverable tbody tr {
     transition: background-color var(--duration-fast) var(--ease-out);
   }
-  
+
     .cs-table--hoverable tbody tr:hover { background: var(--color-surface-2); }
-  
+
+  /* display: block + overflow-x: auto required for reliable horizontal scroll on
+     narrow viewports — overflow-x alone on a <table> element does not create a
+     scroll container across browsers. Same pattern used by .prose table. */
+  .cs-table--responsive { display: block; overflow-x: auto; max-width: 100%; }
+
 
   /* ----- Feature list (checkmark-prefixed list) ----- */
   /* Tag-agnostic — works on <ul>, <ol>, or <div>. Marker uses ::before with unicode,
@@ -3125,17 +3205,16 @@
 
   /* ----- Nav link (plain navigation link, matches parent in dropdowns) ----- */
   /* Use on plain <a> in navigation alongside cs-nav-dropdown for visual consistency.
-     Uses `a.cs-nav-link` selector (specificity 0,1,1) to override base `a` and `a:visited`
-     which would otherwise apply framework's link color. */
-  a.cs-nav-link {
+     Lives in @layer slashed.components, beats base `a` / `a:visited` by layer order. */
+  .cs-nav-link {
     text-decoration: none;
     color: var(--color-text-muted);
     padding-block: var(--space-2xs);
     transition: color var(--duration-fast) var(--ease-out);
   }
-  a.cs-nav-link:hover,
-  a.cs-nav-link:visited:hover { color: var(--color-text); }
-  a.cs-nav-link:visited { color: var(--color-text-muted); }
+  .cs-nav-link:hover,
+  .cs-nav-link:visited:hover { color: var(--color-text); }
+  .cs-nav-link:visited { color: var(--color-text-muted); }
 
   /* ----- Nav dropdown (submenu for primary navigation) ----- */
   /* Uses native <details>/<summary> — zero JS required for basic operation.
@@ -3202,19 +3281,19 @@
 
   /* Parent link — matches .cs-nav-link styling.
      padding-block extends click target to full nav height.
-     Using a.-scoped selector (specificity 0,1,1) to override base `a` styles. */
-  a.cs-nav-dropdown__parent {
+     Lives in @layer slashed.components, beats base `a` / `a:visited` by layer order. */
+  .cs-nav-dropdown__parent {
     text-decoration: none;
     color: var(--color-text-muted);
     padding-block: var(--space-2xs);
     transition: color var(--duration-fast) var(--ease-out);
   }
-  a.cs-nav-dropdown__parent:hover,
-  a.cs-nav-dropdown__parent:visited:hover,
-  .cs-nav-dropdown[open] > summary > a.cs-nav-dropdown__parent {
+  .cs-nav-dropdown__parent:hover,
+  .cs-nav-dropdown__parent:visited:hover,
+  .cs-nav-dropdown[open] > summary > .cs-nav-dropdown__parent {
     color: var(--color-text);
   }
-  a.cs-nav-dropdown__parent:visited { color: var(--color-text-muted); }
+  .cs-nav-dropdown__parent:visited { color: var(--color-text-muted); }
 
   .cs-nav-dropdown__menu {
     list-style: none;
@@ -3275,6 +3354,21 @@
       padding-inline-start: var(--space-m);
       padding-block: var(--space-xs);
       gap: var(--space-2xs);
+    }
+
+    /* Animated expand on mobile only. Cannot apply globally because
+       overflow: hidden on ::details-content would clip the desktop popover
+       which uses position: absolute below — popover would be cut to height: 0
+       of its details parent. Future: reimplement desktop using popover API +
+       anchor positioning, then this rule can apply globally. */
+    @supports selector(details::details-content) {
+      .cs-nav-dropdown::details-content {
+        height: 0;
+        overflow: hidden;
+        transition: height var(--duration-normal, 250ms) var(--ease-out, ease-out),
+                    content-visibility var(--duration-normal, 250ms) var(--ease-out, ease-out) allow-discrete;
+      }
+      .cs-nav-dropdown[open]::details-content { height: auto; }
     }
   }
 
@@ -5271,7 +5365,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Utilities — v0.4.4.0
+   SLASHED Utilities — v0.4.6.0
    Layout, functional, and inline typographic composition utilities.
 
    PHILOSOPHY:
@@ -5590,7 +5684,7 @@
   .text-faint      { color: var(--color-text-faint); }
   .text-disabled   { color: var(--color-text-disabled); }
   .text-success    { color: var(--success); }
-  .text-warning    { color: var(--warning); }
+  .text-warning    { color: var(--warning-600); }
   .text-error      { color: var(--error); }
   .text-white      { color: white; }
   .text-inherit    { color: inherit; }
@@ -5603,11 +5697,11 @@
 
   /* ----- Scheme / Theme ----- */
 
-  /* Class-based equivalents to data-theme for visual builders.
-     color-scheme: dark/light causes all light-dark() tokens to resolve
-     to the correct values for the entire subtree automatically. */
-  .scheme--dark  { color-scheme: dark;  background-color: var(--color-bg); color: var(--color-text); }
-  .scheme--light { color-scheme: light; background-color: var(--color-bg); color: var(--color-text); }
+  /* UA color-scheme helpers only.
+     They do not replace [data-theme] because semantic --color-* tokens
+     are switched by the theme selectors in tokens-default.css. */
+  .scheme--dark  { color-scheme: dark; }
+  .scheme--light { color-scheme: light; }
 
   /* ----- Border ----- */
 
@@ -5668,7 +5762,12 @@
   .row-span-3    { grid-row: span 3; }
   .row-span-4    { grid-row: span 4; }
 
-  /* ----- Sizing ----- */
+  /* ----- Sizing — three axes with explicit prefix -----
+     Parent-relative fractions  →  .w-1/2, .w-1/3, .w-2/3, .w-1/4, .w-3/4
+     Viewport-relative          →  .w-vw-10 … .w-vw-100 (steps of 10)
+     Content-width-relative     →  .w-content-1/4 … .w-content-3/4, .w-content-full
+     Intrinsic                  →  .w-full, .w-auto, .w-fit, .w-min, .w-max
+     The slash is escaped in CSS (\/) and used unescaped in HTML (class="w-1/2"). */
 
   .w-full  { width: 100%; }
   .w-auto  { width: auto; }
@@ -5678,19 +5777,34 @@
   .h-fit   { height: fit-content; }
   .min-w-full { min-width: 100%; }
   .max-h-full { max-height: 100%; }
-  .w-75   { width: 75%; }
-  .w-66   { width: 66.666%; }
-  .w-50   { width: 50%; }
-  .w-33   { width: 33.333%; }
-  .w-25   { width: 25%; }
 
-  /* Content-width-relative widths — centers with max-inline-size as % of --content-width */
-  .w-content-25   { width: 100%; max-inline-size: calc(var(--content-width) * 0.25);  margin-inline: auto; }
-  .w-content-33   { width: 100%; max-inline-size: calc(var(--content-width) * 0.333); margin-inline: auto; }
-  .w-content-50   { width: 100%; max-inline-size: calc(var(--content-width) * 0.5);   margin-inline: auto; }
-  .w-content-66   { width: 100%; max-inline-size: calc(var(--content-width) * 0.666); margin-inline: auto; }
-  .w-content-75   { width: 100%; max-inline-size: calc(var(--content-width) * 0.75);  margin-inline: auto; }
-  .w-content-full { width: 100%; max-inline-size: var(--content-width);               margin-inline: auto; }
+  /* Parent-relative fractions */
+  .w-1\/2  { width: 50%; }
+  .w-1\/3  { width: 33.3333%; }
+  .w-2\/3  { width: 66.6667%; }
+  .w-1\/4  { width: 25%; }
+  .w-3\/4  { width: 75%; }
+
+  /* Viewport-relative — for hero sections, full-bleed elements, breakouts.
+     Use sparingly: vw ignores ancestor padding/scrollbars. */
+  .w-vw-10  { width: 10vw; }
+  .w-vw-20  { width: 20vw; }
+  .w-vw-30  { width: 30vw; }
+  .w-vw-40  { width: 40vw; }
+  .w-vw-50  { width: 50vw; }
+  .w-vw-60  { width: 60vw; }
+  .w-vw-70  { width: 70vw; }
+  .w-vw-80  { width: 80vw; }
+  .w-vw-90  { width: 90vw; }
+  .w-vw-100 { width: 100vw; }
+
+  /* Content-width-relative — centers with max-inline-size as fraction of --content-width */
+  .w-content-1\/4  { width: 100%; max-inline-size: calc(var(--content-width) * 0.25);   margin-inline: auto; }
+  .w-content-1\/3  { width: 100%; max-inline-size: calc(var(--content-width) * 0.3333); margin-inline: auto; }
+  .w-content-1\/2  { width: 100%; max-inline-size: calc(var(--content-width) * 0.5);    margin-inline: auto; }
+  .w-content-2\/3  { width: 100%; max-inline-size: calc(var(--content-width) * 0.6667); margin-inline: auto; }
+  .w-content-3\/4  { width: 100%; max-inline-size: calc(var(--content-width) * 0.75);   margin-inline: auto; }
+  .w-content-full  { width: 100%; max-inline-size: var(--content-width);                margin-inline: auto; }
 
   .h-full   { height: 100%; }
   .h-auto   { height: auto; }
@@ -6082,27 +6196,19 @@
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      .dark\:hidden    { display: none; }
-      .dark\:block     { display: block; }
-      .dark\:flex      { display: flex; }
-      .dark\:bg-surface     { background: var(--color-surface); }
-      .dark\:bg-neutral-900 { background: var(--neutral-900); }
-      .dark\:text-white     { color: white; }
-      .dark\:text-muted     { color: var(--color-text-muted); }
-      .dark\:border-strong  { border-color: var(--color-border-strong); }
-      .dark\:shadow-none    { box-shadow: none; }
+      .dark\:hidden { display: none; }
+      .dark\:block  { display: block; }
+      .dark\:flex   { display: flex; }
+      .dark\:text-white { color: white; }
+      .dark\:text-muted { color: var(--color-text-muted); }
     }
   }
   [data-theme="dark"] {
-    .dark\:hidden    { display: none; }
-    .dark\:block     { display: block; }
-    .dark\:flex      { display: flex; }
-    .dark\:bg-surface     { background: var(--color-surface); }
-    .dark\:bg-neutral-900 { background: var(--neutral-900); }
-    .dark\:text-white     { color: white; }
-    .dark\:text-muted     { color: var(--color-text-muted); }
-    .dark\:border-strong  { border-color: var(--color-border-strong); }
-    .dark\:shadow-none    { box-shadow: none; }
+    .dark\:hidden { display: none; }
+    .dark\:block  { display: block; }
+    .dark\:flex   { display: flex; }
+    .dark\:text-white { color: white; }
+    .dark\:text-muted { color: var(--color-text-muted); }
   }
 
   @media (prefers-color-scheme: light) {
