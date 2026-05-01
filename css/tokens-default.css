@@ -337,10 +337,6 @@
   --text-3xl: clamp(2.5rem,    2.232rem + 1.143vw, 3.375rem);  /* 40→54px */
   --text-4xl: clamp(3.125rem,  2.704rem + 1.796vw, 4.5rem);    /* 50→72px */
   --text-5xl: clamp(4rem,      3.388rem + 2.612vw, 6rem);      /* 64→96px */
-  --text-6xl: clamp(5rem,      4.235rem + 3.265vw, 7.5rem);    /* 80→120px */
-  --text-7xl: clamp(6rem,      5.082rem + 3.918vw, 9rem);      /* 96→144px */
-  --text-8xl: clamp(7.5rem,    6.122rem + 5.878vw, 12rem);     /* 120→192px */
-  --text-9xl: clamp(9rem,      7.163rem + 7.837vw, 15rem);     /* 144→240px */
   /* text-fluid-hero: viewport-relative heading for full-bleed hero sections.
      3rem = minimum, 10vw = preferred (viewport-relative), 12rem = maximum.
      Use only on single-line display text — body text would be inaccessible at this scale. */

@@ -82,7 +82,7 @@ Utilities in `slashed-utilities.css` serve three roles:
 | `.text-m` | `var(--text-m)` |
 | `.text-l` | `var(--text-l)` |
 | `.text-xl` | `var(--text-xl)` |
-| `.text-2xl` through `.text-9xl` | Progressive scale |
+| `.text-2xl` through `.text-5xl` | Progressive scale |
 | `.text-fluid-hero` | Extra-fluid for hero titles |
 
 ### Semantic heading scale

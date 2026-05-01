@@ -226,10 +226,7 @@
   .text-3xl { font-size: var(--text-3xl); }
   .text-4xl { font-size: var(--text-4xl); }
   .text-5xl { font-size: var(--text-5xl); }
-  .text-6xl { font-size: var(--text-6xl); }
-  .text-7xl { font-size: var(--text-7xl); }
-  .text-8xl { font-size: var(--text-8xl); }
-  .text-9xl { font-size: var(--text-9xl); }
+
   .text-fluid-hero { font-size: var(--text-fluid-hero); }
 
   /* ----- Typography: semantic heading scale ----- */
