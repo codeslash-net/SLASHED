@@ -16,6 +16,8 @@
 (function () {
   'use strict';
 
+  var _tabsUid = 0; /* persistent across initTabsAccessible() re-runs */
+
   /* ---------------------------------------------------------------
      1. Nav dropdown — aria-expanded + full keyboard accessibility
      Enhances .cs-nav-dropdown (<details>-based) with proper ARIA.
@@ -238,11 +240,10 @@
      Adds: role="tab", aria-selected, roving tabindex, Arrow/Home/End.
   --------------------------------------------------------------- */
   function initTabsAccessible() {
-    var uid = 0;
     document.querySelectorAll('.cs-tabs').forEach(function (tabs) {
       if (tabs.dataset.csTabsInited) return;
       tabs.dataset.csTabsInited = '1';
-      uid++;
+      var uid = ++_tabsUid;
 
       var list = tabs.querySelector(':scope > .cs-tabs__list');
       if (!list) return;
