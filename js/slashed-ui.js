@@ -238,14 +238,31 @@
      Adds: role="tab", aria-selected, roving tabindex, Arrow/Home/End.
   --------------------------------------------------------------- */
   function initTabsAccessible() {
+    var uid = 0;
     document.querySelectorAll('.cs-tabs').forEach(function (tabs) {
+      if (tabs.dataset.csTabsInited) return;
+      tabs.dataset.csTabsInited = '1';
+      uid++;
+
       var list = tabs.querySelector(':scope > .cs-tabs__list');
       if (!list) return;
       var isVertical = tabs.classList.contains('cs-tabs--vertical');
       list.setAttribute('role', 'tablist');
       if (isVertical) list.setAttribute('aria-orientation', 'vertical');
-      var items = Array.from(list.querySelectorAll(':scope > .cs-tabs__tab'));
+      var items  = Array.from(list.querySelectorAll(':scope > .cs-tabs__tab'));
       if (!items.length) return;
+      var panels = Array.from(tabs.querySelectorAll(':scope > .cs-tabs__panels > .cs-tabs__panel'));
+
+      /* Wire stable IDs and tab↔panel relationships once */
+      items.forEach(function (tab, i) {
+        if (!tab.id) tab.id = 'cs-tab-' + uid + '-' + i;
+        var panel = panels[i];
+        if (!panel) return;
+        if (!panel.id) panel.id = 'cs-panel-' + uid + '-' + i;
+        tab.setAttribute('aria-controls', panel.id);
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', tab.id);
+      });
 
       function applyAriaFromChecked() {
         var activeIdx = items.findIndex(function (tab) {
@@ -260,6 +277,7 @@
           tab.setAttribute('role', 'tab');
           tab.setAttribute('aria-selected', active ? 'true' : 'false');
           tab.setAttribute('tabindex', active ? '0' : '-1');
+          if (panels[i]) panels[i].setAttribute('aria-hidden', active ? 'false' : 'true');
         });
       }
       applyAriaFromChecked();
@@ -272,6 +290,7 @@
           tab.setAttribute('tabindex', active ? '0' : '-1');
           if (radio) radio.tabIndex = -1;
           if (active && radio) radio.checked = true;
+          if (panels[i]) panels[i].setAttribute('aria-hidden', active ? 'false' : 'true');
         });
         items[idx].focus();
         syncTabs(tabs);
