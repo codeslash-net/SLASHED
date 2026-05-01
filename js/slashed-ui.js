@@ -159,7 +159,52 @@
   }
 
   /* ---------------------------------------------------------------
-     6. Toast — append a toast into a .cs-toast-stack with auto-dismiss.
+     6. Tabs accessible — WAI-ARIA Tabs keyboard pattern.
+     Opt-in enhancement on top of the CSS-only radio/label tab pattern.
+     Call instead of or alongside initTabs().
+     Adds: role="tab", aria-selected, roving tabindex, Arrow/Home/End.
+  --------------------------------------------------------------- */
+  function initTabsAccessible() {
+    document.querySelectorAll('.cs-tabs').forEach(function (tabs) {
+      var list = tabs.querySelector(':scope > .cs-tabs__list');
+      if (!list) return;
+      var items = Array.from(list.querySelectorAll(':scope > .cs-tabs__tab'));
+      if (!items.length) return;
+
+      items.forEach(function (tab, i) {
+        var radio = tab.querySelector('input[type="radio"]');
+        var active = radio ? radio.checked : i === 0;
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.setAttribute('tabindex', active ? '0' : '-1');
+      });
+
+      function selectTab(idx) {
+        items.forEach(function (tab, i) {
+          var radio = tab.querySelector('input[type="radio"]');
+          var active = i === idx;
+          tab.setAttribute('aria-selected', active ? 'true' : 'false');
+          tab.setAttribute('tabindex', active ? '0' : '-1');
+          if (active && radio) radio.checked = true;
+        });
+        items[idx].focus();
+        syncTabs(tabs);
+      }
+
+      list.addEventListener('keydown', function (e) {
+        var idx = items.indexOf(document.activeElement);
+        if (idx === -1) return;
+        var last = items.length - 1;
+        if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(idx < last ? idx + 1 : 0); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); selectTab(idx > 0 ? idx - 1 : last); }
+        else if (e.key === 'Home') { e.preventDefault(); selectTab(0); }
+        else if (e.key === 'End') { e.preventDefault(); selectTab(last); }
+      });
+    });
+  }
+
+  /* ---------------------------------------------------------------
+     7. Toast — append a toast into a .cs-toast-stack with auto-dismiss.
      Usage:
        slashedUI.toast('Saved');
        slashedUI.toast({ title: 'Uploaded', body: 'report.pdf', variant: 'success', duration: 3000 });
@@ -233,16 +278,20 @@
   }
 
   /* Expose public helpers for dynamic content re-runs, toasts, range
-     re-paints, and programmatic modal close:
+     re-paints, programmatic modal close, and accessible tab keyboard nav:
      slashedUI.initStagger(containerElement)
-     slashedUI.toast({ title, body, variant, duration })
+     slashedUI.toast({ title, body, variant, urgency, duration })
      slashedUI.updateRange(rangeInputElement)
-     slashedUI.closeModal(dialogElement) */
+     slashedUI.closeModal(dialogElement)
+     slashedUI.initTabsAccessible()
+     slashedUI.initModalFocusRestore()
+     slashedUI.initFormGroups() */
   window.slashedUI = Object.assign(window.slashedUI || {}, {
     initStagger: initStagger,
     toast: toast,
     updateRange: updateRange,
-    closeModal: closeModal
+    closeModal: closeModal,
+    initTabsAccessible: initTabsAccessible
   });
 
 })();
