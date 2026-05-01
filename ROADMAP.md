@@ -169,6 +169,14 @@ updates — their BEM always wins over framework layers. Visual defaults
 between MINOR versions as the design matures; consumers who want to freeze
 a specific value override it with a local token.
 
+**Pre-0.8.0.0 breaking-change policy: none.** Before `0.8.0.0`, anything
+can be renamed, removed, or restructured without a deprecation alias,
+migration guide, or advance notice. No `docs/MIGRATING-*.md`, no
+compatibility shims, no changelog hand-holding for consumers. The API is
+not stable; treat every update as potentially breaking and diff the source.
+Migration guides, deprecation aliases, and consumer upgrade tooling become
+obligations at `0.8.0.0` as a pre-condition for the 1.0 freeze.
+
 ---
 
 ## Pending work
@@ -339,16 +347,13 @@ After the audit, add a CI step or note to the cheatsheet content audit
 element of `.cs-skeleton` (a visual loading placeholder), not a standalone
 component. The correct BEM name is `.cs-skeleton__line`.
 
-**This is a breaking change.** Any consumer using `.cs-skeleton-line` in
-their HTML must update to `.cs-skeleton__line`. Document in
-`docs/MIGRATING-0.3-TO-1.0.md` (see § Path to 1.0).
+**This is a breaking change** (pre-0.8 — no migration doc required).
 
 **Fix:**
 1. Rename `.cs-skeleton-line` to `.cs-skeleton__line` in
    `slashed-components.css`.
 2. Update `cheatsheet.html` if it references the old name.
 3. Update slashed-blueprints to follow the rename.
-4. Add an entry to `docs/MIGRATING-0.3-TO-1.0.md`.
 
 ---
 
@@ -605,8 +610,6 @@ only — reduced scope compared to previous description.
 T4/C1/C2/C3/K3 shipped early in 0.4.5–0.4.6 as part of the issue #3
 cleanup pass; the items below are what remains. Breaking changes to token
 names are intentional — the scope justifies the MAJOR bump to `0.5`.
-Consumers upgrading from `0.4.x` should consult
-`docs/MIGRATING-0.3-TO-1.0.md` for the full list of renames and removals.
 
 **Implementation order:**
 
@@ -864,10 +867,10 @@ when planning the version that will become 1.0.
   must map to a real selector or `--*` declaration in `css/*.css`. Script
   in `bin/` + GitHub Action. Already named in `docs/SPEC.md` § Path to 1.0;
   not yet implemented.
-- **`docs/MIGRATING-0.3-TO-1.0.md` drafted.** Captures every rename,
-  removal, and behaviour change between 0.3.x and 1.0 so consumers can
-  migrate in one pass. The `cs-skeleton-line → cs-skeleton__line` rename
-  (see Pending work) must be in this document.
+- **`docs/MIGRATING-0.3-TO-1.0.md` drafted** (not before `0.8.0.0`).
+  Captures every rename, removal, and behaviour change between 0.3.x and
+  1.0 so consumers can migrate in one pass. Write this at `0.8.0.0` once
+  the API is nearing freeze — not incrementally.
 - **Battle-test pass #2 complete** (see Pending work).
 - **API freeze review complete.** Specific audits to perform before sign-off:
   - `--color-text-faint` (~3.4:1 contrast ratio — fails WCAG AA for body
