@@ -149,15 +149,16 @@
          behind a still-visible backdrop. Falls back to 150 ms. */
       var dialog = e.target;
       var done = false;
-      function doFocus() {
+      function doFocus(ev) {
+        if (ev && ev.target !== dialog) return;
         if (done) return;
         done = true;
         dialog.removeEventListener('transitionend', doFocus);
         dialog.removeEventListener('animationend',  doFocus);
         target.focus();
       }
-      dialog.addEventListener('transitionend', doFocus, { once: true });
-      dialog.addEventListener('animationend',  doFocus, { once: true });
+      dialog.addEventListener('transitionend', doFocus);
+      dialog.addEventListener('animationend',  doFocus);
       setTimeout(doFocus, 160);
     }, true);
   }
