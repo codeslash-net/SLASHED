@@ -107,8 +107,10 @@ rules.
   framework-surface change. **Append-only** (Keep-a-Changelog format).
   Breaking changes go under `### Breaking` with a one-line rename map;
   no migration guide is required before `0.8.0.0`.
-- Forward-looking plans live in `ROADMAP.md`. At every version bump, verify
-  `ROADMAP.md` against shipped state and update its **Last reviewed** line.
+- Forward-looking plans live in `ROADMAP.md`. When implementing any roadmap
+  item, move it out of "Pending work" and add a one-liner to the "Explicitly
+  NOT on the roadmap" section in the same commit. At every version bump, do
+  a full pass to verify shipped state and update the **Last reviewed** line.
 - Commit messages follow the existing style: short subject, optional longer
   body describing *why*.
 - Run `bin/bump-version.sh NEW_VERSION` to update all version strings and
