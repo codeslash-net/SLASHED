@@ -331,49 +331,6 @@ After the audit, add a CI step or note to the cheatsheet content audit
 
 ---
 
-#### Additive utilities: width scale
-
-No audit dependency. Fill the viewport-relative width scale in
-`slashed-utilities.css`:
-`.w-10 / -20 / -30 / -40 / -60 / -70 / -80 / -90`.
-
-These complement the existing `.w-25 / -33 / -50 / -66 / -75` and the
-content-width-relative `.w-content-*` family. No responsive variants needed
-— non-standard widths use inline `style` per the framework philosophy.
-
----
-
-#### Auto-pairing foreground colors
-
-No audit dependency. Add to `tokens-default.css` inside main `:root {}`:
-
-```css
-@supports (color: oklch(from red 0 0 0)) {
-  :root {
-    --color-text-on-primary:
-      oklch(from var(--primary) clamp(0.1, (0.6 - l) * 999, 1) 0 0);
-    --color-text-on-secondary:
-      oklch(from var(--secondary) clamp(0.1, (0.6 - l) * 999, 1) 0 0);
-    --color-text-on-accent:
-      oklch(from var(--accent) clamp(0.1, (0.6 - l) * 999, 1) 0 0);
-  }
-}
-```
-
-The `@supports` guard is required: CSS relative color syntax requires
-Firefox 128+; SLASHED's baseline is Firefox 120+. The existing hardcoded
-`white` / `var(--neutral-900)` values continue to apply in Firefox 120–127
-as fallbacks since the `@supports` block only overrides when supported.
-
-The formula resolves to near-black (L≈0.1) when the base color is light,
-and near-white (L≈1) when it is dark — automatic WCAG-compliant contrast
-without consumer configuration. Dark mode works automatically because
-`--primary` / `--secondary` / `--accent` are redefined in the dark mode
-blocks and the `oklch(from ...)` expression re-evaluates against the new
-values.
-
----
-
 #### Component rename: `cs-skeleton-line` → `cs-skeleton__line`
 
 **File:** `css/slashed-components.css`.
@@ -910,8 +867,8 @@ when planning the version that will become 1.0.
 - **`docs/MIGRATING-0.3-TO-1.0.md` drafted.** Captures every rename,
   removal, and behaviour change between 0.3.x and 1.0 so consumers can
   migrate in one pass. The `cs-skeleton-line → cs-skeleton__line` rename
-  from `0.4.6.0` must be in this document.
-- **Battle-test pass #2 complete** (see `0.4.5.0`).
+  (see Pending work) must be in this document.
+- **Battle-test pass #2 complete** (see Pending work).
 - **API freeze review complete.** Specific audits to perform before sign-off:
   - `--color-text-faint` (~3.4:1 contrast ratio — fails WCAG AA for body
     text): deprecate with a replacement name, keep with a prominent
