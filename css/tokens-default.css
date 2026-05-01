@@ -78,7 +78,7 @@
   --color-text-secondary:       #374151;
   --color-text-muted:           #4b5563;
   --color-text-faint:           #9ca3af;
-  --color-text-disabled:        #9ca3af;
+  --color-text-disabled:        #d1d5db; /* intentionally below WCAG AA — disabled elements are exempt */
   --color-text-on-primary:      #ffffff;
   --color-text-on-secondary:    #ffffff;
   --color-text-on-accent:       #111827;
@@ -282,7 +282,7 @@
   --color-text-secondary:       var(--neutral-700);
   --color-text-muted:           var(--neutral-600);
   --color-text-faint:           var(--neutral-400);
-  --color-text-disabled:        var(--neutral-400);
+  --color-text-disabled:        var(--neutral-300); /* intentionally below WCAG AA — disabled elements are exempt */
   /* ⚠️ --color-text-faint: ratio ~3.4:1 on --color-bg — does NOT meet WCAG AA for body text.
      Use for decorative/supplementary content only (placeholders, captions, timestamps).
      For accessible body text use --color-text-muted (AA) or --color-text (AAA). */
@@ -407,7 +407,7 @@
                   0 16px 48px 0 rgba(0, 0, 0, calc(var(--shadow-strength-2) * 1.75)),
                   0 32px 80px -8px rgba(0, 0, 0, calc(var(--shadow-strength-2) * 2));
   /* inner: inset shadow for pressed states and inset UI elements */
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 1.5));
   /* glow: colored ambient glow — set --glow-color per component for brand-colored glow */
   --shadow-glow:  0 0 0 3px var(--glow-color, var(--primary-a25)),
                   0 0 20px 0 var(--glow-color, var(--primary-a25));
@@ -424,7 +424,8 @@
   --z-base:      0;
   --z-raised:    1;
   --z-docked:   10;
-  --z-sticky:   1100;
+  --z-above:    100;   /* elements that must clear docked but not compete with sticky UI (e.g. inline popovers) */
+  --z-sticky:   1100;  /* intentionally below WP admin bar (99999) — only --z-max beats the admin bar */
   --z-dropdown: 1150; /* above sticky so menus opened from sticky headers overlay adjacent sticky sections */
   --z-banner:   1200;
   --z-overlay:  1300;
@@ -441,6 +442,8 @@
   --duration-normal:  250ms;
   --duration-slow:    400ms;
 
+  --duration-enter:   var(--duration-normal);
+  --duration-exit:    var(--duration-fast);
   --duration-stagger: 80ms; /* for sequential stagger animations */
 
   --ease-out:     cubic-bezier(0.25, 0, 0.15, 1);
