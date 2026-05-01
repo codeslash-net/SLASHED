@@ -1130,10 +1130,6 @@
     gap: var(--bento-gap, var(--space-gap));
   }
 
-  /* Collapse to single column below 30em container width.
-     Rules live in slashed.overrides so they beat utility span classes without
-     needing !important; unlayered user BEM still wins over any @layer. */
-
   /* 2-column layout between 30em and 48em */
   @container (min-width: 30em) and (max-width: 47.99em) {
     .bento {
@@ -1456,28 +1452,4 @@
      }
    ========================================================================== */
 
-@layer slashed.overrides {
-
-  /* Bento 2-col medium breakpoint: col-span-3/4/full collapse to full-width.
-     Lives here so it beats slashed.utilities span classes without !important. */
-  @container (min-width: 30em) and (max-width: 47.99em) {
-    .bento > .col-span-3,
-    .bento > .col-span-4,
-    .bento > .col-span-full {
-      grid-column: 1 / -1;
-    }
-  }
-
-  /* Bento single-col collapse below 30em.
-     Uses 29.9999em to avoid overlap with the 30em medium-breakpoint query. */
-  @container (max-width: 29.9999em) {
-    .bento {
-      grid-auto-rows: auto;
-    }
-    .bento > * {
-      grid-column: 1 / -1;
-      grid-row: auto;
-    }
-  }
-
-}
+@layer slashed.overrides {}

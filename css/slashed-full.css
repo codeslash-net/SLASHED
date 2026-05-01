@@ -716,9 +716,7 @@
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
 
-/* slashed.overrides: highest-priority layer. Framework uses it for rules that must beat
-   slashed.utilities (e.g., Bento responsive collapse). Consumers may also place their own
-   overrides here — rules in this layer outrank all other slashed.* layers. */
+/* slashed.overrides: empty — reserved for consumer styles that must win over all framework layers. */
 
 @layer slashed.reset {
 
@@ -1842,10 +1840,6 @@
     gap: var(--bento-gap, var(--space-gap));
   }
 
-  /* Collapse to single column below 30em container width.
-     Rules live in slashed.overrides so they beat utility span classes without
-     needing !important; unlayered user BEM still wins over any @layer. */
-
   /* 2-column layout between 30em and 48em */
   @container (min-width: 30em) and (max-width: 47.99em) {
     .bento {
@@ -2168,31 +2162,7 @@
      }
    ========================================================================== */
 
-@layer slashed.overrides {
-
-  /* Bento 2-col medium breakpoint: col-span-3/4/full collapse to full-width.
-     Lives here so it beats slashed.utilities span classes without !important. */
-  @container (min-width: 30em) and (max-width: 47.99em) {
-    .bento > .col-span-3,
-    .bento > .col-span-4,
-    .bento > .col-span-full {
-      grid-column: 1 / -1;
-    }
-  }
-
-  /* Bento single-col collapse below 30em.
-     Uses 29.9999em to avoid overlap with the 30em medium-breakpoint query. */
-  @container (max-width: 29.9999em) {
-    .bento {
-      grid-auto-rows: auto;
-    }
-    .bento > * {
-      grid-column: 1 / -1;
-      grid-row: auto;
-    }
-  }
-
-}
+@layer slashed.overrides {}
 
 /* ==========================================================================
    SLASHED Components — v0.4.6.0
@@ -2202,9 +2172,7 @@
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
 
-/* slashed.overrides: highest-priority layer. Framework uses it for rules that must beat
-   slashed.utilities (e.g., Bento responsive collapse). Consumers may also place their own
-   overrides here — rules in this layer outrank all other slashed.* layers. */
+/* slashed.overrides: empty — reserved for consumer styles that must win over all framework layers. */
 
 /* ==========================================================================
    COMPONENTS
@@ -5766,6 +5734,18 @@
   .row-span-2    { grid-row: span 2; }
   .row-span-3    { grid-row: span 3; }
   .row-span-4    { grid-row: span 4; }
+
+  /* Bento responsive collapse — placed here so .bento > .col-span-* (specificity 0,2,0)
+     beats plain .col-span-* (0,1,0) within the same layer without !important. */
+  @container (min-width: 30em) and (max-width: 47.99em) {
+    .bento > .col-span-3,
+    .bento > .col-span-4,
+    .bento > .col-span-full { grid-column: 1 / -1; }
+  }
+  @container (max-width: 29.9999em) {
+    .bento                   { grid-auto-rows: auto; }
+    .bento > *               { grid-column: 1 / -1; grid-row: auto; }
+  }
 
   /* ----- Sizing — three axes with explicit prefix -----
      Parent-relative fractions  →  .w-1/2, .w-1/3, .w-2/3, .w-1/4, .w-3/4

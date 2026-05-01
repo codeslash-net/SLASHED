@@ -395,6 +395,18 @@
   .row-span-3    { grid-row: span 3; }
   .row-span-4    { grid-row: span 4; }
 
+  /* Bento responsive collapse — placed here so .bento > .col-span-* (specificity 0,2,0)
+     beats plain .col-span-* (0,1,0) within the same layer without !important. */
+  @container (min-width: 30em) and (max-width: 47.99em) {
+    .bento > .col-span-3,
+    .bento > .col-span-4,
+    .bento > .col-span-full { grid-column: 1 / -1; }
+  }
+  @container (max-width: 29.9999em) {
+    .bento                   { grid-auto-rows: auto; }
+    .bento > *               { grid-column: 1 / -1; grid-row: auto; }
+  }
+
   /* ----- Sizing — three axes with explicit prefix -----
      Parent-relative fractions  →  .w-1/2, .w-1/3, .w-2/3, .w-1/4, .w-3/4
      Viewport-relative          →  .w-vw-10 … .w-vw-100 (steps of 10)
