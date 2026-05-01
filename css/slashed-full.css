@@ -597,7 +597,7 @@
     --color-text-secondary:   #d1d5db;
     --color-text-muted:       #9ca3af;
     --color-text-faint:       #6b7280;
-    --color-text-disabled:    #4b5563;
+    --color-text-disabled:    var(--neutral-300); /* intentionally below WCAG AA — disabled elements are exempt */
     /* Hardcoded contrast on brand surfaces — without these, light-mode values
        (white / var(--neutral-900)) cascade and fail in dark mode where
        --neutral-900 flips to light. Dark text wins because dark-mode brand
@@ -670,7 +670,7 @@
   --color-text-secondary:   #d1d5db;
   --color-text-muted:       #9ca3af;
   --color-text-faint:       #6b7280;
-  --color-text-disabled:    #4b5563;
+  --color-text-disabled:    var(--neutral-300); /* intentionally below WCAG AA — disabled elements are exempt */
   /* Hardcoded contrast on brand surfaces — see comment in prefers-color-scheme block. */
   --color-text-on-primary:   #111827;
   --color-text-on-secondary: #111827;
@@ -716,7 +716,7 @@
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
 
-/* slashed.overrides: empty — reserved for consumer styles that must win over all framework layers. */
+/* slashed.overrides: empty — reserved for user styles that must win over all framework layers. */
 
 @layer slashed.reset {
 
@@ -811,7 +811,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading, var(--font-body, ui-sans-serif, system-ui, sans-serif));
-    font-weight: var(--font-weight-heading, 700);
+    font-weight: 700;
     line-height: var(--leading-tight, 1.2);
     text-wrap: balance;
     overflow-wrap: break-word;
@@ -2172,7 +2172,7 @@
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;
 
-/* slashed.overrides: empty — reserved for consumer styles that must win over all framework layers. */
+/* slashed.overrides: empty — reserved for user styles that must win over all framework layers. */
 
 /* ==========================================================================
    COMPONENTS
@@ -5394,8 +5394,10 @@
      xl:  80em  (1280px)  →  find: (min-width: 80em)
 
    VS Code: Ctrl+H → enable regex → find each value → replace all.
-   This is the ONLY file with hardcoded breakpoint values.
-   slashed-core.css layout primitives use @container queries
+   slashed-utilities.css is the ONLY file in the utilities layer with
+   hardcoded breakpoint values. slashed-core.css also contains hardcoded
+   breakpoints for its own layout rules; update both files together.
+   slashed-core.css layout primitives use @container queries in addition
    and do not need to be updated when changing breakpoints.
    ================================================================ */
 

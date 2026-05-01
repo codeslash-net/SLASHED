@@ -589,7 +589,7 @@
     --color-text-secondary:   #d1d5db;
     --color-text-muted:       #9ca3af;
     --color-text-faint:       #6b7280;
-    --color-text-disabled:    #4b5563;
+    --color-text-disabled:    var(--neutral-300); /* intentionally below WCAG AA — disabled elements are exempt */
     /* Hardcoded contrast on brand surfaces — without these, light-mode values
        (white / var(--neutral-900)) cascade and fail in dark mode where
        --neutral-900 flips to light. Dark text wins because dark-mode brand
@@ -662,7 +662,7 @@
   --color-text-secondary:   #d1d5db;
   --color-text-muted:       #9ca3af;
   --color-text-faint:       #6b7280;
-  --color-text-disabled:    #4b5563;
+  --color-text-disabled:    var(--neutral-300); /* intentionally below WCAG AA — disabled elements are exempt */
   /* Hardcoded contrast on brand surfaces — see comment in prefers-color-scheme block. */
   --color-text-on-primary:   #111827;
   --color-text-on-secondary: #111827;

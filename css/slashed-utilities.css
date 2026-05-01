@@ -54,8 +54,10 @@
      xl:  80em  (1280px)  →  find: (min-width: 80em)
 
    VS Code: Ctrl+H → enable regex → find each value → replace all.
-   This is the ONLY file with hardcoded breakpoint values.
-   slashed-core.css layout primitives use @container queries
+   slashed-utilities.css is the ONLY file in the utilities layer with
+   hardcoded breakpoint values. slashed-core.css also contains hardcoded
+   breakpoints for its own layout rules; update both files together.
+   slashed-core.css layout primitives use @container queries in addition
    and do not need to be updated when changing breakpoints.
    ================================================================ */
 
@@ -487,6 +489,7 @@
   .z-base      { z-index: var(--z-base); }
   .z-raised    { z-index: var(--z-raised); }
   .z-docked    { z-index: var(--z-docked); }
+  .z-above     { z-index: var(--z-above); }
   .z-dropdown  { z-index: var(--z-dropdown); }
   .z-sticky    { z-index: var(--z-sticky); }
   .z-banner    { z-index: var(--z-banner); }

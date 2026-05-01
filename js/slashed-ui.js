@@ -300,7 +300,8 @@
 
       list.addEventListener('click', function (e) {
         var tab = e.target.closest('.cs-tabs__tab');
-        if (tab && list.contains(tab)) selectTab(items.indexOf(tab));
+        var idx = tab ? items.indexOf(tab) : -1;
+        if (idx !== -1) selectTab(idx);
       });
     });
   }
