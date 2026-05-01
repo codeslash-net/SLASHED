@@ -143,8 +143,6 @@
       restoreTarget = null;
       if (target && document.body.contains(target)) {
         target.focus();
-      } else {
-        document.body.focus();
       }
     }, true);
   }
