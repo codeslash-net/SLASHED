@@ -297,7 +297,7 @@
     var allowedVariants = { success: true, warning: true, error: true };
     var variant = typeof opts.variant === 'string' ? opts.variant.trim() : '';
     el.className = 'cs-toast' + (allowedVariants[variant] ? ' cs-toast--' + variant : '');
-    el.setAttribute('role', 'status');
+    el.setAttribute('role', opts.urgency === 'assertive' ? 'alert' : 'status');
     var bodySpan = document.createElement('span');
     bodySpan.className = 'cs-toast__body';
     if (opts.title != null) {
@@ -335,6 +335,30 @@
   }
 
   /* ---------------------------------------------------------------
+     Form groups — aria-live wiring for error messages.
+     .cs-form-group__error becomes visible via CSS :user-invalid but
+     screen readers don't announce CSS-only visibility changes.
+     Wires aria-live="polite" and links each error to its input via
+     aria-describedby so assistive tech announces errors on validation.
+  --------------------------------------------------------------- */
+  function initFormGroups() {
+    var errors = document.querySelectorAll('.cs-form-group__error');
+    errors.forEach(function (error, i) {
+      error.setAttribute('aria-live', 'polite');
+      error.setAttribute('aria-atomic', 'true');
+      if (!error.id) error.id = 'cs-fgerr-' + i;
+      var group = error.closest('.cs-form-group');
+      var input = group && group.querySelector('.cs-form-group__input, input, textarea, select');
+      if (input) {
+        var existing = input.getAttribute('aria-describedby');
+        if (!existing || existing.indexOf(error.id) === -1) {
+          input.setAttribute('aria-describedby', existing ? existing + ' ' + error.id : error.id);
+        }
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------
      Init — run all enhancements on DOMContentLoaded
   --------------------------------------------------------------- */
   function init() {
@@ -343,6 +367,7 @@
     initTabs();
     initStagger();
     initRangeFill();
+    initFormGroups();
   }
 
   if (document.readyState === 'loading') {
@@ -366,7 +391,8 @@
     updateRange: updateRange,
     closeModal: closeModal,
     initTabsAccessible: initTabsAccessible,
-    initModalFocusRestore: initModalFocusRestore
+    initModalFocusRestore: initModalFocusRestore,
+    initFormGroups: initFormGroups
   });
 
 })();
