@@ -39,6 +39,7 @@
       summary.addEventListener('keydown', function (e) {
         if (e.key !== 'ArrowDown') return;
         e.preventDefault();
+        e.stopPropagation();
         details.open = true;
         var links = Array.from(details.querySelectorAll('.cs-nav-dropdown__link'));
         if (links.length) links[0].focus();
@@ -242,6 +243,9 @@
     document.querySelectorAll('.cs-tabs').forEach(function (tabs) {
       var list = tabs.querySelector(':scope > .cs-tabs__list');
       if (!list) return;
+      var isVertical = tabs.classList.contains('cs-tabs--vertical');
+      list.setAttribute('role', 'tablist');
+      if (isVertical) list.setAttribute('aria-orientation', 'vertical');
       var items = Array.from(list.querySelectorAll(':scope > .cs-tabs__tab'));
       if (!items.length) return;
 
@@ -276,8 +280,10 @@
         var idx = items.indexOf(document.activeElement);
         if (idx === -1) return;
         var last = items.length - 1;
-        if (e.key === 'ArrowRight') { e.preventDefault(); selectTab(idx < last ? idx + 1 : 0); }
-        else if (e.key === 'ArrowLeft') { e.preventDefault(); selectTab(idx > 0 ? idx - 1 : last); }
+        var nextKey = isVertical ? 'ArrowDown' : 'ArrowRight';
+        var prevKey = isVertical ? 'ArrowUp'   : 'ArrowLeft';
+        if (e.key === nextKey) { e.preventDefault(); selectTab(idx < last ? idx + 1 : 0); }
+        else if (e.key === prevKey) { e.preventDefault(); selectTab(idx > 0 ? idx - 1 : last); }
         else if (e.key === 'Home') { e.preventDefault(); selectTab(0); }
         else if (e.key === 'End') { e.preventDefault(); selectTab(last); }
       });
@@ -352,8 +358,9 @@
      Form groups — aria-live wiring for error messages.
      .cs-form-group__error becomes visible via CSS :user-invalid but
      screen readers don't announce CSS-only visibility changes.
-     Wires aria-live="polite" and links each error to its input via
-     aria-describedby so assistive tech announces errors on validation.
+     Uses aria-errormessage (only active when aria-invalid="true") so
+     errors are not announced for currently valid fields. Validation
+     logic should toggle aria-invalid="true"/"false" on the input.
   --------------------------------------------------------------- */
   function initFormGroups() {
     var errors = document.querySelectorAll('.cs-form-group__error');
@@ -364,10 +371,7 @@
       var group = error.closest('.cs-form-group');
       var input = group && group.querySelector('.cs-form-group__input, input, textarea, select');
       if (input) {
-        var existing = input.getAttribute('aria-describedby');
-        var ids = existing ? existing.trim().split(/\s+/) : [];
-        if (ids.indexOf(error.id) === -1) ids.push(error.id);
-        input.setAttribute('aria-describedby', ids.join(' '));
+        input.setAttribute('aria-errormessage', error.id);
       }
     });
   }
