@@ -75,7 +75,33 @@
   }
 
   /* ---------------------------------------------------------------
-     3. Stagger — auto-set --_i index on children
+     3. Modal focus restore — return focus to trigger on dialog close.
+     Native <dialog> traps focus inside and handles Escape; the gap
+     is restoring focus to the element that opened the dialog.
+     Call once: slashedUI.initModalFocusRestore()
+  --------------------------------------------------------------- */
+  function initModalFocusRestore() {
+    var restoreTarget = null;
+
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[data-modal-trigger]');
+      if (trigger) restoreTarget = trigger;
+    });
+
+    document.addEventListener('close', function (e) {
+      if (!e.target || e.target.tagName !== 'DIALOG') return;
+      var target = restoreTarget;
+      restoreTarget = null;
+      if (target && document.body.contains(target)) {
+        target.focus();
+      } else {
+        document.body.focus();
+      }
+    }, true);
+  }
+
+  /* ---------------------------------------------------------------
+     5. Stagger — auto-set --_i index on children
      CSS platform gap: sibling-index() is not yet cross-browser,
      so we set --_i from JS for stagger animations. Unrelated to the
      flexbox/grid `gap` property, which is natively supported.
@@ -291,7 +317,8 @@
     toast: toast,
     updateRange: updateRange,
     closeModal: closeModal,
-    initTabsAccessible: initTabsAccessible
+    initTabsAccessible: initTabsAccessible,
+    initModalFocusRestore: initModalFocusRestore
   });
 
 })();
