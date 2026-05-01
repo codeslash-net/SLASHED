@@ -78,21 +78,23 @@ In the minor release that ends the alias window:
 - The release's `CHANGELOG.md` entry includes a `### Removed`
   subsection citing the announce version and confirming the alias
   period elapsed.
-- A line is added to (or referenced in) `docs/MIGRATING-0.3-TO-1.0.md`
-  if the migration guide already exists; otherwise the CHANGELOG
-  remains the canonical migration record.
+- The CHANGELOG entry is the canonical migration record. A line is
+  added to `docs/MIGRATING-0.3-TO-1.0.md` once that document exists;
+  it will be written at `0.8.0.0` — see the pre-0.8.0.0 note below.
 
-## Pre-1.0 caveat
+## Pre-0.8.0.0: policy suspended
 
-This policy is the **target contract**. Pre-1.0 (current state), the
-project tries to follow it but reserves the right to make breaking
-changes outside this process when a name turns out to be wrong before
-it sees significant adoption — that's the whole point of pre-1.0.
-Each such break is recorded in `CHANGELOG.md` under `### Breaking`
-with a manual migration note.
+Before `0.8.0.0` this policy **does not apply**. Anything on the public
+surface — tokens, classes, utilities, instance properties, layer order —
+can be renamed, removed, or restructured in a single commit with no
+deprecation alias, no migration guide, and no advance notice. The only
+obligation is a `### Breaking` subsection in `CHANGELOG.md` with a
+one-line rename/removal map.
 
-After 1.0, this policy becomes binding: every public-surface rename or
-removal goes through Announce → Alias → Remove with no exceptions, and
-the alias window starts at one full minor version.
+The policy activates at `0.8.0.0` as a pre-condition for the 1.0 API
+freeze. From that point the Announce → Alias → Remove process is binding
+with no exceptions, and the alias window is at least one full minor
+version.
 
-See `SPEC.md` § "Path to 1.0" for the broader stability roadmap.
+See `SPEC.md` § "Path to 1.0" and `ROADMAP.md` § Versioning for the
+broader stability roadmap.

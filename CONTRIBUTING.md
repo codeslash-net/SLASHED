@@ -66,9 +66,11 @@ rules.
 - **The `slashed.overrides` layer is intentionally empty** and reserved
   for *user* styles that must beat every framework layer. Framework source
   must not author into it.
-- **Breakpoints are not tokenizable.** CSS forbids custom properties inside
-  `@media` queries, so `sm/md/lg/xl` (30em / 48em / 64em / 80em) are
-  hardcoded in `slashed-utilities.css`.
+- **Breakpoints are hardcoded in `slashed-utilities.css` only.** CSS
+  forbids custom properties inside `@media` queries. `sm/md/lg/xl`
+  (30em / 48em / 64em / 80em) live there and nowhere else — layout
+  primitives in `slashed-core.css` use `@container` queries and are
+  unaffected when you change breakpoints.
 - **`--warning` on white is ~2.8:1 — fails WCAG AA for text.** For warning
   *text*, use `var(--warning-600)`. For warning *messages*, pair
   `--warning-100` background with `--warning-600` text.
@@ -91,10 +93,20 @@ rules.
 
 ## Versioning & commits
 
-- Pre-1.0 scheme: `MAJOR.MINOR.PATCH.REVIEW` (e.g. `0.3.8.2`). Only CSS/JS
-  framework changes bump the version.
-- `CHANGELOG.md` is authoritative and verbose — add an entry for any
+- Version scheme: `0.MAJOR.MINOR.PATCH` — the leading `0.` is fixed and
+  signals the API is not yet stable. Only CSS/JS framework changes bump the
+  version. (Older docs and `CLAUDE.md` call the fourth digit `REVIEW`; same
+  position, different name.)
+- **Before `0.8.0.0` — no migration overhead.** Anything on the public
+  surface can be renamed, removed, or restructured in a single commit with
+  no deprecation alias, no migration guide, and no advance notice. Treat
+  every update as potentially breaking; diff the source to see what changed.
+  The full Announce → Alias → Remove process in `docs/DEPRECATION-POLICY.md`
+  activates at `0.8.0.0`.
+- `CHANGELOG.md` is authoritative and verbose — add an entry for every
   framework-surface change. **Append-only** (Keep-a-Changelog format).
+  Breaking changes go under `### Breaking` with a one-line rename map;
+  no migration guide is required before `0.8.0.0`.
 - Forward-looking plans live in `ROADMAP.md`. At every version bump, verify
   `ROADMAP.md` against shipped state and update its **Last reviewed** line.
 - Commit messages follow the existing style: short subject, optional longer
