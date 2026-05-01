@@ -54,11 +54,10 @@
      xl:  80em  (1280px)  →  find: (min-width: 80em)
 
    VS Code: Ctrl+H → enable regex → find each value → replace all.
-   slashed-utilities.css is the ONLY file in the utilities layer with
-   hardcoded breakpoint values. slashed-core.css also contains hardcoded
-   breakpoints for its own layout rules; update both files together.
-   slashed-core.css layout primitives use @container queries in addition
-   and do not need to be updated when changing breakpoints.
+   Both slashed-utilities.css and slashed-core.css contain hardcoded
+   @media breakpoints — update both files when changing these values.
+   Exception: slashed-core.css layout primitives (.stack, .cover, etc.)
+   use @container queries and are not affected by breakpoint changes.
    ================================================================ */
 
 @layer slashed.reset, slashed.base, slashed.layout, slashed.components, slashed.utilities, slashed.visual, slashed.a11y, slashed.overrides;

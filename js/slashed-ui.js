@@ -378,7 +378,12 @@
       error.setAttribute('aria-atomic', 'true');
       if (!error.id) error.id = 'cs-fgerr-' + i;
       var group = error.closest('.cs-form-group');
-      var input = group && group.querySelector('.cs-form-group__input, input, textarea, select');
+      var input = group && group.querySelector(
+        '.cs-form-group__input, ' +
+        'input:not([type="hidden"]):not([hidden]):not([disabled]), ' +
+        'textarea:not([hidden]):not([disabled]), ' +
+        'select:not([hidden]):not([disabled])'
+      );
       if (input && !input.hasAttribute('data-cs-fg-init')) {
         input.setAttribute('data-cs-fg-init', '');
         input.setAttribute('aria-errormessage', error.id);
@@ -390,7 +395,8 @@
         input.addEventListener('blur', syncAriaInvalid);
         input.addEventListener('input', syncAriaInvalid);
         input.addEventListener('change', syncAriaInvalid);
-      }
+        input.addEventListener('invalid', syncAriaInvalid);
+        syncAriaInvalid();
     });
   }
 
