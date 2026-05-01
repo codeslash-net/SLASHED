@@ -75,6 +75,8 @@
       --duration-fast:   0.01ms;
       --duration-normal: 0.01ms;
       --duration-slow:   0.01ms;
+      --duration-enter:  0.01ms;
+      --duration-exit:   0.01ms;
     }
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -101,7 +103,7 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading, var(--font-body, ui-sans-serif, system-ui, sans-serif));
-    font-weight: 700;
+    font-weight: var(--font-weight-heading, 700);
     line-height: var(--leading-tight, 1.2);
     text-wrap: balance;
     overflow-wrap: break-word;

@@ -379,7 +379,8 @@
       if (!error.id) error.id = 'cs-fgerr-' + i;
       var group = error.closest('.cs-form-group');
       var input = group && group.querySelector('.cs-form-group__input, input, textarea, select');
-      if (input) {
+      if (input && !input.hasAttribute('data-cs-fg-init')) {
+        input.setAttribute('data-cs-fg-init', '');
         input.setAttribute('aria-errormessage', error.id);
         function syncAriaInvalid() {
           if (!('validity' in input)) return;

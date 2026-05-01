@@ -1,0 +1,4 @@
+# Generated bundle — edit source files and run bin/build-bundle.sh instead.
+# CodeRabbit reviews the sources (tokens-default.css, slashed-core.css,
+# slashed-components.css, slashed-utilities.css) where changes are made.
+css/slashed-full.css

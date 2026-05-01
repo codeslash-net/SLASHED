@@ -402,6 +402,8 @@
   @container (min-width: 30em) and (max-width: 47.99em) {
     .bento > .col-span-3,
     .bento > .col-span-4,
+    .bento > .col-span-5,
+    .bento > .col-span-6,
     .bento > .col-span-full { grid-column: 1 / -1; }
   }
   @container (max-width: 29.9999em) {
