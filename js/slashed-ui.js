@@ -17,9 +17,10 @@
   'use strict';
 
   /* ---------------------------------------------------------------
-     1. Nav dropdown — aria-expanded + keyboard accessibility
+     1. Nav dropdown — aria-expanded + full keyboard accessibility
      Enhances .cs-nav-dropdown (<details>-based) with proper ARIA.
-     Adds: aria-expanded sync, Escape to close, click-outside close.
+     Adds: aria-expanded sync, Escape, click-outside, Arrow keys,
+           Home/End, first-letter navigation.
   --------------------------------------------------------------- */
   function initNavDropdowns() {
     var dropdowns = document.querySelectorAll('.cs-nav-dropdown');
@@ -29,9 +30,56 @@
       var summary = details.querySelector('summary');
       if (!summary) return;
       summary.setAttribute('aria-expanded', details.open ? 'true' : 'false');
+      summary.setAttribute('aria-haspopup', 'true');
 
       details.addEventListener('toggle', function () {
         summary.setAttribute('aria-expanded', details.open ? 'true' : 'false');
+      });
+
+      summary.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowDown') return;
+        e.preventDefault();
+        details.open = true;
+        var links = Array.from(details.querySelectorAll('.cs-nav-dropdown__link'));
+        if (links.length) links[0].focus();
+      });
+
+      details.addEventListener('keydown', function (e) {
+        if (!details.open) return;
+        var links = Array.from(details.querySelectorAll('.cs-nav-dropdown__link'));
+        if (!links.length) return;
+        var idx = links.indexOf(document.activeElement);
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (idx === -1 || idx === links.length - 1) links[0].focus();
+          else links[idx + 1].focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (idx <= 0) links[links.length - 1].focus();
+          else links[idx - 1].focus();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          links[0].focus();
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          links[links.length - 1].focus();
+        } else if (e.key === 'Escape') {
+          e.stopPropagation();
+          details.open = false;
+          summary.focus();
+        } else if (e.key === 'Tab') {
+          details.open = false;
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+          var char = e.key.toLowerCase();
+          var start = idx >= 0 ? idx + 1 : 0;
+          var found = links.slice(start).find(function (l) {
+            return l.textContent.trim()[0].toLowerCase() === char;
+          }) || links.find(function (l) {
+            return l.textContent.trim()[0].toLowerCase() === char;
+          });
+          if (found) { e.preventDefault(); found.focus(); }
+        }
       });
     });
 
