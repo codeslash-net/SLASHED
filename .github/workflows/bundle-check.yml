@@ -22,3 +22,18 @@ jobs:
             echo "Then commit the result."
             exit 1
           fi
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dev dependencies
+        run: npm install
+
+      - name: Lint CSS
+        run: npm run lint:css
