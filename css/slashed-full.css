@@ -5804,12 +5804,12 @@
      recurred in ≥3 unrelated wireframe categories. Distinct from
      `.max-w-prose` (which uses the `--container-prose` token at 65ch). */
 
-  .measure-xs  { margin-inline: auto; max-inline-size: 40rem; }
-  .measure-s   { margin-inline: auto; max-inline-size: 42rem; }
-  .measure-m   { margin-inline: auto; max-inline-size: 44rem; }
-  .measure-l   { margin-inline: auto; max-inline-size: 48rem; }
-  .measure-xl  { margin-inline: auto; max-inline-size: 56rem; }
-  .measure-2xl { margin-inline: auto; max-inline-size: 64rem; }
+  .measure-xs  { margin-inline: auto; max-inline-size: var(--measure-xs, 40rem); }
+  .measure-s   { margin-inline: auto; max-inline-size: var(--measure-s, 42rem); }
+  .measure-m   { margin-inline: auto; max-inline-size: var(--measure-m, 44rem); }
+  .measure-l   { margin-inline: auto; max-inline-size: var(--measure-l, 48rem); }
+  .measure-xl  { margin-inline: auto; max-inline-size: var(--measure-xl, 56rem); }
+  .measure-2xl { margin-inline: auto; max-inline-size: var(--measure-2xl, 64rem); }
 
   /* Parent-relative fractions */
   .w-1\/2  { width: 50%; }

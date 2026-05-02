@@ -46,10 +46,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.4.9.0] — 2026-05-02 — Wireframes audit promotions
 
 Implements the promote shortlist from `slashed-blueprints` audit pass #2
-(PR #5). Each promoted pattern recurred in ≥3 unrelated wireframe
-categories with no framework equivalent. Two further shortlist items
-(`.object-cover`, `.overflow-hidden`) were already framework utilities
-and required no change.
+(slashed-blueprints PR #5). Each promoted pattern recurred in ≥3
+unrelated wireframe categories with no framework equivalent. Two further
+shortlist items (`.object-cover`, `.overflow-hidden`) were already
+framework utilities and required no change.
 
 ### Added — utilities (`slashed-utilities.css`)
 
