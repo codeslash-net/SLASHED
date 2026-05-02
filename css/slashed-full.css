@@ -2773,6 +2773,7 @@
   }
   .cs-skeleton > * { visibility: hidden; }
   .cs-skeleton > .cs-skeleton__line {
+    display: block;
     height: 0.75em;
     border-radius: var(--radius-xs);
     background: inherit;
