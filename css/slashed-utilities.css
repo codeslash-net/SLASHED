@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Utilities — v0.4.8.0
+   SLASHED Utilities — v0.4.9.0
    Layout, functional, and inline typographic composition utilities.
 
    PHILOSOPHY:
@@ -262,9 +262,12 @@
   .underline    { text-decoration: underline; }
   .line-through { text-decoration: line-through; }
   .no-underline { text-decoration: none; }
+  .link-reset   { color: var(--color-text); text-decoration: none; }
+  .text-eyebrow { font-weight: 700; letter-spacing: var(--tracking-widest); text-transform: uppercase; }
 
   /* ----- Typography: line-height & letter-spacing ----- */
 
+  .leading-none   { line-height: 1; }
   .leading-tight  { line-height: var(--leading-tight); }
   .leading-snug   { line-height: var(--leading-snug); }
   .leading-normal { line-height: var(--leading-normal); }
@@ -436,6 +439,19 @@
   .max-w-none { max-width: none; }
   .max-w-prose { max-width: var(--container-prose); }
   .max-h-full { max-height: 100%; }
+
+  /* ----- Measure (centred reading widths) -----
+     Pair `margin-inline: auto` with `max-inline-size` for centred reading
+     columns. Sourced from blueprints audit pass #2 (PR #5): each width
+     recurred in ≥3 unrelated wireframe categories. Distinct from
+     `.max-w-prose` (which uses the `--container-prose` token at 65ch). */
+
+  .measure-xs  { margin-inline: auto; max-inline-size: 40rem; }
+  .measure-s   { margin-inline: auto; max-inline-size: 42rem; }
+  .measure-m   { margin-inline: auto; max-inline-size: 44rem; }
+  .measure-l   { margin-inline: auto; max-inline-size: 48rem; }
+  .measure-xl  { margin-inline: auto; max-inline-size: 56rem; }
+  .measure-2xl { margin-inline: auto; max-inline-size: 64rem; }
 
   /* Parent-relative fractions */
   .w-1\/2  { width: 50%; }

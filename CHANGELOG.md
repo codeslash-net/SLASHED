@@ -43,6 +43,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.9.0] — 2026-05-02 — Wireframes audit promotions
+
+Implements the promote shortlist from `slashed-blueprints` audit pass #2
+(PR #5). Each promoted pattern recurred in ≥3 unrelated wireframe
+categories with no framework equivalent. Two further shortlist items
+(`.object-cover`, `.overflow-hidden`) were already framework utilities
+and required no change.
+
+### Added — utilities (`slashed-utilities.css`)
+
+**Measure (centred reading widths):** `.measure-xs` (40rem) ·
+`.measure-s` (42rem) · `.measure-m` (44rem) · `.measure-l` (48rem) ·
+`.measure-xl` (56rem) · `.measure-2xl` (64rem). Each pairs
+`margin-inline: auto` with `max-inline-size`. Distinct from
+`.max-w-prose` (which uses the `--container-prose` token at 65ch); the
+`.measure-*` family preserves the explicit rem values measured in
+wireframes.
+
+**Typography:**
+- `.link-reset` — `color: var(--color-text); text-decoration: none`. For
+  links inside surfaces where the parent already implies clickability
+  (cards, list rows) and a default underline + accent colour would add
+  noise.
+- `.text-eyebrow` — `font-weight: 700; letter-spacing:
+  var(--tracking-widest); text-transform: uppercase`. Consolidates four
+  variants observed in the audit (rows #17 / #18 / #49 / #50). Tracking
+  normalised to the framework token.
+- `.leading-none` — `line-height: 1`. Used for stat / number displays
+  where stacked tight type matters.
+
+### Regenerated
+
+- `css/slashed-full.css` regenerated at v0.4.9.0 state.
+
+---
+
 ## [0.4.8.0] — 2026-05-02 — BEM fix + CSS modernization
 
 ### Breaking
