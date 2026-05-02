@@ -3,7 +3,7 @@
 > Forward-looking only. Shipped work lives in [`CHANGELOG.md`](CHANGELOG.md).
 > Reviewed at every framework version bump.
 >
-> **Last reviewed:** v0.4.6.0 (2026-05-01).
+> **Last reviewed:** v0.4.6.0 (2026-05-02). Items labelled `0.5.0.0` are implemented in the codebase; the version tag has not yet been cut.
 
 This file is the single authoritative list of what is *not yet shipped*. If
 something is here and has since shipped, move it to the corresponding
@@ -662,10 +662,10 @@ here to prevent re-addition.
   two CI checks) for a workflow that is already possible. Document the
   multi-file load path in README more visibly instead.
 - **`initTabsAccessible()`** — shipped in `0.5.0.0`. WAI-ARIA Tabs keyboard pattern: arrow navigation, roving tabindex, auto-select, `aria-selected` wiring.
-- **`initModalFocusRestore()`** — shipped in `0.5.0.0`. Returns focus to the trigger element when `<dialog>` closes; falls back to `document.body` if trigger was removed.
+- **`initModalFocusRestore()`** — shipped in `0.5.0.0`. Returns focus to the trigger element when `<dialog>` closes; if the trigger is unavailable or removed, focus restoration is skipped (no `document.body` fallback).
 - **Nav-dropdown keyboard navigation** — shipped in `0.5.0.0`. Arrow Up/Down, Home/End, first-letter jump, Escape closes, Tab closes via browser default.
 - **Toast `urgency: 'assertive'` option** — shipped in `0.5.0.0`. Sets `role="alert"` for immediate screen-reader interruption on errors; default `role="status"` unchanged.
-- **`initFormGroups()` aria-live wiring** — shipped in `0.5.0.0`. Adds `aria-live="polite"` / `aria-atomic="true"` to `.cs-form-group__error` and links `aria-describedby` from input to error.
+- **`initFormGroups()` aria-live wiring** — shipped in `0.5.0.0`. Adds `aria-live="polite"` / `aria-atomic="true"` to `.cs-form-group__error` and sets `aria-errormessage` on the associated input pointing to the error element's id.
 - **T1 (font-weight token cleanup)** — shipped in `0.5.0.0`. Removed 8 `--font-weight-*` tokens; renamed `--font-weight-bold` → `--font-weight-heading`.
 - **T2 (alpha variant trim)** — shipped in `0.5.0.0`. Alpha variants reduced to 3 steps (`a25`, `a50`, `a75`) for `--primary`, `--secondary`, `--accent`.
 - **T3 (`--text-6xl` through `--text-9xl` removal)** — shipped in `0.5.0.0`. Scale ends at `--text-5xl`; `--text-fluid-hero` covers hero-scale type.
