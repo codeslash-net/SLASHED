@@ -659,7 +659,7 @@
     <div class="item"><span class="name">.cs-media</span><span class="desc">Image / video wrapper with overflow clip and radius</span><span class="why">Wraps images and embeds — handles border-radius + overflow-clip so the child image inherits the radius correctly.</span></div>
     <div class="item"><span class="name">[data-icon]="s/m/l/xl"</span><span class="desc">SVG icon sizing via attribute (16/20/24/32px)</span><span class="why">Token-driven icon sizing without per-icon classes — <code>data-icon="m"</code> on any <code>&lt;svg&gt;</code> sets width + height.</span></div>
     <div class="item"><span class="name">.cs-skeleton</span><span class="desc">Skeleton loading placeholder (shimmer animation)</span><span class="why">Loading state. Use <code>.cs-skeleton__line</code> for child line elements.</span></div>
-    <div class="item"><span class="name">.cs-skeleton__line <span class="tag tag--breaking">renamed in 0.4.8.0</span></span><span class="desc">Skeleton line element (was <code>.cs-skeleton-line</code>)</span><span class="why">Renamed from <code>.cs-skeleton-line</code> to correct the BEM violation — element classes use <code>__</code>, not standalone names.</span></div>
+    <div class="item"><span class="name">.cs-skeleton__line <span class="tag tag--breaking">renamed in 0.4.9.0</span></span><span class="desc">Skeleton line element (was <code>.cs-skeleton-line</code>)</span><span class="why">Renamed from <code>.cs-skeleton-line</code> to correct the BEM violation — element classes use <code>__</code>, not standalone names.</span></div>
     <div class="item"><span class="name">.cs-chip / .cs-nav-link / .cs-nav-link--active</span><span class="desc">Chip button and navigation link components</span><span class="why">UI chip for filter bars, tag selection. Nav link with active/current state styling.</span></div>
     <div class="item"><span class="name">.cs-tabs / .cs-tab / .cs-tab-panel</span><span class="desc">Tab interface (pure-CSS baseline + optional JS ARIA enhancement)</span><span class="why">Pure-CSS tabs use <code>:has(:checked)</code> on radio inputs. <code>initTabsAccessible()</code> upgrades to full ARIA tabs with keyboard navigation.</span></div>
     <div class="item"><span class="name">.cs-modal / .cs-modal__header / .cs-modal__body / .cs-modal__footer</span><span class="desc">Native <code>&lt;dialog&gt;</code> modal with <code>@starting-style</code> animation</span><span class="why">Wraps native <code>&lt;dialog&gt;</code> — correct backdrop handling, <code>closeModal()</code>/<code>initModalFocusRestore()</code> for full accessibility.</span></div>
@@ -767,11 +767,14 @@
 
   <h3 class="subheading">Line height &amp; tracking</h3>
   <div class="class-grid">
+    <div class="item"><span class="name">.leading-none</span><span class="desc">line-height: 1 — for stat / number displays</span><span class="why">Tight stacking for large numerals where descender room would look loose. Sourced from blueprints audit pass #2.</span></div>
     <div class="item"><span class="name">.leading-tight</span><span class="desc">line-height: ~1.15 — for headings</span><span class="why">Tight line height for large text — multi-line display headings need less gap than body text.</span></div>
     <div class="item"><span class="name">.leading-snug</span><span class="desc">line-height: ~1.3</span><span class="why">For subheadings and UI text where body-height would look too loose.</span></div>
     <div class="item"><span class="name">.leading-normal</span><span class="desc">line-height: ~1.5 — for body text</span><span class="why">The readable default. Use to reset tight line-height from a heading inside a prose context.</span></div>
     <div class="item"><span class="name">.leading-loose</span><span class="desc">line-height: ~1.8</span><span class="why">For small text with lots of breathing room — footnotes, form hints, captions.</span></div>
     <div class="item"><span class="name">.tracking-tighter / tight / normal / wide / wider / widest</span><span class="desc">letter-spacing scale (5 steps, <code>--tracking-*</code> tokens)</span><span class="why">Tight: large display text. Normal: body. Wide/wider/widest: uppercase labels and eyebrows (wide tracking improves readability at small caps).</span></div>
+    <div class="item"><span class="name">.text-eyebrow</span><span class="desc">700 + tracking-widest + uppercase</span><span class="why">Consolidated eyebrow primitive. Sourced from blueprints audit pass #2 (consolidates four variant patterns into one class).</span></div>
+    <div class="item"><span class="name">.link-reset</span><span class="desc">color: var(--color-text); text-decoration: none</span><span class="why">For links inside surfaces that already imply clickability (cards, list rows). Removes default underline and accent colour.</span></div>
   </div>
 </section>
 
@@ -984,6 +987,7 @@
     <div class="item"><span class="name">.w-content-1/4 … .w-content-full</span><span class="desc">Fractions of <code>--content-width</code> (centered)</span><span class="why">For editorial pull-quotes and narrow centered blocks inside <code>.content-grid</code>.</span></div>
     <div class="item"><span class="name">.min-w-0</span><span class="desc">min-width: 0</span><span class="why">Allows flex/grid children to shrink below their content size — fixes the common overflow-in-flex bug.</span></div>
     <div class="item"><span class="name">.min-w-full</span><span class="desc">min-width: 100%</span><span class="why">Forces an element to at least fill its parent — useful for dropdown menus that should be at least as wide as their trigger.</span></div>
+    <div class="item"><span class="name">.measure-xs / -s / -m / -l / -xl / -2xl</span><span class="desc">Centred reading widths: 40 / 42 / 44 / 48 / 56 / 64rem</span><span class="why">Pairs <code>margin-inline: auto</code> with <code>max-inline-size</code>. Distinct from <code>.max-w-prose</code> which uses the <code>--container-prose</code> token at 65ch. Sourced from blueprints audit pass #2.</span></div>
     <div class="item"><span class="name">.max-w-full <span class="tag tag--proposed">proposed</span></span><span class="desc">max-width: 100%</span><span class="why">Constrains to parent width — prevents images and tables from overflowing. One of the most common one-off CSS declarations.</span></div>
     <div class="item"><span class="name">.max-w-none <span class="tag tag--proposed">proposed</span></span><span class="desc">max-width: none</span><span class="why">Resets a <code>max-width</code> constraint from a parent or component default. Needed when a component sets max-width but an instance should be unconstrained.</span></div>
     <div class="item"><span class="name">.max-w-prose <span class="tag tag--breaking">breaking rename</span></span><span class="desc">max-width: var(--container-prose) — formerly <code>.max-prose</code></span><span class="why">Constrains reading content to 65ch for optimal line length. Rename from <code>.max-prose</code> to align with the <code>max-w-*</code> naming axis.</span></div>
@@ -1160,8 +1164,8 @@
 <div class="no-results" id="no-results" style="display:none;">No classes match your filter.</div>
 
 <footer class="footer-note">
-  SLASHED v0.4.8.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
-  <span style="font-size:10px;opacity:0.6;">Cheatsheet updated for 0.5.0.0 planning · Classes marked <span class="tag tag--proposed" style="vertical-align:middle">proposed</span> are pending approval before implementation · Classes marked <span class="tag tag--breaking" style="vertical-align:middle">breaking rename</span> will change in 0.4.7.0 or 0.4.8.0</span>
+  SLASHED v0.4.9.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
+  <span style="font-size:10px;opacity:0.6;">Cheatsheet updated for 0.5.0.0 planning · Classes marked <span class="tag tag--proposed" style="vertical-align:middle">proposed</span> are pending approval before implementation · Classes marked <span class="tag tag--breaking" style="vertical-align:middle">breaking rename</span> will change in 0.4.7.0 or 0.4.9.0</span>
 </footer>
 
 <script>
