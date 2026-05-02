@@ -10,6 +10,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [unreleased]
+
+### Fixed (review pass on PR #4)
+
+- `css/tokens-default.css` — `--color-text-on-primary` in dark mode
+  changed from `#ffffff` to `#111827`. White on dark-mode primary
+  (`#5b8def`) was 3.24:1, failing WCAG AA. Dark text is 5.48:1.
+- `css/slashed-core.css` `prefers-reduced-data` selector tightened from
+  `[class*="cs-"]` / `[class*="bg-"]` (substring match, false-positives
+  on names like `btn-cs-primary`) to whole-token matching with
+  `[class^="cs-"], [class*=" cs-"]`.
+- `css/slashed-core.css` `.bento` `@container` queries — `(max-width:
+  48em)` tightened to `(max-width: 47.99em)` on both occurrences (medium
+  bento layout and span-collapse override). Aligns with the
+  `47.99em` convention used elsewhere in the framework and prevents
+  the medium rule from leaking into the `48em` breakpoint.
+- `css/slashed-core.css` `dialog` element — width now derives from
+  `--container-dialog` (20rem) via a new `--dialog-max-width` instance
+  custom property. The previous default routed through
+  `--container-prose` (65ch), which made the new `--container-dialog`
+  token meaningless for the very element it was named for. Consumers
+  who want wider dialogs can override per-instance:
+  `<dialog style="--dialog-max-width: var(--container-prose)">…</dialog>`.
+  This shrinks the default `<dialog>` width from ~40rem to 20rem; if
+  your app has substantive dialogs, set `--dialog-max-width` (per
+  instance or globally on `:root`) to your preferred token.
+- `docs/COMPONENTS.md` `.cs-nav-link` paragraph rewritten — no longer
+  claims the rule is authored as `a.cs-nav-link` with specificity
+  0,1,1; documents the class-only authoring and the cascade-layer
+  mechanism.
+
+---
+
 ## [0.4.8.0] — 2026-05-02 — BEM fix + CSS modernization
 
 ### Breaking
@@ -63,39 +96,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `docs/UTILITIES.md` — z-index section now documents all 14 utility classes (previously only 7)
 - `docs/UTILITIES.md` — new classes added above documented in all relevant sections
 - `cheatsheet.html` — complete per-class and per-token justification pass; all sections now include group rationale, per-item `.why` justifications, and status tags (`proposed` / `breaking` / `⚠ issue`)
-
----
-
-## [unreleased]
-
-### Fixed (review pass on PR #4)
-
-- `css/tokens-default.css` — `--color-text-on-primary` in dark mode
-  changed from `#ffffff` to `#111827`. White on dark-mode primary
-  (`#5b8def`) was 3.24:1, failing WCAG AA. Dark text is 5.48:1.
-- `css/slashed-core.css` `prefers-reduced-data` selector tightened from
-  `[class*="cs-"]` / `[class*="bg-"]` (substring match, false-positives
-  on names like `btn-cs-primary`) to whole-token matching with
-  `[class^="cs-"], [class*=" cs-"]`.
-- `css/slashed-core.css` `.bento` `@container` queries — `(max-width:
-  48em)` tightened to `(max-width: 47.99em)` on both occurrences (medium
-  bento layout and span-collapse override). Aligns with the
-  `47.99em` convention used elsewhere in the framework and prevents
-  the medium rule from leaking into the `48em` breakpoint.
-- `css/slashed-core.css` `dialog` element — width now derives from
-  `--container-dialog` (20rem) via a new `--dialog-max-width` instance
-  custom property. The previous default routed through
-  `--container-prose` (65ch), which made the new `--container-dialog`
-  token meaningless for the very element it was named for. Consumers
-  who want wider dialogs can override per-instance:
-  `<dialog style="--dialog-max-width: var(--container-prose)">…</dialog>`.
-  This shrinks the default `<dialog>` width from ~40rem to 20rem; if
-  your app has substantive dialogs, set `--dialog-max-width` (per
-  instance or globally on `:root`) to your preferred token.
-- `docs/COMPONENTS.md` `.cs-nav-link` paragraph rewritten — no longer
-  claims the rule is authored as `a.cs-nav-link` with specificity
-  0,1,1; documents the class-only authoring and the cascade-layer
-  mechanism.
 
 ## [0.4.6.0] — 2026-04-30 — Container token rename, width utility refactor, docs audit
 

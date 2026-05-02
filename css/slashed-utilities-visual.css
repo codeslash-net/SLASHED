@@ -8,8 +8,8 @@
    Decoration belongs in BEM rules with design tokens - see SPEC.md pillar #2.
 
    This file exists for projects that prefer decorative utility composition,
-   rapid prototyping, or ad-hoc tinting in Bricks GUI. It ships the exact 98
-   classes that were cut from core in 0.1.2.1, one-to-one. No additions.
+   rapid prototyping, or ad-hoc tinting in Bricks GUI. It ships the classes
+   that were cut from core in 0.1.2.1, plus additive visual utilities.
 
    USAGE:
    Load AFTER slashed-full.css (or slashed-utilities.css):
@@ -43,7 +43,7 @@
   .border         { border: var(--border-width, 1px) solid var(--color-border); }
   .border-0       { border: 0; }
   .border-2       { border-width: 2px; }
-  .border-4       { border-width: 4px; }
+  .border-4       { border-width: var(--border-width-4, 4px); }
   .border-b       { border-block-end: var(--border-width, 1px) solid var(--color-border); }
   .border-t       { border-block-start: var(--border-width, 1px) solid var(--color-border); }
   .border-l       { border-inline-start: var(--border-width, 1px) solid var(--color-border); }

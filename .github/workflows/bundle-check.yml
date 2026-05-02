@@ -33,7 +33,7 @@ jobs:
           node-version: lts/*
 
       - name: Install dev dependencies
-        run: npm install
+        run: npm ci
 
       - name: Lint CSS
         run: npm run lint:css

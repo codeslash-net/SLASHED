@@ -2771,8 +2771,8 @@
     user-select: none;
     pointer-events: none;
   }
-  .cs-skeleton * { visibility: hidden; }
-  .cs-skeleton__line {
+  .cs-skeleton > * { visibility: hidden; }
+  .cs-skeleton > .cs-skeleton__line {
     height: 0.75em;
     border-radius: var(--radius-xs);
     background: inherit;

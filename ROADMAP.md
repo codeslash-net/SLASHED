@@ -482,7 +482,7 @@ Items that have been proposed in the past but are not pending. Documented
 here to prevent re-addition.
 
 - **BEM fix: `.cs-skeleton-line` → `.cs-skeleton__line`** — shipped in `0.4.8.0`. Breaking rename in `slashed-components.css`; cheatsheet updated.
-- **`sibling-index()` native stagger** — shipped in `0.4.8.0`. `@supports` block added in `slashed-core.css`; `initStagger()` in `slashed-ui.js` remains as polyfill for Chrome <130 / Firefox <131 / Safari <18.
+- **`sibling-index()` native stagger** — shipped in `0.4.8.0`. `@supports` block added in `slashed-core.css`; `initStagger()` in `slashed-ui.js` remains as polyfill for `Chrome <130` / `Firefox <131` / `Safari <18`.
 - **`text-box` trim extended to `.cs-badge`, `.cs-nav-link`, `.cs-chip`, `.cs-eyebrow`** — shipped in `0.4.8.0`. Added to the existing `@supports (text-box: trim-both cap alphabetic)` block in `slashed-components.css`.
 - **Cheatsheet / docs vs. CSS parity audit + phantom class sweep** — shipped in `0.4.7.0`. All documented-but-missing utility classes implemented (`.inline`, `.inline-grid`, `.contents`, `.static`, `.shrink`, `.justify-around`, `.justify-evenly`, `.self-stretch`, `.self-auto`, `.start-0`, `.end-0`, `.h-min`, `.h-max`, `.max-w-full`, `.max-w-none`, `.max-w-prose`, `.overflow-scroll`, `.overflow-visible`, `.overflow-y-auto`, `.object-fill`, `.object-scale-down`, `.object-left`, `.object-right`, `.cursor-wait`, `.cursor-grab`, `.cursor-grabbing`, `.border-4`). Phantom `.masonry--l` and `.border-default` removed from docs. `.max-prose` renamed to `.max-w-prose`. `--ease-inout` renamed to `--ease-in-out`. Cheatsheet updated with per-class/token justification pass.
 - **Container token rename (T4)** — shipped in `0.4.6.0`.

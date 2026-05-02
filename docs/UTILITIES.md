@@ -297,6 +297,8 @@ Single primitive driven by an inline instance token:
 | Class | Value |
 |-------|-------|
 | `.inset-0` | `inset: 0` |
+| `.inset-x-0` | `inset-inline: 0` |
+| `.inset-y-0` | `inset-block: 0` |
 | `.top-0`, `.right-0`, `.bottom-0`, `.left-0` | Physical offsets |
 | `.start-0`, `.end-0` | Logical (LTR/RTL aware) |
 
@@ -360,9 +362,13 @@ Three axes with explicit prefix:
 |-------|-------|
 | `.min-w-0` | `min-width: 0` (allows flex/grid children to shrink past content width) |
 | `.min-w-full` | `min-width: 100%` |
+| `.min-h-0` | `min-height: 0` |
+| `.min-h-screen` | `min-height: 100vh / 100dvh` |
 | `.max-w-full` | `max-width: 100%` |
 | `.max-w-none` | `max-width: none` (reset) |
 | `.max-w-prose` | `max-width: var(--container-prose)` (~65ch for reading) |
+| `.max-h-full` | `max-height: 100%` |
+| `.max-h-screen` | `max-height: 100vh / 100dvh` |
 
 ### Aspect ratio
 

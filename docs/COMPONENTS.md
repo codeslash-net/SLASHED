@@ -980,7 +980,7 @@ Size modifiers: `--s` / `--lead` / `--xl`.
 
 ### `.cs-skeleton` / `.cs-skeleton__line`
 
-Animated placeholder for content loading. `.cs-skeleton` masks all descendants (`visibility: hidden` on `*`); `.cs-skeleton__line` is a BEM element for a standalone shimmering line.
+Animated placeholder for content loading. `.cs-skeleton` masks all descendants (`visibility: hidden` on `*`); `.cs-skeleton__line` is the BEM element used inside `.cs-skeleton` for shimmer lines — it must be a direct child to correctly inherit the shimmer animation.
 
 ```html
 <article class="cs-card cs-skeleton">
@@ -988,7 +988,7 @@ Animated placeholder for content loading. `.cs-skeleton` masks all descendants (
   <p>Hidden too — only the card surface shimmers.</p>
 </article>
 
-<div class="stack stack--xs">
+<div class="cs-skeleton stack stack--xs">
   <span class="cs-skeleton__line"></span>
   <span class="cs-skeleton__line" style="inline-size: 70%"></span>
 </div>
