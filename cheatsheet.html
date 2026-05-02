@@ -219,6 +219,74 @@
     font-size: 12px;
     text-align: center;
   }
+
+  /* --- Rationale / decision-review additions --- */
+  .rationale {
+    background: rgba(96, 165, 250, 0.05);
+    border: 1px solid rgba(96, 165, 250, 0.15);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0 1rem;
+    font-size: 12px;
+    color: var(--cs-muted);
+    line-height: 1.6;
+  }
+  .rationale strong { color: var(--cs-text); }
+  .rationale code {
+    font-family: var(--mono);
+    background: var(--cs-bg);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    color: var(--cs-accent);
+    font-size: 11px;
+  }
+  .rationale .when-not {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--cs-faint);
+    font-style: italic;
+  }
+
+  /* Inline badges on items */
+  .tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    font-family: var(--sans);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin-left: 0.3rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .tag--proposed { background: rgba(74, 222, 128, 0.15); color: var(--cs-green); border: 1px solid rgba(74, 222, 128, 0.3); }
+  .tag--breaking { background: rgba(251, 146, 60, 0.15); color: var(--cs-orange); border: 1px solid rgba(251, 146, 60, 0.3); }
+  .tag--issue    { background: rgba(250, 204, 21, 0.15);  color: var(--cs-yellow); border: 1px solid rgba(250, 204, 21, 0.3); }
+  .tag--remove   { background: rgba(248, 113, 113, 0.15); color: #f87171;          border: 1px solid rgba(248, 113, 113, 0.3); }
+
+  .item .why {
+    color: var(--cs-faint);
+    font-size: 10px;
+    font-family: var(--sans);
+    font-style: italic;
+    line-height: 1.4;
+    margin-top: 0.15rem;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 11px;
+    color: var(--cs-muted);
+    padding: 0.75rem 1rem;
+    background: var(--cs-surface);
+    border: 1px solid var(--cs-border);
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+  }
 </style>
 </head>
 <body>
@@ -251,114 +319,284 @@
 <div class="intro-note">
   <strong>Philosophy:</strong> UI components are <code>.cs-*</code> prefixed. Layout primitives and utilities are unprefixed for ergonomic authoring.
   Framework uses cascade layers — any unlayered BEM class you write beats framework rules automatically.
+  <br><br>
+  <strong>Three authoring layers:</strong> (1) <strong>Layout primitives</strong> (<code>.section</code>, <code>.stack</code>, <code>.bento</code>) encode structural patterns with responsive behaviour built-in.
+  (2) <strong>BEM components</strong> (<code>.cs-btn</code>, <code>.cs-card</code>) encode design decisions with design tokens. (3) <strong>Utilities</strong> configure the layout engine, toggle a11y properties, and compose inline typography — they do <em>not</em> encode decoration.
+</div>
+
+<div class="legend">
+  <strong>Legend:</strong>
+  <span class="tag tag--proposed">proposed</span> not in CSS yet — pending approval
+  <span class="tag tag--breaking">breaking</span> rename or removal from existing API
+  <span class="tag tag--issue">⚠ issue</span> known problem requiring a decision
+  <span class="tag tag--remove">remove</span> phantom — documented but will never ship
 </div>
 
 <!-- ============================================================ TOKENS -->
 <section class="section" id="tokens">
-  <h2 class="section-title">Design Tokens <span class="meta">201 tokens · see docs/TOKENS.md</span></h2>
+  <h2 class="section-title">Design Tokens <span class="meta">tokens-default.css · see docs/TOKENS.md</span></h2>
 
-  <h3 class="subheading">Brand Colors</h3>
-  <div class="class-grid">
-    <div class="item"><span class="name">--primary</span><span class="desc"><span class="color-chip" style="background:#2563eb"></span>Primary brand color</span></div>
-    <div class="item"><span class="name">--secondary</span><span class="desc"><span class="color-chip" style="background:#0d9488"></span>Secondary brand color</span></div>
-    <div class="item"><span class="name">--accent</span><span class="desc"><span class="color-chip" style="background:#f59e0b"></span>Accent color</span></div>
-    <div class="item"><span class="name">--primary-50..950</span><span class="desc">Primary palette shades</span></div>
-    <div class="item"><span class="name">--secondary-50..950</span><span class="desc">Secondary palette shades</span></div>
-    <div class="item"><span class="name">--accent-50..950</span><span class="desc">Accent palette shades</span></div>
+  <div class="rationale">
+    <strong>System architecture:</strong> Tokens form a three-tier hierarchy.
+    <strong>Primitives</strong> are the raw scale values (<code>--primary-100</code>, <code>--space-m</code>).
+    <strong>Semantic aliases</strong> give role-based names to primitives (<code>--color-bg</code>, <code>--color-text</code>) — components and utilities always reference aliases, never raw primitives.
+    <strong>Instance tokens</strong> are component-scoped overrides (<code>--btn-bg</code>, <code>--card-padding</code>) that let you customise one instance without touching the cascade.
+    <br><br>
+    <strong>How to configure:</strong> Override primitives on <code>:root</code> in your own stylesheet. The entire system (shades, dark mode, components) updates automatically.
+    <span class="when-not">Do NOT reach into component CSS or utility rules — token override is the correct customisation path.</span>
   </div>
 
-  <h3 class="subheading">Semantic Colors</h3>
+  <h3 class="subheading">Brand Colors — primitives (6 configurable roots)</h3>
+  <div class="rationale">
+    Each of the 6 brand roles is an <code>oklch()</code> value registered via <code>@property</code> (enables CSS transitions between themes).
+    The full shade scale (50–950), hover tint, and 3 alpha variants are derived via <code>color-mix(in oklch, …)</code> — change one root and all 15+ derived values update. Dark-mode shade inversion is automatic.
+    <span class="when-not">Use status colors (<code>--success</code>, <code>--warning</code>, <code>--error</code>) for feedback states, not <code>--primary</code> tinted to look greenish.</span>
+  </div>
   <div class="class-grid">
-    <div class="item"><span class="name">--color-bg</span><span class="desc">Page background</span></div>
-    <div class="item"><span class="name">--color-surface</span><span class="desc">Card / elevated surface</span></div>
-    <div class="item"><span class="name">--color-surface-2</span><span class="desc">Secondary surface (hover, nested)</span></div>
-    <div class="item"><span class="name">--color-surface-elevated</span><span class="desc">Highest elevation</span></div>
-    <div class="item"><span class="name">--color-text</span><span class="desc">Primary body text</span></div>
-    <div class="item"><span class="name">--color-text-secondary</span><span class="desc">Secondary text</span></div>
-    <div class="item"><span class="name">--color-text-muted</span><span class="desc">Muted / helper text</span></div>
-    <div class="item"><span class="name">--color-text-faint</span><span class="desc">Tertiary / disabled text</span></div>
-    <div class="item"><span class="name">--color-border</span><span class="desc">Default border color</span></div>
-    <div class="item"><span class="name">--color-border-subtle</span><span class="desc">Subtle border</span></div>
-    <div class="item"><span class="name">--color-border-strong</span><span class="desc">Strong border</span></div>
+    <div class="item"><span class="name">--primary</span><span class="desc"><span class="color-chip" style="background:#2563eb"></span>Primary brand color. Default: <code>#2563eb</code>.</span><span class="why">Root of the primary scale. Override: <code>:root { --primary: oklch(55% 0.2 250); }</code></span></div>
+    <div class="item"><span class="name">--secondary</span><span class="desc"><span class="color-chip" style="background:#0d9488"></span>Secondary brand color. Default: <code>#0d9488</code>.</span><span class="why">Used for supporting actions, links, tags. Same derivation system as primary.</span></div>
+    <div class="item"><span class="name">--accent</span><span class="desc"><span class="color-chip" style="background:#f59e0b"></span>Accent / highlight color. Default: <code>#f59e0b</code>.</span><span class="why">Warm contrast against cool primary. Used for highlights, callouts, badges.</span></div>
+    <div class="item"><span class="name">--success / --warning / --error</span><span class="desc">Status feedback colors.</span><span class="why">Semantic, not brand. Always use these for feedback states — never primary-tinted hues.</span></div>
+    <div class="item"><span class="name">--primary-50 … --primary-950</span><span class="desc">Primary shade scale (10 stops: 50, 100, 200, 300, 400, 600, 700, 800, 900, 950).</span><span class="why">Derived via <code>color-mix(in oklch)</code>. Use for tinted backgrounds, hover fills, disabled states.</span></div>
+    <div class="item"><span class="name">--primary-a25 / -a50 / -a75</span><span class="desc">Alpha variants at 25%, 50%, 75% opacity.</span><span class="why">For overlays and tinted surfaces where transparency is needed. Same pattern for secondary and accent.</span></div>
+    <div class="item"><span class="name">--primary-hover</span><span class="desc">Hover state tint (slightly darker/lighter than root).</span><span class="why">Computed from root — guarantees hover always contrasts with base regardless of custom brand color.</span></div>
+    <div class="item"><span class="name">--success-100 / -600</span><span class="desc">Light tint and dark text variant for success.</span><span class="why">Pattern: <code>-100</code> for backgrounds, <code>-600</code> for text on white. Same for warning/error. <strong>Do not use <code>--warning</code> for text on white</strong> — ~2.8:1 contrast fails WCAG AA; use <code>--warning-600</code>.</span></div>
   </div>
 
-  <h3 class="subheading">Spacing Scale (fluid clamp values)</h3>
+  <h3 class="subheading">Neutral scale</h3>
+  <div class="rationale">
+    Neutrals are derived via <code>color-mix(in oklch, var(--primary) var(--neutral-tint), gray)</code>.
+    With <code>--neutral-tint: 0%</code> (default) you get pure gray. Set <code>--neutral-tint: 2-3%</code> for brand-cohesive grays that match your primary hue.
+    <span class="when-not"><strong class="tag tag--issue">⚠ issue</strong> Default of <code>0%</code> makes the tinting feature invisible — a consumer who doesn't read docs never discovers it. Decision needed: change default to <code>2%</code> or keep <code>0%</code> with a more visible note.</span>
+  </div>
   <div class="class-grid">
-    <div class="item"><span class="name">--space-px</span><span class="val">1px</span></div>
-    <div class="item"><span class="name">--space-0-5</span><span class="val">0.125rem / 2px</span></div>
-    <div class="item"><span class="name">--space-2xs</span><span class="val">clamp(0.25rem → 0.375rem)</span></div>
-    <div class="item"><span class="name">--space-xs</span><span class="val">clamp(0.5rem → 0.75rem)</span></div>
-    <div class="item"><span class="name">--space-s</span><span class="val">clamp(0.75rem → 1.125rem)</span></div>
-    <div class="item"><span class="name">--space-m</span><span class="val">clamp(1rem → 1.5rem)</span></div>
-    <div class="item"><span class="name">--space-l</span><span class="val">clamp(1.5rem → 2.25rem)</span></div>
-    <div class="item"><span class="name">--space-xl</span><span class="val">clamp(2rem → 3rem)</span></div>
-    <div class="item"><span class="name">--space-2xl</span><span class="val">clamp(3rem → 4.5rem)</span></div>
-    <div class="item"><span class="name">--space-3xl</span><span class="val">clamp(4rem → 6rem)</span></div>
-    <div class="item"><span class="name">--space-4xl</span><span class="val">clamp(6rem → 9rem)</span></div>
-    <div class="item"><span class="name">--space-gutter</span><span class="val">Page gutter (fluid)</span></div>
+    <div class="item"><span class="name">--neutral-tint</span><span class="desc">Controls brand-cohesion of gray scale. Default: <code>0%</code> (pure gray).</span><span class="why">Set to 2–3% for grays that feel "on-brand". Low-impact but high-polish detail.</span></div>
+    <div class="item"><span class="name">--neutral-50 … --neutral-900</span><span class="desc">10-stop neutral scale, light to dark.</span><span class="why">Used for backgrounds, borders, disabled states, text hierarchy. Flip in dark mode automatically.</span></div>
   </div>
 
-  <h3 class="subheading">Typography Scale</h3>
+  <h3 class="subheading">Semantic color aliases</h3>
+  <div class="rationale">
+    These aliases decouple component authoring from specific shade values. A component referencing <code>--color-bg</code> works correctly across light/dark mode and across any brand color, because these aliases are redefined in the dark mode blocks.
+    <span class="when-not">Never use raw shade tokens (<code>--neutral-100</code>, <code>--primary-50</code>) directly in component BEM rules — use semantic aliases so the component responds to theme changes.</span>
+  </div>
   <div class="class-grid">
-    <div class="item"><span class="name">--text-2xs..5xl</span><span class="val">Fluid clamp scale, 10 steps</span></div>
-    <div class="item"><span class="name">--text-fluid-hero</span><span class="val">Ultra-fluid for hero</span></div>
-    <div class="item"><span class="name">--h1..h6</span><span class="val">Semantic heading sizes</span></div>
-    <div class="item"><span class="name">--leading-tight..loose</span><span class="val">Line-height scale</span></div>
-    <div class="item"><span class="name">--tracking-tighter..widest</span><span class="val">Letter-spacing scale</span></div>
-    <div class="item"><span class="name">--font-weight-heading</span><span class="val">700 (heading weight)</span></div>
-    <div class="item"><span class="name">--font-body / heading / mono</span><span class="val">Font families</span></div>
+    <div class="item"><span class="name">--color-bg</span><span class="desc">Page / root background. Light: near-white. Dark: near-black.</span><span class="why">The baseline. Every surface sits on top of this.</span></div>
+    <div class="item"><span class="name">--color-surface</span><span class="desc">Cards, modals, elevated elements. One step above <code>--color-bg</code>.</span><span class="why">The most-used surface. Components default to this.</span></div>
+    <div class="item"><span class="name">--color-surface-2</span><span class="desc">Nested surfaces, hover backgrounds. One step above <code>--color-surface</code>.</span><span class="why">For hover states and nested cards — creates clear elevation hierarchy.</span></div>
+    <div class="item"><span class="name">--color-surface-elevated</span><span class="desc">Dropdowns, tooltips, floating panels.</span><span class="why">Highest surface elevation — creates clear separation from page content.</span></div>
+    <div class="item"><span class="name">--color-surface-overlay</span><span class="desc">Modal backdrop overlay.</span><span class="why">Dedicated token so consumers can change backdrop opacity/color independently.</span></div>
+    <div class="item"><span class="name">--color-text</span><span class="desc">Primary body text.</span><span class="why">The default. All base text renders through this.</span></div>
+    <div class="item"><span class="name">--color-text-secondary</span><span class="desc">Subheadings, secondary labels.</span><span class="why">One step below primary — for slightly de-emphasised but still readable text.</span></div>
+    <div class="item"><span class="name">--color-text-muted</span><span class="desc">Hints, placeholders, metadata.</span><span class="why">Visibly subordinate but still accessible. Passes WCAG AA for large text.</span></div>
+    <div class="item"><span class="name">--color-text-faint</span><span class="desc">Decorative labels, watermarks. ~3.4:1 contrast.<span class="tag tag--issue">⚠ contrast</span></span><span class="why"><strong>Fails WCAG AA for body text.</strong> Decision: rename to <code>--color-text-decorative</code> to make the intent explicit, or add a prominent "decorative only" warning.</span></div>
+    <div class="item"><span class="name">--color-text-disabled</span><span class="desc">Disabled form controls. ~2.7:1 contrast (WCAG exemption for disabled).</span><span class="why">WCAG explicitly exempts disabled controls from contrast requirements. Value is intentional.</span></div>
+    <div class="item"><span class="name">--color-text-on-primary</span><span class="desc">Text on primary-colored backgrounds.</span><span class="why">Auto-computed via Relative Color Syntax (<code>oklch(from …)</code>) in supporting browsers. Static fallback for others.</span></div>
+    <div class="item"><span class="name">--color-text-on-dark</span><span class="desc">Text on dark/inverted surfaces.</span><span class="why">For footer-dark, hero-dark, and any <code>.bg-dark</code> context.</span></div>
+    <div class="item"><span class="name">--color-border</span><span class="desc">Default border color.</span><span class="why">Used by <code>--border-width</code> components and <code>.border</code> visual utility.</span></div>
+    <div class="item"><span class="name">--color-border-subtle / --color-border-strong</span><span class="desc">Weaker and stronger border variants.</span><span class="why">For dividers (subtle) and input focus rings (strong). Provides contrast hierarchy without custom values.</span></div>
+    <div class="item"><span class="name">--color-link / --color-link-visited / --color-link-hover</span><span class="desc">Link color stack.</span><span class="why">Centralises link styling — override once, affects all unclassed links.</span></div>
   </div>
 
-  <h3 class="subheading">Radius, Shadows, Motion, Z-index</h3>
+  <h3 class="subheading">Spacing scale — fluid clamp (11 steps + semantic aliases)</h3>
+  <div class="rationale">
+    All spacing tokens are <code>clamp(min, fluid, max)</code> computed across 320–1440px viewport. You never set px values directly — always use tokens.
+    Each step is approximately 1.5× the previous. The scale maps to typical component padding, gap, and layout spacing needs.
+    Semantic aliases (<code>--space-section</code>, <code>--space-content</code>, <code>--space-gap</code>, <code>--space-gutter</code>) provide named slots for the most common layout roles.
+    <span class="when-not">Spacing utilities (<code>.p-m</code>, <code>.gap-l</code>) are for layout configuration. For component-intrinsic spacing, use instance tokens (<code>--card-padding</code>, <code>--btn-padding</code>) that default to spacing tokens.</span>
+  </div>
   <div class="class-grid">
-    <div class="item"><span class="name">--radius-xs..2xl</span><span class="val">Border radius scale</span></div>
-    <div class="item"><span class="name">--radius-full</span><span class="val">9999px (pill / circle)</span></div>
-    <div class="item"><span class="name">--shadow-xs..xl</span><span class="val">Box shadow scale</span></div>
-    <div class="item"><span class="name">--duration-fast/normal/slow</span><span class="val">150 / 250 / 400ms</span></div>
-    <div class="item"><span class="name">--ease-out / in / in-out / spring</span><span class="val">Timing functions</span></div>
-    <div class="item"><span class="name">--z-base..tooltip</span><span class="val">0 / 1 / 10 / 1100 / 1300 / 1400 / 1800</span></div>
-    <div class="item"><span class="name">--container-dialog / --form / --prose / --default / --wide / --full</span><span class="val">Container width scale</span></div>
-    <div class="item"><span class="name">--focus-ring-width / color / offset</span><span class="val">Focus styling</span></div>
+    <div class="item"><span class="name">--space-px</span><span class="val">1px (fixed)</span><span class="why">Hairline — borders, separators. Not fluid because 1px is always 1px.</span></div>
+    <div class="item"><span class="name">--space-0-5</span><span class="val">~2px</span><span class="why">Sub-pixel gap — icon padding, tight chip spacing.</span></div>
+    <div class="item"><span class="name">--space-2xs</span><span class="val">clamp(0.25rem → 0.375rem)</span><span class="why">Micro spacing — badge padding, tight label gaps.</span></div>
+    <div class="item"><span class="name">--space-xs</span><span class="val">clamp(0.5rem → 0.75rem)</span><span class="why">Small intra-component gaps — button icon gap, form hint margin.</span></div>
+    <div class="item"><span class="name">--space-s</span><span class="val">clamp(0.75rem → 1.125rem)</span><span class="why">Default component internal padding (inputs, small cards).</span></div>
+    <div class="item"><span class="name">--space-m</span><span class="val">clamp(1rem → 1.5rem)</span><span class="why">Standard gap / padding. The most-used step.</span></div>
+    <div class="item"><span class="name">--space-l</span><span class="val">clamp(1.5rem → 2.25rem)</span><span class="why">Card padding, section sub-gaps.</span></div>
+    <div class="item"><span class="name">--space-xl</span><span class="val">clamp(2rem → 3rem)</span><span class="why">Section padding, large card padding.</span></div>
+    <div class="item"><span class="name">--space-2xl</span><span class="val">clamp(3rem → 4.5rem)</span><span class="why">Between major sections inside a page block.</span></div>
+    <div class="item"><span class="name">--space-3xl</span><span class="val">clamp(4rem → 6rem)</span><span class="why">Page-level vertical rhythm.</span></div>
+    <div class="item"><span class="name">--space-4xl</span><span class="val">clamp(6rem → 9rem)</span><span class="why">Hero/section top/bottom padding. Large breathing room.</span></div>
+    <div class="item"><span class="name">--space-section</span><span class="val">= --space-3xl</span><span class="why">Semantic alias for <code>.section</code> padding. Override to globally change section rhythm.</span></div>
+    <div class="item"><span class="name">--space-content</span><span class="val">= --space-xl</span><span class="why">Inner content padding (inside <code>.container</code>).</span></div>
+    <div class="item"><span class="name">--space-gap</span><span class="val">= --space-m</span><span class="why">Default grid/flex gap. Override to globally tighten or loosen all grids.</span></div>
+    <div class="item"><span class="name">--space-gutter</span><span class="val">fluid page gutter</span><span class="why">Horizontal page margin — used by <code>.px-gutter</code>. Override for custom edge spacing.</span></div>
+  </div>
+
+  <h3 class="subheading">Typography scale — fluid clamp (10 body steps + hero)</h3>
+  <div class="rationale">
+    Same fluid philosophy as spacing. All sizes use <code>clamp(min, fluid, max)</code> across 375–1600px. No breakpoint-triggered font size changes — the scale is continuous.
+    <code>--h1..h6</code> are aliases pointing to size-scale tokens: headings reuse body scale steps for coherence.
+    <code>--text-fluid-hero</code> has a wider range and higher ceiling — reserved for single large marketing headings.
+    <span class="when-not">Don't use <code>--text-fluid-hero</code> on body text or section subheadings — it's very large at wide viewports.</span>
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">--text-2xs</span><span class="val">clamp(~10px → ~12px)</span><span class="why">Legal, footnotes, micro labels. Use sparingly — accessibility concern below 12px.</span></div>
+    <div class="item"><span class="name">--text-xs</span><span class="val">clamp(~12px → ~14px)</span><span class="why">Captions, timestamps, secondary metadata.</span></div>
+    <div class="item"><span class="name">--text-s</span><span class="val">clamp(~14px → ~16px)</span><span class="why">Small body, helper text, table cells.</span></div>
+    <div class="item"><span class="name">--text-m</span><span class="val">clamp(17px → 20px)</span><span class="why">Default body text. Starts at 17px to beat the "16px minimum" anti-pattern.</span></div>
+    <div class="item"><span class="name">--text-l</span><span class="val">clamp(~20px → ~24px)</span><span class="why">Lead paragraphs, intro text, blockquote.</span></div>
+    <div class="item"><span class="name">--text-xl</span><span class="val">clamp(~24px → ~30px)</span><span class="why">h5/h4 level headings, card titles.</span></div>
+    <div class="item"><span class="name">--text-2xl</span><span class="val">clamp(~28px → ~36px)</span><span class="why">h3 level headings, feature section titles.</span></div>
+    <div class="item"><span class="name">--text-3xl</span><span class="val">clamp(40px → 54px)</span><span class="why">h2 level headings, major section titles.</span></div>
+    <div class="item"><span class="name">--text-4xl</span><span class="val">clamp(~52px → ~72px)</span><span class="why">h1 level, page titles.</span></div>
+    <div class="item"><span class="name">--text-5xl</span><span class="val">clamp(~64px → ~96px)</span><span class="why">Large page titles, splash screens.</span></div>
+    <div class="item"><span class="name">--text-fluid-hero</span><span class="val">very large, wide range</span><span class="why">Single marketing headline. Max is ~192px — for landing pages only.</span></div>
+    <div class="item"><span class="name">--h1..h6</span><span class="val">Aliases → text-4xl / 3xl / 2xl / xl / l / m</span><span class="why">Semantic heading aliases. Override to globally remap heading sizes without changing utility classes.</span></div>
+    <div class="item"><span class="name">--font-body / --font-heading / --font-mono</span><span class="val">system-ui / inherit / monospace stacks</span><span class="why">Three font family roles. Override all three to brand the typography system.</span></div>
+    <div class="item"><span class="name">--font-weight-heading</span><span class="val">700</span><span class="why">Single override point for all heading weights. Change to <code>600</code> for lighter headings.</span></div>
+    <div class="item"><span class="name">--leading-tight / -snug / -normal / -loose</span><span class="val">~1.15 / ~1.3 / ~1.5 / ~1.8</span><span class="why">Line-height scale. tight = headings. normal = body. loose = prose with dyslexia accommodations.</span></div>
+    <div class="item"><span class="name">--tracking-tighter … --tracking-widest</span><span class="val">5-step letter-spacing scale</span><span class="why">tighter = large display headings. widest = small-caps eyebrows and labels.</span></div>
+  </div>
+
+  <h3 class="subheading">Border radius scale</h3>
+  <div class="rationale">
+    7 steps from sharp to pill. Components default to <code>--radius-m</code>. The full scale lets consumers set a "design personality": sharp edges (0 radius everywhere) vs. very rounded (override root).
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">--radius-xs</span><span class="val">2px</span><span class="why">Tags, badges, very small elements.</span></div>
+    <div class="item"><span class="name">--radius-s</span><span class="val">4px</span><span class="why">Buttons, inputs, small cards.</span></div>
+    <div class="item"><span class="name">--radius-m</span><span class="val">6–8px</span><span class="why">Default component radius.</span></div>
+    <div class="item"><span class="name">--radius-l</span><span class="val">12px</span><span class="why">Cards, panels, larger surfaces.</span></div>
+    <div class="item"><span class="name">--radius-xl</span><span class="val">16px</span><span class="why">Feature cards, hero sections.</span></div>
+    <div class="item"><span class="name">--radius-2xl</span><span class="val">24px</span><span class="why">Image frames, large hero blocks.</span></div>
+    <div class="item"><span class="name">--radius-full</span><span class="val">9999px</span><span class="why">Pills, circles, avatar chips.</span></div>
+  </div>
+
+  <h3 class="subheading">Shadow scale</h3>
+  <div class="rationale">
+    Shadows are derived via <code>--shadow-strength</code> multiplier tokens. Dark mode only overrides the two multipliers, not each individual shadow — <em>this is why shadows feel correct in dark mode automatically</em>.
+    <code>--shadow-float</code>, <code>--shadow-glow</code>, and <code>--shadow-colored</code> are special-purpose extras.
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">--shadow-xs</span><span class="desc">Barely-there lift. Cards on light backgrounds.</span></div>
+    <div class="item"><span class="name">--shadow-s</span><span class="desc">Subtle elevation. Default card shadow.</span></div>
+    <div class="item"><span class="name">--shadow-m</span><span class="desc">Mid-range. Dropdowns, modals at rest.</span></div>
+    <div class="item"><span class="name">--shadow-l</span><span class="desc">Prominent. Modals, popovers.</span></div>
+    <div class="item"><span class="name">--shadow-xl</span><span class="desc">Maximum. Overlay panels.</span></div>
+    <div class="item"><span class="name">--shadow-float</span><span class="desc">Floating action buttons — wider, softer.</span></div>
+    <div class="item"><span class="name">--shadow-glow</span><span class="desc">Outward haze (unfocused). Used for hero image treatments.</span></div>
+    <div class="item"><span class="name">--shadow-colored</span><span class="desc">Brand-colored drop shadow (<code>--primary</code> tinted). Use on branded CTA buttons.</span></div>
+    <div class="item"><span class="name">--shadow-inner</span><span class="desc">Inset shadow — pressed state, inset inputs.</span></div>
+    <div class="item"><span class="name">--shadow-strength / --shadow-strength-2</span><span class="desc">Opacity multipliers. 0.04 / 0.08 light, 0.12 / 0.24 dark.</span><span class="why">Override these two values to globally lighten or darken all shadows in one place.</span></div>
+  </div>
+
+  <h3 class="subheading">Motion tokens</h3>
+  <div class="rationale">
+    Named by semantic role, not duration value. This means you can globally slow down all enter animations by overriding one token.
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">--duration-fast</span><span class="val">150ms</span><span class="why">Micro-interactions: hover tints, color changes.</span></div>
+    <div class="item"><span class="name">--duration-normal</span><span class="val">250ms</span><span class="why">Standard transitions: dropdowns, accordion expand.</span></div>
+    <div class="item"><span class="name">--duration-slow</span><span class="val">400ms</span><span class="why">Page-level transitions: modal open, complex animations.</span></div>
+    <div class="item"><span class="name">--duration-enter</span><span class="val">= --duration-normal (250ms)</span><span class="why">Semantic alias for enter animations. Override independently of exit.</span></div>
+    <div class="item"><span class="name">--duration-exit</span><span class="val">= --duration-fast (150ms)</span><span class="why">Exits are faster than entries — better UX perception. Override independently.</span></div>
+    <div class="item"><span class="name">--duration-stagger</span><span class="val">80ms</span><span class="why">Delay between stagger children. Used by <code>.stagger</code> layout and <code>sibling-index()</code> CSS path.</span></div>
+    <div class="item"><span class="name">--ease-out</span><span class="val">cubic-bezier(0.25, 0, 0.15, 1)</span><span class="why">Enter animations — fast start, settle at end.</span></div>
+    <div class="item"><span class="name">--ease-in</span><span class="val">cubic-bezier(0.5, 0, 0.75, 0.25)</span><span class="why">Exit animations — slow start, fast end.</span></div>
+    <div class="item"><span class="name">--ease-in-out <span class="tag tag--breaking">renamed in 0.4.7.0</span></span><span class="val">cubic-bezier(0.4, 0, 0.2, 1)</span><span class="why">Standard ease-in-out. Renamed from <code>--ease-inout</code> to match the naming convention of other ease tokens. Use <code>var(--ease-in-out)</code>.</span></div>
+    <div class="item"><span class="name">--ease-spring</span><span class="val">cubic-bezier(0.34, 1.56, 0.64, 1)</span><span class="why">Playful overshoot. Use for fun hover effects and micro-interactions, not page transitions.</span></div>
+  </div>
+
+  <h3 class="subheading">Z-index stack (14 levels)</h3>
+  <div class="rationale">
+    The z-index stack is a named stacking context — no magic numbers, ever. The complete stack ensures you can always find the right level name without needing to audit z-values.
+    All 14 levels are available as both tokens (<code>--z-modal</code>) and utility classes (<code>.z-modal</code>).
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">--z-below</span><span class="val">−1</span><span class="why">Behind page content — decorative backgrounds, pseudo-element fills.</span></div>
+    <div class="item"><span class="name">--z-base</span><span class="val">0</span><span class="why">Normal document flow. The default.</span></div>
+    <div class="item"><span class="name">--z-raised</span><span class="val">1</span><span class="why">One step above flow — overlapping sibling (e.g. focused table row).</span></div>
+    <div class="item"><span class="name">--z-docked</span><span class="val">10</span><span class="why">Sticky inline elements — sidebar nav, in-page sticky cards.</span></div>
+    <div class="item"><span class="name">--z-above</span><span class="val">100</span><span class="why">Small floating elements above docked — floating labels, chip-remove buttons.</span></div>
+    <div class="item"><span class="name">--z-sticky</span><span class="val">1100</span><span class="why">Sticky page header. Standard viewport-sticky UI.</span></div>
+    <div class="item"><span class="name">--z-dropdown</span><span class="val">1150</span><span class="why">Dropdown menus from sticky headers — must exceed <code>--z-sticky</code>.</span></div>
+    <div class="item"><span class="name">--z-banner</span><span class="val">1200</span><span class="why">Top/bottom sticky notification banner.</span></div>
+    <div class="item"><span class="name">--z-overlay</span><span class="val">1300</span><span class="why">Background dimming overlay behind modal.</span></div>
+    <div class="item"><span class="name">--z-modal</span><span class="val">1400</span><span class="why">Modal dialogs — above overlay.</span></div>
+    <div class="item"><span class="name">--z-popover</span><span class="val">1500</span><span class="why">Popovers, autocomplete dropdowns from inside modals — above modal.</span></div>
+    <div class="item"><span class="name">--z-toast</span><span class="val">1700</span><span class="why">Toast notifications — above everything including popovers.</span></div>
+    <div class="item"><span class="name">--z-tooltip</span><span class="val">1800</span><span class="why">Tooltips — above toasts, always visible.</span></div>
+    <div class="item"><span class="name">--z-max</span><span class="val">999999</span><span class="why">Emergency override / third-party widget containment. Use sparingly — signals a stacking context problem.</span></div>
+  </div>
+
+  <h3 class="subheading">Container width scale</h3>
+  <div class="rationale">
+    Container tokens map to semantic layout roles, not arbitrary pixel values. This way renaming a role (e.g. switching all "prose" containers to a different width) is a one-token change.
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">--container-dialog</span><span class="val">20rem (320px)</span><span class="why">Native <code>&lt;dialog&gt;</code> default width. Compact confirmations, alerts.</span></div>
+    <div class="item"><span class="name">--container-form</span><span class="val">24rem (384px)</span><span class="why">Single-column forms — login, register, contact.</span></div>
+    <div class="item"><span class="name">--container-prose</span><span class="val">65ch</span><span class="why">Readable line length — articles, documentation, blog posts. ch unit follows actual glyph width.</span></div>
+    <div class="item"><span class="name">--container-default</span><span class="val">75rem (1200px)</span><span class="why">Standard page content width. Default <code>.container</code>.</span></div>
+    <div class="item"><span class="name">--container-wide</span><span class="val">90rem (1440px)</span><span class="why">Wide marketing layouts, dashboards, data tables.</span></div>
+    <div class="item"><span class="name">--container-full</span><span class="val">100%</span><span class="why">Full bleed — edge-to-edge within parent.</span></div>
+    <div class="item"><span class="name">--content-width</span><span class="val">= --container-default</span><span class="why">Semantic alias used by <code>body</code> max-width. Override this to globally cap page width.</span></div>
+  </div>
+
+  <h3 class="subheading">Border + Focus tokens</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">--border-width</span><span class="val">1px</span><span class="why">Default border width used by all components. Override once to globally thicken borders.</span></div>
+    <div class="item"><span class="name">--focus-ring-width</span><span class="val">2px</span><span class="why">Width of keyboard focus outlines. WCAG 2.2 requires ≥2px.</span></div>
+    <div class="item"><span class="name">--focus-ring-color</span><span class="val">= --primary (with alpha)</span><span class="why">Focus ring color. Matches brand. Override for high-contrast modes.</span></div>
+    <div class="item"><span class="name">--focus-ring-offset</span><span class="val">2px</span><span class="why">Gap between element and focus ring. Improves visibility on colored backgrounds.</span></div>
+    <div class="item"><span class="name">--header-height</span><span class="val">5rem</span><span class="why">Used by <code>.scroll-mt-header</code> and <code>.scroll-pt-header</code> to offset scroll targets below sticky headers.</span></div>
   </div>
 </section>
 
 <!-- ============================================================ LAYOUT -->
 <section class="section" id="layout">
-  <h2 class="section-title">Layout Primitives <span class="meta">unprefixed · core building blocks</span></h2>
-  <div class="class-grid">
-    <div class="item"><span class="name">.section</span><span class="desc">Vertical padding rhythm for page sections</span></div>
-    <div class="item"><span class="name">.section--s / --xl</span><span class="desc">Smaller / larger section variants</span></div>
-    <div class="item"><span class="name">.container</span><span class="desc">Max-width centered wrapper</span></div>
-    <div class="item"><span class="name">.container--dialog / --form / --prose / --wide / --full</span><span class="desc">Container size variants</span></div>
-    <div class="item"><span class="name">.stack</span><span class="desc">Vertical spacing between children</span></div>
-    <div class="item"><span class="name">.stack--xs / --s / --l</span><span class="desc">Stack size variants</span></div>
-    <div class="item"><span class="name">.cluster</span><span class="desc">Horizontal flex with wrap</span></div>
-    <div class="item"><span class="name">.cluster--2xs / --s / --l / --xl</span><span class="desc">Cluster gap variants</span></div>
-    <div class="item"><span class="name">.auto-grid</span><span class="desc">Auto-fitting grid (--grid-min)</span></div>
-    <div class="item"><span class="name">.auto-grid--s / --m / --l / --fill</span><span class="desc">Preset min widths</span></div>
-    <div class="item"><span class="name">.bento</span><span class="desc">Bento-style grid layout</span></div>
-    <div class="item"><span class="name">.bento--2 / --4 / --compact / --tall</span><span class="desc">Bento variants</span></div>
-    <div class="item"><span class="name">.cover</span><span class="desc">Full-height hero section</span></div>
-    <div class="item"><span class="name">.cover--min / --max</span><span class="desc">Min/max height variants</span></div>
-    <div class="item"><span class="name">.cover--padding-s / --padding-l</span><span class="desc">Cover padding variants</span></div>
-    <div class="item"><span class="name">.cover__center</span><span class="desc">Auto-centered block</span></div>
-    <div class="item"><span class="name">.center / .center--intrinsic</span><span class="desc">Intrinsically centered</span></div>
-    <div class="item"><span class="name">.flow / .flow--s / --l</span><span class="desc">Flow content spacing</span></div>
-    <div class="item"><span class="name">.frame</span><span class="desc">Aspect-ratio box (--frame-ratio)</span></div>
-    <div class="item"><span class="name">.bleed</span><span class="desc">Full-bleed element</span></div>
-    <div class="item"><span class="name">.alternate</span><span class="desc">Alternating background sections</span></div>
-    <div class="item"><span class="name">.content-grid</span><span class="desc">Grid w/ named columns (main, wide, fullwidth)</span></div>
-    <div class="item"><span class="name">.clickable-parent</span><span class="desc">Make whole card clickable via inner link</span></div>
-    <div class="item"><span class="name">.focus-parent</span><span class="desc">Focus ring on parent from inner focus</span></div>
-    <div class="item"><span class="name">.masonry</span><span class="desc">CSS masonry layout</span></div>
+  <h2 class="section-title">Layout Primitives <span class="meta">slashed-core.css · unprefixed</span></h2>
+
+  <div class="rationale">
+    <strong>Layout primitives are the primary building blocks.</strong> Unlike utility classes, they encode structural patterns <em>with responsive behavior, semantic spacing, and container-awareness built in</em>.
+    Reach for a primitive first — use utilities only for one-off adjustments on top. Grids in SLASHED use <code>@container</code> queries (not viewport media queries) so they respond to their own width, not the page width.
+    <span class="when-not">Do NOT use layout primitives as BEM components — they have no <code>cs-</code> prefix intentionally. Don't apply BEM modifiers to them either; use instance tokens or modifier classes documented below.</span>
   </div>
 
-  <h3 class="subheading">Grid columns & spans</h3>
+  <h3 class="subheading">Page structure</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.grid-1..12</span><span class="desc">N equal columns</span></div>
-    <div class="item"><span class="name">.grid-cols</span><span class="desc">Custom grid via --cols</span></div>
-    <div class="item"><span class="name">.col-span-2 / 3 / 4 / 5 / 6 / full</span><span class="desc">Grid column spans</span></div>
-    <div class="item"><span class="name">.row-span-2 / 3 / 4</span><span class="desc">Grid row spans</span></div>
+    <div class="item"><span class="name">.section</span><span class="desc">Vertical padding rhythm for page sections (uses <code>--space-section</code>).</span><span class="why">Ensures consistent vertical breathing room between page blocks without per-section CSS.</span></div>
+    <div class="item"><span class="name">.section--s / --m / --xl</span><span class="desc">Smaller / default / larger padding variants.</span><span class="why">For tight landing-page sections (<code>--s</code>) or generous hero blocks (<code>--xl</code>).</span></div>
+    <div class="item"><span class="name">.section--alt</span><span class="desc">Neutral tinted background (<code>--color-surface-2</code>).</span><span class="why">Alternating visual rhythm without custom background colors. Safe in any brand.</span></div>
+    <div class="item"><span class="name">.container</span><span class="desc">Max-width centered wrapper with side gutters (default: <code>--container-default</code> = 75rem).</span><span class="why">The single standard centering pattern. Replaces <code>max-width + margin: auto + padding</code> boilerplate.</span></div>
+    <div class="item"><span class="name">.container--dialog / --form / --prose / --wide / --full</span><span class="desc">Container width variants.</span><span class="why">Semantic sizing — e.g. <code>--prose</code> gives 65ch readable width for articles without a magic number.</span></div>
+  </div>
+
+  <h3 class="subheading">Spacing patterns</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.stack</span><span class="desc">Vertical spacing between direct children via <code>margin-block-start</code> on siblings.</span><span class="why">Eliminates bottom-margin accumulation. Children don't know about each other's spacing — only their gap to the next sibling matters.</span></div>
+    <div class="item"><span class="name">.stack--xs / --s / --l</span><span class="desc">Tighter / looser stack gaps.</span><span class="why">For tight form stacks (<code>--xs</code>) or spacious editorial stacks (<code>--l</code>).</span></div>
+    <div class="item"><span class="name">.cluster</span><span class="desc">Horizontal flex with wrapping and gap. For tag lists, button groups, nav items.</span><span class="why">The "inline wrapping group" pattern appears in every UI. Handles RTL and wraps correctly at any width.</span></div>
+    <div class="item"><span class="name">.cluster--2xs / --s / --l / --xl</span><span class="desc">Cluster gap variants.</span></div>
+    <div class="item"><span class="name">.flow / .flow--s / --l</span><span class="desc">Applies <code>margin-block-start</code> to all elements in a prose flow (paragraphs, headings, lists).</span><span class="why">For article / docs content where you don't control the HTML. Sets consistent vertical rhythm in rich-text output.</span></div>
+  </div>
+
+  <h3 class="subheading">Grid layouts</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.auto-grid</span><span class="desc">Auto-fitting grid — columns fit as many as possible at <code>--grid-min</code> width.</span><span class="why">Replaces hand-written <code>repeat(auto-fit, minmax(Xrem, 1fr))</code>. Self-contained — no breakpoint needed.</span></div>
+    <div class="item"><span class="name">.auto-grid--s / --m / --l / --fill</span><span class="desc">Preset <code>--grid-min</code> values (12rem / 16rem / 20rem) + <code>--fill</code> = no minimum.</span></div>
+    <div class="item"><span class="name">.grid-1 … .grid-12</span><span class="desc">N equal-width columns. Collapses to 1 column based on container width (not viewport).</span><span class="why">Covers 90% of column layouts. Container-query aware — works correctly inside modals, sidebars, and Bricks columns.</span></div>
+    <div class="item"><span class="name">.grid-cols</span><span class="desc">Fully custom grid via <code>--cols</code> CSS variable (e.g. <code>style="--cols: 2fr 1fr"</code>).</span><span class="why">Escape hatch for asymmetric grids that no preset covers.</span></div>
+    <div class="item"><span class="name">.grid-sidebar / .grid-1-1 / .grid-1-2 / .grid-1-3 / .grid-2-1</span><span class="desc">Named asymmetric grid presets.</span><span class="why">Cover the most common content+sidebar patterns without custom CSS.</span></div>
+    <div class="item"><span class="name">.col-span-2 / 3 / 4 / 5 / 6 / full</span><span class="desc">Span N columns within a parent grid.</span><span class="why">For featured/highlighted grid cells. <code>full</code> = full-width break row.</span></div>
+    <div class="item"><span class="name">.row-span-2 / 3 / 4</span><span class="desc">Span N rows within a parent grid.</span><span class="why">For tall featured cards in <code>.bento</code> layouts.</span></div>
+    <div class="item"><span class="name">.bento</span><span class="desc">Bento-box grid — mixed-size cards in a structured magazine layout.</span><span class="why">A high-frequency marketing pattern. Container-aware, handles featured cells with <code>.row-span-2</code>.</span></div>
+    <div class="item"><span class="name">.bento--2 / --4 / --compact / --tall</span><span class="desc">Bento column presets and row-height variants.</span></div>
+  </div>
+
+  <h3 class="subheading">Special layouts</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.cover</span><span class="desc">Full-height section with vertically centered content. Replaces the "hero" pattern.</span><span class="why">A dedicated hero primitive prevents ad-hoc <code>min-height: 100vh + flex + align-items: center</code>.</span></div>
+    <div class="item"><span class="name">.cover--min / --max / --padding-s / --padding-l</span><span class="desc">Height and padding variants.</span></div>
+    <div class="item"><span class="name">.cover__center</span><span class="desc">The vertically-centered child element within <code>.cover</code>.</span></div>
+    <div class="item"><span class="name">.center / .center--intrinsic</span><span class="desc">Horizontally centers a block. <code>--intrinsic</code> centers to content width.</span><span class="why">When you want an element to be centered but not full-width. Common for logos, dividers, hero illustrations.</span></div>
+    <div class="item"><span class="name">.frame</span><span class="desc">Aspect-ratio box with <code>object-fit: cover</code> for images/videos. Ratio set via <code>--frame-ratio</code>.</span><span class="why">The correct way to constrain image ratios — no clipping hacks, RTL-safe.</span></div>
+    <div class="item"><span class="name">.bleed</span><span class="desc">Breaks out of parent <code>.container</code> to full viewport width.</span><span class="why">For edge-to-edge images and bands inside a constrained layout.</span></div>
+    <div class="item"><span class="name">.content-grid</span><span class="desc">Named-column grid with <code>main</code> / <code>wide</code> / <code>fullwidth</code> tracks. For editorial layouts.</span><span class="why">The "New York Times layout" pattern — prose in the center, pull-quotes wider, images full-bleed — in one class.</span></div>
+    <div class="item"><span class="name">.alternate</span><span class="desc">Applies alternating background colors to odd/even direct children.</span><span class="why">For stacked sections with light/neutral alternation without per-section classes.</span></div>
+    <div class="item"><span class="name">.clickable-parent</span><span class="desc">Makes a card/container fully clickable via its inner <code>&lt;a&gt;</code> using <code>::after</code> expansion.</span><span class="why">Accessible large-click-target pattern — screen readers see the link correctly, no nested interactive elements.</span></div>
+    <div class="item"><span class="name">.focus-parent</span><span class="desc">Shows focus ring on parent when inner element is focused.</span><span class="why">For custom controls and card-as-button patterns where the visual focus ring should be on the wrapper.</span></div>
+    <div class="item"><span class="name">.masonry</span><span class="desc">CSS masonry grid (load from <code>slashed-experimental.css</code> — not in core bundle).</span><span class="why">Behind <code>@supports (grid-template-rows: masonry)</code>. Degrades to standard grid.</span></div>
   </div>
 
   <pre class="code-block"><code><span class="c-tag">&lt;section</span> <span class="c-attr">class</span>=<span class="c-string">"section"</span><span class="c-tag">&gt;</span>
@@ -372,41 +610,61 @@
 <!-- ============================================================ COMPONENTS -->
 <section class="section" id="components">
   <h2 class="section-title">UI Components <span class="meta">.cs-* prefixed · docs/COMPONENTS.md</span></h2>
+
+  <div class="rationale">
+    <strong>Why BEM components:</strong> Components encode entire patterns — their layout, states, tokens, and accessibility semantics in one class. Unlike utilities, they are self-contained: you don't stack 8 utility classes to get a button. Components use instance tokens for single-line customisation without <code>!important</code>.
+    <span class="when-not">Never write into <code>@layer slashed.overrides</code> — that layer is reserved for consumers. To customise a component: (1) set its instance token via <code>style=""</code>, (2) add a BEM modifier <code>--variant</code>, or (3) write an unlayered <code>.my-btn { … }</code> rule — it automatically beats all framework layers.</span>
+  </div>
+
+  <h3 class="subheading">Buttons</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.cs-btn--primary</span><span class="desc">Primary CTA button</span></div>
-    <div class="item"><span class="name">.cs-btn--outline</span><span class="desc">Outline button</span></div>
-    <div class="item"><span class="name">.cs-btn--ghost</span><span class="desc">Ghost button</span></div>
-    <div class="item"><span class="name">.cs-btn--l</span><span class="desc">Large size modifier</span></div>
-    <div class="item"><span class="name">.cs-card</span><span class="desc">Base card component</span></div>
-    <div class="item"><span class="name">.cs-card--bordered</span><span class="desc">Card with border (no shadow)</span></div>
-    <div class="item"><span class="name">.cs-card--interactive</span><span class="desc">Hover-lift card</span></div>
-    <div class="item"><span class="name">.cs-badge</span><span class="desc">Small label / status pill</span></div>
-    <div class="item"><span class="name">.cs-badge--outline</span><span class="desc">Outlined badge</span></div>
-    <div class="item"><span class="name">.cs-eyebrow</span><span class="desc">Small uppercase pre-heading</span></div>
-    <div class="item"><span class="name">.cs-section-header</span><span class="desc">Centered section header wrapper</span></div>
-    <div class="item"><span class="name">.cs-section-header__heading</span><span class="desc">Header title</span></div>
-    <div class="item"><span class="name">.cs-section-header__lead</span><span class="desc">Header lead text</span></div>
+    <div class="item"><span class="name">.cs-btn--primary</span><span class="desc">Primary CTA button (filled brand color)</span><span class="why">The default call-to-action. Instance tokens: <code>--btn-bg</code>, <code>--btn-color</code>, <code>--btn-radius</code>.</span></div>
+    <div class="item"><span class="name">.cs-btn--outline</span><span class="desc">Outline button (border + transparent bg)</span><span class="why">Secondary action or alternative to primary in the same button group.</span></div>
+    <div class="item"><span class="name">.cs-btn--ghost</span><span class="desc">Ghost button (no border, no background)</span><span class="why">Tertiary/low-priority actions. Nav links, cancel buttons.</span></div>
+    <div class="item"><span class="name">.cs-btn--l</span><span class="desc">Large size modifier (+padding, +font-size)</span><span class="why">Above-the-fold CTAs that need more visual weight.</span></div>
+  </div>
+
+  <h3 class="subheading">Cards &amp; Content</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.cs-card</span><span class="desc">Base card — surface background, radius, shadow, padding</span><span class="why">The most-used component. Instance token: <code>--card-padding</code>. Dark mode shadow auto-adjusts.</span></div>
+    <div class="item"><span class="name">.cs-card--bordered</span><span class="desc">Card with border instead of shadow</span><span class="why">For tighter UI layouts where shadows would crowd — tables, list views.</span></div>
+    <div class="item"><span class="name">.cs-card--interactive</span><span class="desc">Hover-lift card with transition</span><span class="why">For clickable cards in grids. Wraps with <code>.clickable-parent</code> for accessible full-click-target.</span></div>
+    <div class="item"><span class="name">.cs-badge</span><span class="desc">Small label / status pill</span><span class="why">Status indicators, tags, version labels. Instance token: <code>--badge-bg</code>.</span></div>
+    <div class="item"><span class="name">.cs-badge--outline</span><span class="desc">Outlined badge variant</span><span class="why">Lower-emphasis label — for "draft" states, secondary tags.</span></div>
+    <div class="item"><span class="name">.cs-eyebrow</span><span class="desc">Small uppercase pre-heading (colored, tracked)</span><span class="why">Above section headings as a category indicator. Instance token: <code>--eyebrow-color</code>.</span></div>
+    <div class="item"><span class="name">.cs-section-header</span><span class="desc">Centered section header wrapper (eyebrow + heading + lead)</span><span class="why">The standard marketing page section header. Eliminates repeated text-center + max-width + stack boilerplate.</span></div>
+    <div class="item"><span class="name">.cs-section-header__heading / __lead</span><span class="desc">BEM elements for heading and lead paragraph</span></div>
     <div class="item"><span class="name">.cs-section-header--left</span><span class="desc">Left-aligned variant</span></div>
-    <div class="item"><span class="name">.cs-stat</span><span class="desc">Large number + label</span></div>
-    <div class="item"><span class="name">.cs-stat__value</span><span class="desc">Stat number</span></div>
-    <div class="item"><span class="name">.cs-stat__label</span><span class="desc">Stat description</span></div>
-    <div class="item"><span class="name">.cs-divider</span><span class="desc">Horizontal rule with optional label</span></div>
-    <div class="item"><span class="name">.cs-accordion-group</span><span class="desc">Accordion wrapper</span></div>
-    <div class="item"><span class="name">.cs-accordion</span><span class="desc">Native details/summary styled</span></div>
-    <div class="item"><span class="name">.cs-accordion__body</span><span class="desc">Accordion content</span></div>
-    <div class="item"><span class="name">.cs-form-group</span><span class="desc">Accessible form field wrapper</span></div>
-    <div class="item"><span class="name">.cs-form-group__label</span><span class="desc">Form label</span></div>
-    <div class="item"><span class="name">.cs-form-group__input</span><span class="desc">Form input field</span></div>
-    <div class="item"><span class="name">.cs-form-group__hint</span><span class="desc">Form hint text</span></div>
-    <div class="item"><span class="name">.cs-form-group__error</span><span class="desc">Form error message</span></div>
-    <div class="item"><span class="name">.cs-notice</span><span class="desc">Info callout box</span></div>
+    <div class="item"><span class="name">.cs-stat</span><span class="desc">Large number + label (metrics display)</span><span class="why">For statistics, counters, KPI panels. Instance token: <code>--stat-value-size</code>.</span></div>
+    <div class="item"><span class="name">.cs-stat__value / __label</span><span class="desc">BEM elements for number and description text</span></div>
+    <div class="item"><span class="name">.cs-divider</span><span class="desc">Horizontal rule with optional centered label</span><span class="why">Semantic <code>&lt;hr&gt;</code> with optional text label. Replaces CSS-only "line with text" workarounds.</span></div>
+  </div>
+
+  <h3 class="subheading">Interactive components</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.cs-accordion-group / .cs-accordion</span><span class="desc">Native <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> styled with smooth animation</span><span class="why">Zero-JS accordion — pure CSS via <code>::details-content</code> with <code>interpolate-size: allow-keywords</code>. Falls back gracefully.</span></div>
+    <div class="item"><span class="name">.cs-accordion__body</span><span class="desc">Accordion content wrapper</span></div>
+    <div class="item"><span class="name">.cs-form-group</span><span class="desc">Accessible form field wrapper (label + input + hint + error)</span><span class="why">Encodes the correct accessible label/input association pattern in one component. JS optional: <code>initFormGroups()</code> adds live validation.</span></div>
+    <div class="item"><span class="name">.cs-form-group__label / __input / __hint / __error</span><span class="desc">BEM elements — all required for correct accessible form pattern</span></div>
+    <div class="item"><span class="name">.cs-notice</span><span class="desc">Info callout box</span><span class="why">Semantic notice/alert box. Auto-adapts to dark mode. Use <code>role="alert"</code> for live regions.</span></div>
     <div class="item"><span class="name">.cs-notice--success / --warning / --error</span><span class="desc">Notice state variants</span></div>
-    <div class="item"><span class="name">.cs-spinner</span><span class="desc">Loading spinner</span></div>
-    <div class="item"><span class="name">.cs-progress</span><span class="desc">Progress bar (native &lt;progress&gt; primary pattern)</span></div>
-    <div class="item"><span class="name">.cs-select-wrap</span><span class="desc">Select wrapper with token-driven chevron via mask-image</span></div>
-    <div class="item"><span class="name">.cs-media</span><span class="desc">Image / video wrapper</span></div>
-    <div class="item"><span class="name">[data-icon]="s/m/l/xl"</span><span class="desc">SVG icon sizing</span></div>
-    <div class="item"><span class="name">input[role="switch"]</span><span class="desc">Toggle switch styling</span></div>
+    <div class="item"><span class="name">.cs-spinner</span><span class="desc">Loading spinner (CSS animation, no JS)</span><span class="why">Inline loading state. Respects <code>prefers-reduced-motion</code> via <code>@layer slashed.a11y</code>.</span></div>
+    <div class="item"><span class="name">.cs-progress</span><span class="desc">Progress bar (native <code>&lt;progress&gt;</code> primary pattern)</span><span class="why">Styled native <code>&lt;progress&gt;</code> element — fully accessible, no ARIA needed.</span></div>
+    <div class="item"><span class="name">.cs-select-wrap</span><span class="desc">Select wrapper with token-driven chevron via <code>mask-image</code></span><span class="why">Custom-styled native <code>&lt;select&gt;</code> — uses CSS <code>mask-image</code> for the chevron, no extra HTML or SVG needed.</span></div>
+    <div class="item"><span class="name">input[role="switch"]</span><span class="desc">Toggle switch styling on a native checkbox</span><span class="why">CSS-only toggle — no JS, no extra HTML, full keyboard and screen reader support via native checkbox semantics.</span></div>
+  </div>
+
+  <h3 class="subheading">Media &amp; Utilities</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.cs-media</span><span class="desc">Image / video wrapper with overflow clip and radius</span><span class="why">Wraps images and embeds — handles border-radius + overflow-clip so the child image inherits the radius correctly.</span></div>
+    <div class="item"><span class="name">[data-icon]="s/m/l/xl"</span><span class="desc">SVG icon sizing via attribute (16/20/24/32px)</span><span class="why">Token-driven icon sizing without per-icon classes — <code>data-icon="m"</code> on any <code>&lt;svg&gt;</code> sets width + height.</span></div>
+    <div class="item"><span class="name">.cs-skeleton</span><span class="desc">Skeleton loading placeholder (shimmer animation)</span><span class="why">Loading state. Use <code>.cs-skeleton__line</code> for child line elements.</span></div>
+    <div class="item"><span class="name">.cs-skeleton__line <span class="tag tag--breaking">renamed in 0.4.8.0</span></span><span class="desc">Skeleton line element (was <code>.cs-skeleton-line</code>)</span><span class="why">Renamed from <code>.cs-skeleton-line</code> to correct the BEM violation — element classes use <code>__</code>, not standalone names.</span></div>
+    <div class="item"><span class="name">.cs-chip / .cs-nav-link / .cs-nav-link--active</span><span class="desc">Chip button and navigation link components</span><span class="why">UI chip for filter bars, tag selection. Nav link with active/current state styling.</span></div>
+    <div class="item"><span class="name">.cs-tabs / .cs-tab / .cs-tab-panel</span><span class="desc">Tab interface (pure-CSS baseline + optional JS ARIA enhancement)</span><span class="why">Pure-CSS tabs use <code>:has(:checked)</code> on radio inputs. <code>initTabsAccessible()</code> upgrades to full ARIA tabs with keyboard navigation.</span></div>
+    <div class="item"><span class="name">.cs-modal / .cs-modal__header / .cs-modal__body / .cs-modal__footer</span><span class="desc">Native <code>&lt;dialog&gt;</code> modal with <code>@starting-style</code> animation</span><span class="why">Wraps native <code>&lt;dialog&gt;</code> — correct backdrop handling, <code>closeModal()</code>/<code>initModalFocusRestore()</code> for full accessibility.</span></div>
+    <div class="item"><span class="name">.cs-banner / .cs-banner--sticky</span><span class="desc">Top-of-page notification banner</span><span class="why">Cookie consent, announcement banners. Sticky variant persists on scroll via <code>position: sticky; z-index: var(--z-banner)</code>.</span></div>
+    <div class="item"><span class="name">.cs-tooltip / [data-tooltip]</span><span class="desc">CSS tooltip via <code>[popover]</code></span><span class="why">Zero-JS tooltip using native popover API. Full keyboard-accessible.</span></div>
   </div>
 
   <h3 class="subheading">Instance tokens (per-component customization)</h3>
@@ -427,35 +685,40 @@
 <section class="section" id="spacing">
   <h2 class="section-title">Spacing Utilities</h2>
 
+  <div class="rationale">
+    <strong>Why this family:</strong> All spacing utilities use the fluid <code>--space-*</code> token scale — values derived with <code>clamp(min, fluid, max)</code> between 320px and 1440px viewports. This means responsive spacing is built in automatically; you never write <code>@media</code> rules just to adjust padding or gap.
+    <span class="when-not">Use spacing utilities for <em>contextual</em> overrides. If padding or gap is a fixed part of a component's design (e.g. <code>.cs-card</code> always has <code>--card-padding</code>), change the instance token instead: <code>style="--card-padding: var(--space-2xl)"</code>. Writing <code>.p-2xl</code> on every card instance is noise.</span>
+  </div>
+
   <h3 class="subheading">Padding</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.p-0</span><span class="desc">padding: 0</span></div>
-    <div class="item"><span class="name">.p-px / .p-0-5</span><span class="desc">1px / 2px padding</span></div>
-    <div class="item"><span class="name">.p-2xs / xs / s / m / l / xl / 2xl / 3xl / 4xl</span><span class="desc">All-sides padding scale</span></div>
-    <div class="item"><span class="name">.px-* (px-2xs..px-4xl)</span><span class="desc">Inline padding (left+right)</span></div>
-    <div class="item"><span class="name">.py-* (py-2xs..py-4xl)</span><span class="desc">Block padding (top+bottom)</span></div>
-    <div class="item"><span class="name">.pt-* (pt-0..pt-4xl)</span><span class="desc">Top padding</span></div>
-    <div class="item"><span class="name">.pb-* (pb-0..pb-4xl)</span><span class="desc">Bottom padding</span></div>
-    <div class="item"><span class="name">.px-gutter</span><span class="desc">Page gutter padding</span></div>
+    <div class="item"><span class="name">.p-0</span><span class="desc">padding: 0</span><span class="why">Removes all padding — most common override when resetting a padded component for a specific context.</span></div>
+    <div class="item"><span class="name">.p-px / .p-0-5</span><span class="desc">1px / 2px padding</span><span class="why">Sub-token micro-padding for pixel-precise adjustments (e.g. aligning icon inside a bordered button).</span></div>
+    <div class="item"><span class="name">.p-2xs / xs / s / m / l / xl / 2xl / 3xl / 4xl</span><span class="desc">All-sides padding scale (fluid <code>--space-*</code> tokens)</span><span class="why">The primary padding utility. 9-step scale from 4px to ~6rem, all fluid via <code>clamp()</code>. Use <code>.p-m</code> for standard card padding, <code>.p-xl</code> for generous section padding.</span></div>
+    <div class="item"><span class="name">.px-* (px-2xs..px-4xl)</span><span class="desc">Inline padding (left+right) — logical</span><span class="why">RTL-safe horizontal padding. For buttons, pills, and horizontal containers where vertical padding differs.</span></div>
+    <div class="item"><span class="name">.py-* (py-2xs..py-4xl)</span><span class="desc">Block padding (top+bottom) — logical</span><span class="why">For vertical breathing room inside a container while keeping horizontal tight (e.g. <code>.py-xl.px-m</code>).</span></div>
+    <div class="item"><span class="name">.pt-* (pt-0..pt-4xl)</span><span class="desc">Top padding</span><span class="why">For section-top resets, sticky-header offset, and asymmetric padding.</span></div>
+    <div class="item"><span class="name">.pb-* (pb-0..pb-4xl)</span><span class="desc">Bottom padding</span><span class="why">For section-bottom spacing and footer clearance.</span></div>
+    <div class="item"><span class="name">.px-gutter</span><span class="desc">Page gutter padding (matches <code>--gutter</code> token)</span><span class="why">Applies the same side-padding as <code>.container</code> — use on full-bleed sections that still need text-safe margins.</span></div>
   </div>
 
   <h3 class="subheading">Margin</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.m-auto</span><span class="desc">Auto margin all sides</span></div>
-    <div class="item"><span class="name">.mx-auto</span><span class="desc">Horizontal auto center</span></div>
-    <div class="item"><span class="name">.mt-auto / .mb-auto</span><span class="desc">Push to end in flex column</span></div>
-    <div class="item"><span class="name">.ms-auto / .me-auto</span><span class="desc">Logical (LTR/RTL aware)</span></div>
-    <div class="item"><span class="name">.mt-0..mt-4xl</span><span class="desc">Top margin scale</span></div>
-    <div class="item"><span class="name">.mb-0..mb-4xl</span><span class="desc">Bottom margin scale</span></div>
-    <div class="item"><span class="name">.mx-2xs..mx-xl</span><span class="desc">Horizontal margin scale</span></div>
+    <div class="item"><span class="name">.m-auto</span><span class="desc">margin: auto all sides</span><span class="why">Centers a block element horizontally <em>and</em> vertically (inside a fixed-height container). Prefer <code>.mx-auto</code> when only horizontal centering is needed.</span></div>
+    <div class="item"><span class="name">.mx-auto</span><span class="desc">margin-inline: auto — horizontal centering</span><span class="why">The canonical "center a block" pattern. Logical — works in RTL. Alternative to <code>.center</code> layout primitive when you don't need the full primitive.</span></div>
+    <div class="item"><span class="name">.mt-auto / .mb-auto</span><span class="desc">Push to cross-axis end in flex column</span><span class="why">The "push footer to bottom of card" pattern: <code>flex-col</code> container + <code>.mt-auto</code> on the last child. Extremely common in card grids.</span></div>
+    <div class="item"><span class="name">.ms-auto / .me-auto</span><span class="desc">Logical inline-start/inline-end auto margin (LTR/RTL aware)</span><span class="why">RTL-aware equivalent of <code>.ml-auto</code>/<code>.mr-auto</code>. Use for nav items that should push to the opposite side without hard-coding left/right.</span></div>
+    <div class="item"><span class="name">.mt-0..mt-4xl</span><span class="desc">Top margin scale</span><span class="why">Override component top spacing — e.g. removing the default top margin from a heading when preceded by an eyebrow.</span></div>
+    <div class="item"><span class="name">.mb-0..mb-4xl</span><span class="desc">Bottom margin scale</span><span class="why">Add intentional bottom spacing outside a component's own padding — for stacking non-primitive elements.</span></div>
+    <div class="item"><span class="name">.mx-2xs..mx-xl</span><span class="desc">Horizontal margin scale</span><span class="why">Inline spacing nudges — for offsetting inline elements or adding gutter-like side margins to an element.</span></div>
   </div>
 
   <h3 class="subheading">Gap (flex/grid)</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.gap-0</span><span class="desc">No gap</span></div>
-    <div class="item"><span class="name">.gap-2xs..gap-4xl</span><span class="desc">Full scale (9 steps)</span></div>
-    <div class="item"><span class="name">.gap-x-*</span><span class="desc">Column gap only</span></div>
-    <div class="item"><span class="name">.gap-y-*</span><span class="desc">Row gap only</span></div>
+    <div class="item"><span class="name">.gap-0</span><span class="desc">gap: 0 — no gap</span><span class="why">Removes gap from a grid or flex container — for flush-edge layouts like image mosaics.</span></div>
+    <div class="item"><span class="name">.gap-2xs..gap-4xl</span><span class="desc">Full scale (9 steps, fluid <code>--space-*</code> tokens)</span><span class="why">Preferred over padding for flex/grid spacing. Gap only applies between children — no margin bleeding. <code>.gap-m</code> is the default card grid gap.</span></div>
+    <div class="item"><span class="name">.gap-x-*</span><span class="desc">column-gap only</span><span class="why">Different horizontal and vertical spacing in a grid — e.g. columns tight, rows generous.</span></div>
+    <div class="item"><span class="name">.gap-y-*</span><span class="desc">row-gap only</span><span class="why">Wider row spacing than column spacing in a grid — common in form layouts.</span></div>
   </div>
 </section>
 
@@ -463,47 +726,52 @@
 <section class="section" id="typography">
   <h2 class="section-title">Typography Utilities</h2>
 
-  <h3 class="subheading">Font size</h3>
-  <div class="class-grid">
-    <div class="item"><span class="name">.text-2xs / xs / s / m / l / xl</span><span class="desc">Body text sizes</span></div>
-    <div class="item"><span class="name">.text-2xl / 3xl / 4xl / 5xl</span><span class="desc">Display sizes</span></div>
-    <div class="item"><span class="name">.text-fluid-hero</span><span class="desc">Ultra-fluid hero title</span></div>
-    <div class="item"><span class="name">.h1 / h2 / h3 / h4 / h5 / h6</span><span class="desc">Semantic heading styles</span></div>
+  <div class="rationale">
+    <strong>Why this family:</strong> Typography utilities let you modify text properties outside the flow of component BEM rules. All size tokens use <code>clamp(min, fluid, max)</code> between 375px and 1600px — the scale is inherently responsive. Weight and decoration utilities cover common one-off overrides without writing extra rules.
+    <span class="when-not">Don't apply <code>.text-l</code> to every paragraph inside a <code>.flow</code> block — the base font size is already correct. Use utilities only when you need to deviate from the component/page default for a specific element.</span>
   </div>
 
-  <h3 class="subheading">Weight</h3>
+  <h3 class="subheading">Font size</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.font-light</span><span class="desc">300</span></div>
-    <div class="item"><span class="name">.font-normal</span><span class="desc">400</span></div>
-    <div class="item"><span class="name">.font-medium</span><span class="desc">500</span></div>
-    <div class="item"><span class="name">.font-semi</span><span class="desc">600</span></div>
-    <div class="item"><span class="name">.font-bold</span><span class="desc">700</span></div>
-    <div class="item"><span class="name">.font-extrabold</span><span class="desc">800</span></div>
-    <div class="item"><span class="name">.font-black</span><span class="desc">900</span></div>
+    <div class="item"><span class="name">.text-2xs / xs / s / m / l / xl</span><span class="desc">Body text sizes (fluid <code>--text-*</code> tokens, all <code>clamp()</code>-based)</span><span class="why">Scale from ~10px to ~20px. Use <code>.text-s</code> for captions, <code>.text-m</code> for default body, <code>.text-l</code> for large intro paragraphs.</span></div>
+    <div class="item"><span class="name">.text-2xl / 3xl / 4xl / 5xl</span><span class="desc">Display sizes — fluid scale from ~24px to ~72px</span><span class="why">For section headings and display text that needs explicit size rather than semantic heading level. Separate from <code>.h1-.h6</code> which carry heading semantics.</span></div>
+    <div class="item"><span class="name">.text-fluid-hero</span><span class="desc">Ultra-fluid hero title — <code>clamp(3rem, 9vw + 1rem, 9rem)</code></span><span class="why">The largest responsive text step. Grows aggressively with viewport. Use for above-the-fold display text that fills the screen at all sizes.</span></div>
+    <div class="item"><span class="name">.h1 / h2 / h3 / h4 / h5 / h6</span><span class="desc">Semantic heading styles (visual styles only — does NOT change HTML tag)</span><span class="why">For when the semantic heading level differs from the visual level — e.g. a <code>&lt;p&gt;</code> styled like a heading, or a <code>&lt;h3&gt;</code> that should look like an <code>&lt;h1&gt;</code> visually.</span></div>
+  </div>
+
+  <h3 class="subheading">Font weight</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.font-light</span><span class="desc">font-weight: 300</span><span class="why">For large display text where heavy weight would be too dense. Requires a variable font or a 300 weight loaded.</span></div>
+    <div class="item"><span class="name">.font-normal</span><span class="desc">font-weight: 400</span><span class="why">Reset back to regular weight — most common override when a parent applies bold.</span></div>
+    <div class="item"><span class="name">.font-medium</span><span class="desc">font-weight: 500</span><span class="why">Subtle emphasis without full bold — for UI labels, nav items, table headers.</span></div>
+    <div class="item"><span class="name">.font-semi</span><span class="desc">font-weight: 600</span><span class="why">Standard "bold UI" weight — buttons, active nav, callout labels.</span></div>
+    <div class="item"><span class="name">.font-bold</span><span class="desc">font-weight: 700</span><span class="why">Traditional bold — for strong emphasis in body text.</span></div>
+    <div class="item"><span class="name">.font-extrabold</span><span class="desc">font-weight: 800</span><span class="why">For high-impact hero headings with a variable font.</span></div>
+    <div class="item"><span class="name">.font-black</span><span class="desc">font-weight: 900</span><span class="why">Maximum weight — display-only use. Ensure the loaded font supports 900.</span></div>
   </div>
 
   <h3 class="subheading">Style, case, decoration</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.italic</span><span class="desc">font-style: italic</span></div>
-    <div class="item"><span class="name">.uppercase / .lowercase / .capitalize</span><span class="desc">Case transforms</span></div>
-    <div class="item"><span class="name">.underline / .no-underline</span><span class="desc">Underline toggle</span></div>
-    <div class="item"><span class="name">.line-through</span><span class="desc">Strikethrough</span></div>
+    <div class="item"><span class="name">.italic</span><span class="desc">font-style: italic</span><span class="why">For emphasis, quote attribution, or decorative script passages.</span></div>
+    <div class="item"><span class="name">.uppercase / .lowercase / .capitalize</span><span class="desc">text-transform values</span><span class="why"><code>.uppercase</code>: eyebrows, labels, all-caps design accents. <code>.capitalize</code>: dynamic user names from DB. <code>.lowercase</code>: resets inherited uppercase.</span></div>
+    <div class="item"><span class="name">.underline / .no-underline</span><span class="desc">Underline toggle</span><span class="why"><code>.underline</code>: semantic links in prose that lack default styling. <code>.no-underline</code>: decorative links in navs and cards that visually indicate interactivity by other means.</span></div>
+    <div class="item"><span class="name">.line-through</span><span class="desc">text-decoration: line-through</span><span class="why">Crossed-out prices, deprecated items, delete-mode UI. Communicates "was / now" semantics.</span></div>
   </div>
 
-  <h3 class="subheading">Alignment & wrapping</h3>
+  <h3 class="subheading">Alignment &amp; wrapping</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.text-left / .text-center / .text-right</span><span class="desc">Text alignment (logical)</span></div>
-    <div class="item"><span class="name">.text-balance</span><span class="desc">text-wrap: balance (headings)</span></div>
-    <div class="item"><span class="name">.text-pretty</span><span class="desc">text-wrap: pretty (paragraphs)</span></div>
+    <div class="item"><span class="name">.text-left / .text-center / .text-right</span><span class="desc">text-align — uses logical equivalents internally</span><span class="why">Override text alignment per-element. <code>.text-center</code> for headings and CTAs, <code>.text-left</code> to reset centered paragraphs in mixed layouts.</span></div>
+    <div class="item"><span class="name">.text-balance</span><span class="desc">text-wrap: balance — distributes words evenly across lines</span><span class="why">Eliminates "widow" words in multi-line headings. Apply to <code>&lt;h2&gt;</code> / <code>&lt;h3&gt;</code> elements. Already built into framework heading styles — use to opt in on custom elements.</span></div>
+    <div class="item"><span class="name">.text-pretty</span><span class="desc">text-wrap: pretty — avoids orphaned last words</span><span class="why">For paragraphs and lead text. Prevents a single word on the final line without the layout cost of <code>balance</code> (which can slow rendering on long text).</span></div>
   </div>
 
-  <h3 class="subheading">Line height & tracking</h3>
+  <h3 class="subheading">Line height &amp; tracking</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.leading-tight</span><span class="desc">~1.15 (headings)</span></div>
-    <div class="item"><span class="name">.leading-snug</span><span class="desc">~1.3</span></div>
-    <div class="item"><span class="name">.leading-normal</span><span class="desc">~1.5 (body)</span></div>
-    <div class="item"><span class="name">.leading-loose</span><span class="desc">~1.8</span></div>
-    <div class="item"><span class="name">.tracking-tighter..widest</span><span class="desc">Letter-spacing scale (5 steps)</span></div>
+    <div class="item"><span class="name">.leading-tight</span><span class="desc">line-height: ~1.15 — for headings</span><span class="why">Tight line height for large text — multi-line display headings need less gap than body text.</span></div>
+    <div class="item"><span class="name">.leading-snug</span><span class="desc">line-height: ~1.3</span><span class="why">For subheadings and UI text where body-height would look too loose.</span></div>
+    <div class="item"><span class="name">.leading-normal</span><span class="desc">line-height: ~1.5 — for body text</span><span class="why">The readable default. Use to reset tight line-height from a heading inside a prose context.</span></div>
+    <div class="item"><span class="name">.leading-loose</span><span class="desc">line-height: ~1.8</span><span class="why">For small text with lots of breathing room — footnotes, form hints, captions.</span></div>
+    <div class="item"><span class="name">.tracking-tighter / tight / normal / wide / wider / widest</span><span class="desc">letter-spacing scale (5 steps, <code>--tracking-*</code> tokens)</span><span class="why">Tight: large display text. Normal: body. Wide/wider/widest: uppercase labels and eyebrows (wide tracking improves readability at small caps).</span></div>
   </div>
 </section>
 
@@ -511,153 +779,313 @@
 <section class="section" id="colors">
   <h2 class="section-title">Color Utilities</h2>
 
+  <div class="rationale">
+    <strong>Why this family:</strong> Color utilities expose the semantic token layer as CSS classes. They use <code>light-dark()</code> under the hood — every <code>.text-*</code> and <code>.bg-*</code> class automatically adapts to dark mode without an extra <code>.dark:</code> prefix. These utilities express <em>semantic intent</em> (surface, muted, success) rather than raw palette values.
+    <span class="when-not">Don't mix raw palette utilities (<code>.bg-primary-100</code>) with semantic utilities (<code>.bg-surface</code>) in the same design system — pick one axis per project. If a component always has a specific background, encode it in the component's instance token or BEM rule, not as a utility class applied to every instance.</span>
+  </div>
+
   <h3 class="subheading">Text color</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.text-primary / -secondary / -accent</span><span class="desc">Brand text colors</span></div>
-    <div class="item"><span class="name">.text-default</span><span class="desc">Main body text</span></div>
-    <div class="item"><span class="name">.text-muted</span><span class="desc">Secondary text</span></div>
-    <div class="item"><span class="name">.text-faint</span><span class="desc">Tertiary text</span></div>
-    <div class="item"><span class="name">.text-success / -warning / -error / -info</span><span class="desc">Status text colors</span></div>
-    <div class="item"><span class="name">.text-on-primary / -on-dark</span><span class="desc">Contrast text colors</span></div>
-    <div class="item"><span class="name">.text-inherit</span><span class="desc">color: inherit</span></div>
+    <div class="item"><span class="name">.text-primary / -secondary / -accent</span><span class="desc">Brand text colors (map to <code>--primary</code>, <code>--secondary</code>, <code>--accent</code>)</span><span class="why">For brand-colored headings, links, and UI accents. Automatically use the correct shade for contrast in both light and dark mode.</span></div>
+    <div class="item"><span class="name">.text-default</span><span class="desc">color: var(--color-text) — main body text</span><span class="why">Resets text color to the base body color when inside a colored parent. Most reliable color reset.</span></div>
+    <div class="item"><span class="name">.text-muted</span><span class="desc">color: var(--color-text-muted) — secondary text</span><span class="why">For metadata, timestamps, subtitles — visually receding but still comfortably readable (≥4.5:1 contrast).</span></div>
+    <div class="item"><span class="name">.text-faint <span class="tag tag--issue">⚠ issue</span></span><span class="desc">color: var(--color-text-faint) — tertiary text (~3.4:1 contrast)</span><span class="why">For decorative labels only — does NOT meet WCAG AA for body text. Never use for meaningful content. Decision pending: rename to <code>text-decorative</code> or add a "decorative only" token type.</span></div>
+    <div class="item"><span class="name">.text-success / -warning / -error / -info</span><span class="desc">Status text colors — map to semantic status tokens</span><span class="why">For status messages, form validation, alerts. Note: raw <code>--warning</code> on white = ~2.8:1 — use <code>.text-warning-600</code> when the background is white.</span></div>
+    <div class="item"><span class="name">.text-on-primary / -on-dark</span><span class="desc">Contrast text for colored / dark backgrounds</span><span class="why"><code>.text-on-primary</code>: white text on brand primary backgrounds. <code>.text-on-dark</code>: light text for any dark surface. Both derived from <code>light-dark()</code>.</span></div>
+    <div class="item"><span class="name">.text-inherit</span><span class="desc">color: inherit</span><span class="why">Forces a child element to use its parent's text color — for SVG icons inside colored buttons and links.</span></div>
   </div>
 
   <h3 class="subheading">Background color</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.bg-surface / -2 / -elevated</span><span class="desc">Semantic surfaces</span></div>
-    <div class="item"><span class="name">.bg-primary / -50 / -100 / -200 / -700 / -800 / -900 / -950</span><span class="desc">Primary palette</span></div>
-    <div class="item"><span class="name">.bg-secondary / -100 / -800 / -900</span><span class="desc">Secondary palette</span></div>
-    <div class="item"><span class="name">.bg-accent / -100 / -800 / -900</span><span class="desc">Accent palette</span></div>
-    <div class="item"><span class="name">.bg-success / -100</span><span class="desc">Success backgrounds</span></div>
-    <div class="item"><span class="name">.bg-warning / -100</span><span class="desc">Warning backgrounds</span></div>
-    <div class="item"><span class="name">.bg-error / -100</span><span class="desc">Error backgrounds</span></div>
-    <div class="item"><span class="name">.bg-neutral-100 / -800 / -900</span><span class="desc">Neutrals</span></div>
-    <div class="item"><span class="name">.bg-light / -ultra-light</span><span class="desc">Scoped light theme</span></div>
-    <div class="item"><span class="name">.bg-dark / -ultra-dark</span><span class="desc">Scoped dark theme</span></div>
-    <div class="item"><span class="name">.bg-gradient</span><span class="desc">Customizable gradient (--bg-gradient)</span></div>
-    <div class="item"><span class="name">.bg-transparent / -inherit</span><span class="desc">Transparent / inherited</span></div>
+    <div class="item"><span class="name">.bg-surface / -2 / -elevated</span><span class="desc">Semantic surface layers — auto-adapt to dark mode</span><span class="why">The correct way to apply backgrounds to cards, panels, and sections. <code>surface</code> = page base, <code>surface-2</code> = slightly off-white/dark gray layer, <code>elevated</code> = card with shadow context.</span></div>
+    <div class="item"><span class="name">.bg-primary / -50 / -100 / -200 / -700 / -800 / -900 / -950</span><span class="desc">Primary brand palette range</span><span class="why">Tint backgrounds (<code>-50</code> to <code>-200</code>) for light badges, callout boxes. Dark shades (<code>-700</code> to <code>-950</code>) for dark sections and inverted headers.</span></div>
+    <div class="item"><span class="name">.bg-secondary / -100 / -800 / -900</span><span class="desc">Secondary brand palette</span><span class="why">Secondary callouts and alternate section tones.</span></div>
+    <div class="item"><span class="name">.bg-accent / -100 / -800 / -900</span><span class="desc">Accent palette</span><span class="why">Highlight sections, promo banners, featured items.</span></div>
+    <div class="item"><span class="name">.bg-success / -100</span><span class="desc">Success fill / tint</span><span class="why"><code>.bg-success</code>: dark-mode-aware success green. <code>.bg-success-100</code>: light tint for success callout boxes. Pair with <code>.text-success</code>.</span></div>
+    <div class="item"><span class="name">.bg-warning / -100</span><span class="desc">Warning fill / tint</span><span class="why"><code>.bg-warning-100</code> + <code>.text-warning-600</code> is the WCAG-safe warning callout pattern. Raw <code>.bg-warning</code> with white text fails contrast — use with dark text.</span></div>
+    <div class="item"><span class="name">.bg-error / -100</span><span class="desc">Error fill / tint</span><span class="why">Form error highlight, destructive action banners.</span></div>
+    <div class="item"><span class="name">.bg-neutral-100 / -800 / -900</span><span class="desc">Neutral grays — always neutral regardless of brand color</span><span class="why">For UI chrome that should stay gray regardless of the brand primary. <code>-100</code>: code blocks, tags. <code>-800/-900</code>: dark code themes, inverted navbars.</span></div>
+    <div class="item"><span class="name">.bg-light / -ultra-light</span><span class="desc">Force light surface in any context (overrides dark mode)</span><span class="why">For components that must always display on a light background — print previews, colorful section insets with fixed design.</span></div>
+    <div class="item"><span class="name">.bg-dark / -ultra-dark</span><span class="desc">Force dark surface in any context (overrides light mode)</span><span class="why">Dark sections on light-theme pages — "dark marquee" hero bands, footer. Scoped dark theme without requiring system dark mode.</span></div>
+    <div class="item"><span class="name">.bg-gradient</span><span class="desc">background: var(--bg-gradient) — customizable gradient</span><span class="why">Set <code>--bg-gradient</code> on the element to apply any gradient. Framework provides a default brand gradient; override per instance.</span></div>
+    <div class="item"><span class="name">.bg-transparent / -inherit</span><span class="desc">Transparent / inherited background</span><span class="why"><code>.bg-transparent</code>: resets surface backgrounds on interactive states. <code>.bg-inherit</code>: passes parent background through — for ghost elements inside colored containers.</span></div>
   </div>
 </section>
 
 <!-- ============================================================ DISPLAY -->
 <section class="section" id="display">
   <h2 class="section-title">Display</h2>
+
+  <div class="rationale">
+    <strong>Why this family:</strong> Complete <code>display</code> coverage eliminates one-off <code>&lt;style&gt;</code> blocks for simple visibility switches. Every distinct <code>display</code> value serves a unique layout role.
+    <span class="when-not">If a display change is intrinsic to a component's design (e.g. <code>.cs-modal</code> is always <code>display: flex</code>), it belongs in the BEM component rule, not as a utility on the element.</span>
+  </div>
   <div class="class-grid">
-    <div class="item"><span class="name">.block / .inline-block</span><span class="desc">Block / inline display</span></div>
-    <div class="item"><span class="name">.flex / .inline-flex</span><span class="desc">Flexbox</span></div>
-    <div class="item"><span class="name">.grid</span><span class="desc">CSS Grid</span></div>
-    <div class="item"><span class="name">.hidden</span><span class="desc">display: none</span></div>
-    <div class="item"><span class="name">.visible / .invisible</span><span class="desc">visibility toggle</span></div>
+    <div class="item"><span class="name">.block</span><span class="desc">display: block</span><span class="why">Standard block element. Needed to convert inline elements (spans, links) to block for layout purposes.</span></div>
+    <div class="item"><span class="name">.inline-block</span><span class="desc">display: inline-block</span><span class="why">Sits in text flow but accepts width/height. Common for inline icons and badges.</span></div>
+    <div class="item"><span class="name">.inline <span class="tag tag--proposed">proposed</span></span><span class="desc">display: inline</span><span class="why">Resets block elements back to inline flow. Needed when an element needs to appear inline in text without breaking the line.</span></div>
+    <div class="item"><span class="name">.flex</span><span class="desc">display: flex</span><span class="why">The most-used layout mode. Enables all flex child utilities.</span></div>
+    <div class="item"><span class="name">.inline-flex</span><span class="desc">display: inline-flex</span><span class="why">Flex that stays in text flow — for icon+label combinations inside prose.</span></div>
+    <div class="item"><span class="name">.grid</span><span class="desc">display: grid</span><span class="why">Enables all grid child utilities. Used with <code>.grid-1..12</code> or custom <code>--cols</code>.</span></div>
+    <div class="item"><span class="name">.inline-grid <span class="tag tag--proposed">proposed</span></span><span class="desc">display: inline-grid</span><span class="why">Grid that stays inline — for inline component arrangements that need grid alignment without breaking out to block.</span></div>
+    <div class="item"><span class="name">.contents <span class="tag tag--proposed">proposed</span></span><span class="desc">display: contents</span><span class="why">Makes an element "disappear" — its children participate in the parent's layout directly. Essential for accessible wrapper-less grid slots (avoids layout penalty of a wrapper div).</span></div>
+    <div class="item"><span class="name">.hidden</span><span class="desc">display: none</span><span class="why">Fully removes from layout and accessibility tree. Combine with responsive prefix: <code>.md:hidden</code>.</span></div>
+    <div class="item"><span class="name">.visible</span><span class="desc">visibility: visible</span><span class="why">Restores visibility without changing layout. Use when element must remain in flow but visually hidden parent shouldn't affect child.</span></div>
+    <div class="item"><span class="name">.invisible</span><span class="desc">visibility: hidden</span><span class="why">Hides visually but preserves layout space. Use for ghost placeholders and toggle-without-reflow patterns.</span></div>
   </div>
 </section>
 
 <!-- ============================================================ FLEX & GRID -->
 <section class="section" id="flex-grid">
-  <h2 class="section-title">Flex & Alignment</h2>
+  <h2 class="section-title">Flex &amp; Alignment</h2>
 
-  <h3 class="subheading">Flex</h3>
-  <div class="class-grid">
-    <div class="item"><span class="name">.flex-row / -col</span><span class="desc">flex-direction</span></div>
-    <div class="item"><span class="name">.flex-row-reverse</span><span class="desc">Reverse direction</span></div>
-    <div class="item"><span class="name">.flex-wrap / -nowrap</span><span class="desc">Wrapping behavior</span></div>
-    <div class="item"><span class="name">.flex-1 / -auto / -none</span><span class="desc">flex shorthand</span></div>
-    <div class="item"><span class="name">.grow / .grow-0</span><span class="desc">flex-grow toggle</span></div>
-    <div class="item"><span class="name">.shrink-0</span><span class="desc">flex-shrink: 0</span></div>
+  <div class="rationale">
+    <strong>Why this family:</strong> Flex direction, wrapping, and grow/shrink controls are the most-reached-for utilities in layout composition. Complete coverage eliminates the need for single-purpose component rules.
+    <span class="when-not">Alignment utilities configure the flex/grid container. If the container's alignment is fixed by design (never changes), embed it in the BEM component rule so consumers don't need to add utilities to every instance.</span>
   </div>
 
-  <h3 class="subheading">Alignment</h3>
+  <h3 class="subheading">Flex direction &amp; wrapping</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.items-start / -center / -end</span><span class="desc">align-items</span></div>
-    <div class="item"><span class="name">.items-baseline / -stretch</span><span class="desc">Alignment variants</span></div>
-    <div class="item"><span class="name">.justify-start / -center / -end</span><span class="desc">justify-content</span></div>
-    <div class="item"><span class="name">.justify-between</span><span class="desc">Distribution</span></div>
-    <div class="item"><span class="name">.self-start / -center / -end</span><span class="desc">align-self for children</span></div>
-    <div class="item"><span class="name">.place-center</span><span class="desc">Shorthand center (grid)</span></div>
+    <div class="item"><span class="name">.flex-row</span><span class="desc">flex-direction: row (horizontal, default)</span><span class="why">Explicit when switching from a <code>flex-col</code> parent at a breakpoint.</span></div>
+    <div class="item"><span class="name">.flex-col</span><span class="desc">flex-direction: column</span><span class="why">Vertical stacking within a flex container. Use instead of <code>.stack</code> when you also need alignment controls.</span></div>
+    <div class="item"><span class="name">.flex-row-reverse</span><span class="desc">flex-direction: row-reverse</span><span class="why">For alternating image-text layouts where image flips side on every other row.</span></div>
+    <div class="item"><span class="name">.flex-wrap</span><span class="desc">flex-wrap: wrap</span><span class="why">Allows children to wrap to the next line. Required for responsive tag clouds and inline button groups.</span></div>
+    <div class="item"><span class="name">.flex-nowrap</span><span class="desc">flex-wrap: nowrap</span><span class="why">Prevents wrapping — for scrollable horizontal strips (e.g. <code>.reel</code> contents).</span></div>
+  </div>
+
+  <h3 class="subheading">Flex item sizing</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.flex-1</span><span class="desc">flex: 1 1 0% — grow, shrink, zero basis</span><span class="why">Equal-width distribution when all siblings have <code>flex-1</code>. The "split equally" pattern.</span></div>
+    <div class="item"><span class="name">.flex-auto</span><span class="desc">flex: 1 1 auto — grow + shrink from content size</span><span class="why">Equal distribution but starting from each item's natural size.</span></div>
+    <div class="item"><span class="name">.flex-none</span><span class="desc">flex: none — fixed size, no grow or shrink</span><span class="why">For fixed-size sidebar columns and icon wrappers that must not resize.</span></div>
+    <div class="item"><span class="name">.grow</span><span class="desc">flex-grow: 1</span><span class="why">Single item fills remaining space. Classic "spacer" pattern in navbars.</span></div>
+    <div class="item"><span class="name">.grow-0</span><span class="desc">flex-grow: 0</span><span class="why">Prevents an item from growing. Explicit reset after responsive switch.</span></div>
+    <div class="item"><span class="name">.shrink <span class="tag tag--proposed">proposed</span></span><span class="desc">flex-shrink: 1 (restores default)</span><span class="why">Resets <code>.shrink-0</code> when a parent context changes. Documented in UTILITIES.md; missing from CSS — completing the pair with <code>.shrink-0</code>.</span></div>
+    <div class="item"><span class="name">.shrink-0</span><span class="desc">flex-shrink: 0</span><span class="why">Prevents item from shrinking below its natural width. Essential for icons next to text, avatars next to names.</span></div>
+  </div>
+
+  <h3 class="subheading">Alignment — container axis</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.items-start</span><span class="desc">align-items: flex-start</span><span class="why">Children align to the start of the cross axis. Common default for most layouts.</span></div>
+    <div class="item"><span class="name">.items-center</span><span class="desc">align-items: center</span><span class="why">Cross-axis centering. Icon+text pairs, nav items, toolbar buttons.</span></div>
+    <div class="item"><span class="name">.items-end</span><span class="desc">align-items: flex-end</span><span class="why">Push children to cross-axis end. Footer actions, bottom-aligned content.</span></div>
+    <div class="item"><span class="name">.items-baseline</span><span class="desc">align-items: baseline</span><span class="why">Aligns text baselines across different-sized flex children — for mixed font-size rows.</span></div>
+    <div class="item"><span class="name">.items-stretch</span><span class="desc">align-items: stretch</span><span class="why">Children stretch to fill cross-axis height. For equal-height cards in a flex row.</span></div>
+    <div class="item"><span class="name">.justify-start</span><span class="desc">justify-content: flex-start</span></div>
+    <div class="item"><span class="name">.justify-center</span><span class="desc">justify-content: center</span></div>
+    <div class="item"><span class="name">.justify-end</span><span class="desc">justify-content: flex-end</span></div>
+    <div class="item"><span class="name">.justify-between</span><span class="desc">justify-content: space-between — max gap between items, flush to edges</span><span class="why">The most common distribution. Navbars (logo ← spacer → links), toolbars.</span></div>
+    <div class="item"><span class="name">.justify-around <span class="tag tag--proposed">proposed</span></span><span class="desc">justify-content: space-around — equal space around each item (half-space at edges)</span><span class="why">For tag lists and icon toolbars where equal breathing room on all sides matters. Different from <code>between</code>: edges get half the internal gap.</span></div>
+    <div class="item"><span class="name">.justify-evenly <span class="tag tag--proposed">proposed</span></span><span class="desc">justify-content: space-evenly — equal space between all items including edges</span><span class="why">For nav items that should have identical spacing to edges and to each other. Cleaner than <code>around</code> when symmetry matters.</span></div>
+    <div class="item"><span class="name">.place-center</span><span class="desc">place-items + place-content: center — grid 2D centering shorthand</span><span class="why">The cleanest way to center a single grid child. One class replaces four alignment properties.</span></div>
+  </div>
+
+  <h3 class="subheading">Alignment — individual item (align-self)</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.self-start</span><span class="desc">align-self: flex-start</span><span class="why">One item aligns to start while siblings stretch. Common for image in text+image grid.</span></div>
+    <div class="item"><span class="name">.self-center</span><span class="desc">align-self: center</span><span class="why">Vertically center one child independently of siblings.</span></div>
+    <div class="item"><span class="name">.self-end</span><span class="desc">align-self: flex-end</span><span class="why">Push one item to the cross-axis end. "Pin to bottom" in a column.</span></div>
+    <div class="item"><span class="name">.self-stretch <span class="tag tag--proposed">proposed</span></span><span class="desc">align-self: stretch — item fills available cross-axis height</span><span class="why">For equal-height columns in a row where one item is shorter. Documented in UTILITIES.md + cheatsheet; missing from CSS.</span></div>
+    <div class="item"><span class="name">.self-auto <span class="tag tag--proposed">proposed</span></span><span class="desc">align-self: auto — inherits from container's align-items</span><span class="why">Explicitly resets a custom self-alignment back to the container default. Useful in responsive variants.</span></div>
   </div>
 </section>
 
 <!-- ============================================================ BORDERS -->
 <section class="section" id="borders">
-  <h2 class="section-title">Borders & Radius</h2>
+  <h2 class="section-title">Borders &amp; Radius <span class="meta">slashed-utilities-visual.css · opt-in</span></h2>
+
+  <div class="rationale">
+    Border and radius utilities are in <code>slashed-utilities-visual.css</code> — load it separately. They are "decorative" per SLASHED philosophy and not in the core bundle.
+    <span class="when-not">If border style is a fixed part of a component design, use the component's instance token (<code>--card-border</code>, <code>--btn-border</code>) rather than adding a utility class to every instance.</span>
+  </div>
+
+  <h3 class="subheading">Border width</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.border</span><span class="desc">1px solid border</span></div>
-    <div class="item"><span class="name">.border-0 / -2</span><span class="desc">Border width</span></div>
-    <div class="item"><span class="name">.border-primary / -subtle / -strong</span><span class="desc">Border colors</span></div>
-    <div class="item"><span class="name">.rounded-none</span><span class="desc">No radius</span></div>
-    <div class="item"><span class="name">.rounded-xs / -s / -m / -l</span><span class="desc">Common radii</span></div>
-    <div class="item"><span class="name">.rounded-xl / -2xl</span><span class="desc">Large radii</span></div>
-    <div class="item"><span class="name">.rounded-full</span><span class="desc">Fully rounded</span></div>
+    <div class="item"><span class="name">.border</span><span class="desc">1px solid (uses <code>--border-width</code> token and <code>--color-border</code>)</span><span class="why">The default border. Used inline when a one-off element needs a border without writing a rule.</span></div>
+    <div class="item"><span class="name">.border-0</span><span class="desc">border-width: 0</span><span class="why">Removes a border — responsive override or reset on a bordered component instance.</span></div>
+    <div class="item"><span class="name">.border-2</span><span class="desc">border-width: 2px</span><span class="why">Emphasis border — selected states, active tabs, focused inputs.</span></div>
+    <div class="item"><span class="name">.border-4 <span class="tag tag--proposed">proposed</span></span><span class="desc">border-width: 4px</span><span class="why">Heavy accent border — blockquote-style left border, feature card highlight. Completing the 0/1/2/4 width family.</span></div>
+    <div class="item"><span class="name">.border-b / -t / -l / -r</span><span class="desc">Single-side border (bottom / top / left / right)</span><span class="why">Dividers, header bottom rule, table cell borders.</span></div>
+    <div class="item"><span class="name">.border-x / -y</span><span class="desc">Inline (left+right) / block (top+bottom) borders</span></div>
+    <div class="item"><span class="name">.border-dashed / -dotted</span><span class="desc">Border style variants</span><span class="why">Dashed: drop zones, placeholder cards. Dotted: decorative separators.</span></div>
+  </div>
+
+  <h3 class="subheading">Border color</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.border-primary</span><span class="desc">border-color: var(--primary)</span><span class="why">Brand-colored border — selected state, active card.</span></div>
+    <div class="item"><span class="name">.border-subtle</span><span class="desc">border-color: var(--color-border-subtle)</span><span class="why">Light dividers that don't compete with content.</span></div>
+    <div class="item"><span class="name">.border-strong</span><span class="desc">border-color: var(--color-border-strong)</span><span class="why">Stronger separation — table edges, input focus borders.</span></div>
+  </div>
+
+  <h3 class="subheading">Border radius</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">.rounded-none</span><span class="desc">border-radius: 0</span><span class="why">Resets radius — sharp-edged design language override.</span></div>
+    <div class="item"><span class="name">.rounded-xs / -s / -m / -l / -xl / -2xl</span><span class="desc">Radius scale from var(--radius-xs) to var(--radius-2xl)</span><span class="why">Match the radius to the element size — small elements get smaller radii for visual coherence.</span></div>
+    <div class="item"><span class="name">.rounded-full</span><span class="desc">border-radius: 9999px (pill)</span><span class="why">Pills, circles, avatar chips. The most-used radius for badge and chip components.</span></div>
   </div>
 </section>
 
 <!-- ============================================================ POSITION -->
 <section class="section" id="position">
-  <h2 class="section-title">Position & Sizing</h2>
+  <h2 class="section-title">Position &amp; Sizing</h2>
 
   <h3 class="subheading">Position</h3>
+  <div class="rationale">
+    All 5 CSS position values are represented. <code>.static</code> may seem redundant (it's the CSS default) but is needed to reset a positioned ancestor in compound layouts.
+    <span class="when-not">If positioning is a fundamental part of a component's structure (e.g. <code>.cs-modal</code>, <code>.cs-banner</code>), it belongs in BEM, not as a utility.</span>
+  </div>
   <div class="class-grid">
-    <div class="item"><span class="name">.relative / .absolute</span><span class="desc">Basic positioning</span></div>
-    <div class="item"><span class="name">.fixed / .sticky</span><span class="desc">Viewport / scroll positioning</span></div>
-    <div class="item"><span class="name">.inset-0</span><span class="desc">All offsets 0</span></div>
-    <div class="item"><span class="name">.top-0 / right-0 / bottom-0 / left-0</span><span class="desc">Physical offsets</span></div>
+    <div class="item"><span class="name">.static <span class="tag tag--proposed">proposed</span></span><span class="desc">position: static (default)</span><span class="why">Resets positioning — needed when a responsive breakpoint or parent context changes <code>.relative</code> or <code>.absolute</code> back to normal flow.</span></div>
+    <div class="item"><span class="name">.relative</span><span class="desc">position: relative — establishes positioning context for absolute children</span><span class="why">Required parent for all <code>.absolute</code> children. No visual change by itself.</span></div>
+    <div class="item"><span class="name">.absolute</span><span class="desc">position: absolute — removes from flow, positioned to nearest relative ancestor</span><span class="why">Overlapping badges, notification dots, tooltips, pseudo-element replacements.</span></div>
+    <div class="item"><span class="name">.fixed</span><span class="desc">position: fixed — relative to viewport, stays in place on scroll</span><span class="why">Persistent UI: floating action buttons, cookie banners, chat widgets.</span></div>
+    <div class="item"><span class="name">.sticky</span><span class="desc">position: sticky — sticks at <code>--sticky-top</code> threshold while scrolling</span><span class="why">In-page sticky elements: section headers, sidebar navigation, table column headers.</span></div>
+    <div class="item"><span class="name">.inset-0</span><span class="desc">inset: 0 — all four edges to 0</span><span class="why">Fill overlay pattern: <code>position: absolute; inset: 0</code> = covers parent completely. One class for two declarations.</span></div>
+    <div class="item"><span class="name">.inset-x-0 / .inset-y-0</span><span class="desc">Inline or block edges to 0</span><span class="why">Partial coverage — e.g. <code>inset-x-0</code> stretches full width without fixing height.</span></div>
+    <div class="item"><span class="name">.top-0 / .right-0 / .bottom-0 / .left-0</span><span class="desc">Physical edge offsets to 0</span><span class="why">When you explicitly mean "visually top/right/bottom/left" regardless of text direction.</span></div>
+    <div class="item"><span class="name">.start-0 <span class="tag tag--proposed">proposed</span></span><span class="desc">inset-inline-start: 0 (logical — LTR: left, RTL: right)</span><span class="why">RTL-aware equivalent of <code>.left-0</code>. Use for components that should mirror in RTL layouts. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.end-0 <span class="tag tag--proposed">proposed</span></span><span class="desc">inset-inline-end: 0 (logical — LTR: right, RTL: left)</span><span class="why">RTL-aware equivalent of <code>.right-0</code>. Completing the logical inset family with <code>.start-0</code>.</span></div>
   </div>
 
-  <h3 class="subheading">Z-index</h3>
+  <h3 class="subheading">Z-index utilities (all 14 levels)</h3>
+  <div class="rationale">
+    Every z-index token has a corresponding utility class. Use these instead of magic numbers — <em>never write <code>z-index: 999</code></em>.
+  </div>
   <div class="class-grid">
+    <div class="item"><span class="name">.z-below</span><span class="val">−1 — behind page flow</span><span class="why">Decorative pseudo-element fills that must not block interaction.</span></div>
     <div class="item"><span class="name">.z-base</span><span class="val">0</span></div>
-    <div class="item"><span class="name">.z-raised</span><span class="val">1</span></div>
-    <div class="item"><span class="name">.z-docked</span><span class="val">10</span></div>
-    <div class="item"><span class="name">.z-sticky</span><span class="val">1100</span></div>
-    <div class="item"><span class="name">.z-overlay</span><span class="val">1300</span></div>
-    <div class="item"><span class="name">.z-modal</span><span class="val">1400</span></div>
-    <div class="item"><span class="name">.z-tooltip</span><span class="val">1800</span></div>
+    <div class="item"><span class="name">.z-raised</span><span class="val">1 — one step above siblings</span><span class="why">Focused table rows, hovered cards that need to overlap siblings.</span></div>
+    <div class="item"><span class="name">.z-docked</span><span class="val">10 — sticky in-page elements</span></div>
+    <div class="item"><span class="name">.z-above</span><span class="val">100 — small floaters above docked</span><span class="why">Floating labels, chip-remove buttons. Gap from <code>docked</code> allows layering.</span></div>
+    <div class="item"><span class="name">.z-sticky</span><span class="val">1100 — sticky page header</span></div>
+    <div class="item"><span class="name">.z-dropdown</span><span class="val">1150 — dropdowns from sticky header</span></div>
+    <div class="item"><span class="name">.z-banner</span><span class="val">1200 — notification banner</span></div>
+    <div class="item"><span class="name">.z-overlay</span><span class="val">1300 — modal backdrop</span></div>
+    <div class="item"><span class="name">.z-modal</span><span class="val">1400 — modal dialog</span></div>
+    <div class="item"><span class="name">.z-popover</span><span class="val">1500 — popovers inside modals</span></div>
+    <div class="item"><span class="name">.z-toast</span><span class="val">1700 — toast notifications</span></div>
+    <div class="item"><span class="name">.z-tooltip</span><span class="val">1800 — tooltips (always on top)</span></div>
+    <div class="item"><span class="name">.z-max</span><span class="val">999999 — emergency override</span><span class="why">For third-party widget containment. If you reach for this often, you have a stacking context problem.</span></div>
   </div>
 
   <h3 class="subheading">Width</h3>
+  <div class="rationale">
+    Three distinct naming axes for three different use cases. Keep the axes consistent — don't mix them.
+    <span class="when-not"><code>.w-screen</code> would duplicate <code>.w-vw-100</code> — use <code>.w-vw-100</code> instead.</span>
+  </div>
   <div class="class-grid">
-    <div class="item"><span class="name">.w-full</span><span class="desc">100%</span></div>
-    <div class="item"><span class="name">.w-auto / -fit / -min / -max</span><span class="desc">Content-based widths</span></div>
-    <div class="item"><span class="name">.w-1/2 / -1/3 / -2/3 / -1/4 / -3/4</span><span class="desc">Parent-relative fractions</span></div>
-    <div class="item"><span class="name">.w-vw-10 … -vw-100</span><span class="desc">Viewport width in 10% steps</span></div>
-    <div class="item"><span class="name">.w-content-1/4 … -content-3/4 / -content-full</span><span class="desc">Content-track fractions, centered</span></div>
-    <div class="item"><span class="name">.min-w-0 / -full</span><span class="desc">Min width (0 = shrinkable)</span></div>
+    <div class="item"><span class="name">.w-full</span><span class="desc">width: 100% (of parent)</span><span class="why">Most common — fill the container. Default for block elements, needed for inline elements.</span></div>
+    <div class="item"><span class="name">.w-auto</span><span class="desc">width: auto</span><span class="why">Resets an explicit width. Content-driven sizing.</span></div>
+    <div class="item"><span class="name">.w-fit</span><span class="desc">width: fit-content</span><span class="why">Shrinks to content width while still being block-level. For centered pills and labels.</span></div>
+    <div class="item"><span class="name">.w-min</span><span class="desc">width: min-content</span><span class="why">Shrinks to the narrowest possible — longest unbreakable word.</span></div>
+    <div class="item"><span class="name">.w-max</span><span class="desc">width: max-content</span><span class="why">Expands to full content width — never wraps. For nowrap-all badges.</span></div>
+    <div class="item"><span class="name">.w-1/2 / .w-1/3 / .w-2/3 / .w-1/4 / .w-3/4</span><span class="desc">Parent-relative fractions</span><span class="why">Responsive two-or-three column patterns without a grid container.</span></div>
+    <div class="item"><span class="name">.w-vw-10 … .w-vw-100</span><span class="desc">Viewport width, 10% steps (10–100)</span><span class="why">For sections that must be viewport-relative regardless of parent. <code>.w-vw-100</code> = full viewport width.</span></div>
+    <div class="item"><span class="name">.w-content-1/4 … .w-content-full</span><span class="desc">Fractions of <code>--content-width</code> (centered)</span><span class="why">For editorial pull-quotes and narrow centered blocks inside <code>.content-grid</code>.</span></div>
+    <div class="item"><span class="name">.min-w-0</span><span class="desc">min-width: 0</span><span class="why">Allows flex/grid children to shrink below their content size — fixes the common overflow-in-flex bug.</span></div>
+    <div class="item"><span class="name">.min-w-full</span><span class="desc">min-width: 100%</span><span class="why">Forces an element to at least fill its parent — useful for dropdown menus that should be at least as wide as their trigger.</span></div>
+    <div class="item"><span class="name">.max-w-full <span class="tag tag--proposed">proposed</span></span><span class="desc">max-width: 100%</span><span class="why">Constrains to parent width — prevents images and tables from overflowing. One of the most common one-off CSS declarations.</span></div>
+    <div class="item"><span class="name">.max-w-none <span class="tag tag--proposed">proposed</span></span><span class="desc">max-width: none</span><span class="why">Resets a <code>max-width</code> constraint from a parent or component default. Needed when a component sets max-width but an instance should be unconstrained.</span></div>
+    <div class="item"><span class="name">.max-w-prose <span class="tag tag--breaking">breaking rename</span></span><span class="desc">max-width: var(--container-prose) — formerly <code>.max-prose</code></span><span class="why">Constrains reading content to 65ch for optimal line length. Rename from <code>.max-prose</code> to align with the <code>max-w-*</code> naming axis.</span></div>
   </div>
 
-  <h3 class="subheading">Height & aspect ratio</h3>
+  <h3 class="subheading">Height &amp; aspect ratio</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.h-full / .h-screen</span><span class="desc">100% / 100vh</span></div>
-    <div class="item"><span class="name">.h-auto / -fit</span><span class="desc">Content-based heights</span></div>
-    <div class="item"><span class="name">.aspect-square / -video / -4-3 / -3-2</span><span class="desc">Aspect ratios</span></div>
+    <div class="item"><span class="name">.h-full</span><span class="desc">height: 100%</span><span class="why">Fill parent height. Works when parent has an explicit height. Use in flex columns for equal-height stretching.</span></div>
+    <div class="item"><span class="name">.h-screen</span><span class="desc">height: 100vh</span><span class="why">Viewport-height section. For landing pages.</span></div>
+    <div class="item"><span class="name">.h-svh</span><span class="desc">height: 100svh (small viewport height)</span><span class="why">Mobile-safe 100vh — accounts for browser chrome (Safari notch, Android URL bar). Use instead of <code>100vh</code> on mobile.</span></div>
+    <div class="item"><span class="name">.h-auto</span><span class="desc">height: auto (default)</span><span class="why">Resets an explicit height. Content-driven sizing.</span></div>
+    <div class="item"><span class="name">.h-fit</span><span class="desc">height: fit-content</span><span class="why">Shrinks to content height. Useful for sticky sidebars that shouldn't extend beyond their content.</span></div>
+    <div class="item"><span class="name">.h-min <span class="tag tag--proposed">proposed</span></span><span class="desc">height: min-content</span><span class="why">Shrinks to minimum content height. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.h-max <span class="tag tag--proposed">proposed</span></span><span class="desc">height: max-content</span><span class="why">Expands to full content height — prevents clipping. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.aspect-square</span><span class="desc">aspect-ratio: 1 / 1</span><span class="why">Avatars, icons, square thumbnails. Replaces the "padding-top hack".</span></div>
+    <div class="item"><span class="name">.aspect-video</span><span class="desc">aspect-ratio: 16 / 9</span><span class="why">Video embeds, widescreen images. Standard video format.</span></div>
+    <div class="item"><span class="name">.aspect-4-3</span><span class="desc">aspect-ratio: 4 / 3</span><span class="why">Traditional photo ratio, presentation slides.</span></div>
+    <div class="item"><span class="name">.aspect-3-2</span><span class="desc">aspect-ratio: 3 / 2</span><span class="why">Classic photography ratio, hero images.</span></div>
   </div>
 </section>
 
 <!-- ============================================================ EFFECTS -->
 <section class="section" id="effects">
-  <h2 class="section-title">Effects · Overflow · Motion</h2>
+  <h2 class="section-title">Effects · Overflow · Cursor · Motion</h2>
+
+  <h3 class="subheading">Shadows &amp; visual effects <span style="font-weight:400;font-size:11px;color:var(--cs-muted)">(slashed-utilities-visual.css)</span></h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.shadow-none / -xs / -s / -m / -l / -xl</span><span class="desc">Box shadow scale</span></div>
-    <div class="item"><span class="name">.transition</span><span class="desc">Default smooth transition</span></div>
-    <div class="item"><span class="name">.transition-none</span><span class="desc">Disable transitions</span></div>
-    <div class="item"><span class="name">.duration-fast / -normal / -slow</span><span class="desc">Transition duration</span></div>
-    <div class="item"><span class="name">.ease-out / -in / -in-out</span><span class="desc">Timing functions</span></div>
-    <div class="item"><span class="name">.overflow-hidden / -auto / -scroll / -visible</span><span class="desc">Overflow control</span></div>
-    <div class="item"><span class="name">.overflow-x-* / -y-*</span><span class="desc">Single-axis overflow</span></div>
-    <div class="item"><span class="name">.object-cover / -contain / -fill / -scale-down</span><span class="desc">Image fit</span></div>
-    <div class="item"><span class="name">.object-center / -top / -bottom / -left / -right</span><span class="desc">Image position</span></div>
-    <div class="item"><span class="name">.cursor-pointer / -default / -not-allowed / -wait</span><span class="desc">Cursor styles</span></div>
-    <div class="item"><span class="name">.backdrop-blur</span><span class="desc">Frosted glass effect</span></div>
+    <div class="item"><span class="name">.shadow-none / -xs / -s / -m / -l / -xl</span><span class="desc">Box shadow scale using <code>--shadow-*</code> tokens</span><span class="why">Inline shadow assignment without writing a rule. Responds to dark mode automatically via shadow-strength multipliers.</span></div>
+    <div class="item"><span class="name">.shadow-float / -glow / -colored / -inner</span><span class="desc">Special-purpose shadows</span><span class="why">Floating buttons, glow effects, brand drop shadow, inset inputs.</span></div>
+    <div class="item"><span class="name">.backdrop-blur</span><span class="desc">backdrop-filter: blur(…) — frosted glass</span><span class="why">For glass-morphism headers, modal backdrops, sticky panels. Creates a stacking context — beware of dropdown clipping.</span></div>
+    <div class="item"><span class="name">.opacity-0 / -50 / -80 / -100</span><span class="desc">Opacity scale</span><span class="why">Disabled/inactive states, overlay layers.</span></div>
   </div>
 
-  <h3 class="subheading">Motion utilities (a11y layer — respect prefers-reduced-motion)</h3>
+  <h3 class="subheading">Transitions &amp; animations <span style="font-weight:400;font-size:11px;color:var(--cs-muted)">(slashed-utilities-visual.css)</span></h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.motion-safe:transition</span><span class="desc">Transition when motion OK</span></div>
-    <div class="item"><span class="name">.motion-safe:animate-fade-in</span><span class="desc">Fade in on load</span></div>
-    <div class="item"><span class="name">.motion-safe:animate-slide-up</span><span class="desc">Slide up on load</span></div>
-    <div class="item"><span class="name">.motion-safe:animate-scale-in</span><span class="desc">Scale in on load</span></div>
-    <div class="item"><span class="name">.motion-safe:animate-spin</span><span class="desc">Infinite spin (loading)</span></div>
-    <div class="item"><span class="name">.motion-safe:hover-lift</span><span class="desc">Hover: translate + shadow</span></div>
-    <div class="item"><span class="name">.motion-reduce:animate-none</span><span class="desc">Disable animations</span></div>
-    <div class="item"><span class="name">.motion-reduce:transition-none</span><span class="desc">Disable transitions</span></div>
+    <div class="item"><span class="name">.transition</span><span class="desc">Smooth transition on common properties (color, background, border, shadow, transform)</span><span class="why">The standard hover/focus transition. Covers 95% of use cases in one class.</span></div>
+    <div class="item"><span class="name">.transition-colors</span><span class="desc">Transition only color and background</span><span class="why">For text color and background-only transitions — lighter than full <code>.transition</code>.</span></div>
+    <div class="item"><span class="name">.transition-none</span><span class="desc">Transitions disabled</span><span class="why">For instant state changes that shouldn't animate (e.g. disabled inputs).</span></div>
+    <div class="item"><span class="name">.duration-fast / -normal / -slow</span><span class="desc">150ms / 250ms / 400ms</span><span class="why">Override the duration of a <code>.transition</code> inline.</span></div>
+    <div class="item"><span class="name">.ease-out / -in / -in-out</span><span class="desc">Timing function overrides (<code>var(--ease-out/in/in-out)</code>)</span><span class="why">Token renamed: <code>--ease-inout</code> → <code>--ease-in-out</code> in 0.4.7.0. Use <code>var(--ease-in-out)</code>.</span></div>
+    <div class="item"><span class="name">.animate-fade-in / -scale-in / -slide-up / -spin</span><span class="desc">Load animations</span><span class="why">For elements that appear on page load. Prefer <code>.motion-safe:animate-*</code> variants to respect user motion preference.</span></div>
+    <div class="item"><span class="name">.hover-lift</span><span class="desc">Hover: translate up + shadow increase</span><span class="why">Interactive card hover feedback. Use <code>.motion-safe:hover-lift</code> for motion-aware version.</span></div>
+  </div>
+
+  <h3 class="subheading">Overflow</h3>
+  <div class="rationale">
+    Complete <code>overflow</code> coverage. These are <em>functional</em> utilities (not decorative) and belong in the core bundle.
+    <span class="when-not">If overflow is intrinsic to a component (<code>.cs-modal__body</code> always scrolls), it belongs in BEM.</span>
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">.overflow-hidden</span><span class="desc">overflow: hidden — clips content, no scrollbar</span><span class="why">Most common. For rounded cards with image children, carousel containers.</span></div>
+    <div class="item"><span class="name">.overflow-auto</span><span class="desc">overflow: auto — scrollbar only when needed</span><span class="why">Scrollable containers that shouldn't always show a scrollbar. Modal bodies, code blocks.</span></div>
+    <div class="item"><span class="name">.overflow-scroll <span class="tag tag--proposed">proposed</span></span><span class="desc">overflow: scroll — scrollbar always visible</span><span class="why">For scroll areas where a persistent scrollbar prevents layout shift (e.g. data tables in dashboards). Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.overflow-visible <span class="tag tag--proposed">proposed</span></span><span class="desc">overflow: visible — content escapes container</span><span class="why">Resets <code>overflow: hidden</code> so tooltips and dropdowns inside a clipped parent can escape. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.overflow-x-auto</span><span class="desc">overflow-x: auto — horizontal scroll when needed</span><span class="why">For wide tables and code blocks that should scroll horizontally.</span></div>
+    <div class="item"><span class="name">.overflow-y-auto</span><span class="desc">overflow-y: auto — vertical scroll when needed</span><span class="why">For fixed-height containers with dynamic content (e.g. autocomplete lists).</span></div>
+    <div class="item"><span class="name">.scrollbar-thin</span><span class="desc">Narrow scrollbar (Webkit + Firefox)</span><span class="why">For tight UI panels where the default scrollbar is too visually heavy.</span></div>
+    <div class="item"><span class="name">.overscroll-contain</span><span class="desc">Prevents scroll chaining to parent</span><span class="why">Modal and drawer bodies — prevents page scroll when the inner container reaches its boundary.</span></div>
+    <div class="item"><span class="name">.overscroll-none</span><span class="desc">Prevents bounce/overscroll effects</span><span class="why">Removes iOS rubber-band effect inside scroll containers.</span></div>
+  </div>
+
+  <h3 class="subheading">Object fit &amp; position (for img/video)</h3>
+  <div class="rationale">
+    Used with <code>.frame</code> layout primitive and <code>&lt;img&gt;</code>/<code>&lt;video&gt;</code> elements. Complete coverage of <code>object-fit</code> values and all <code>object-position</code> options.
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">.object-cover</span><span class="desc">object-fit: cover — fills frame, crops overflow</span><span class="why">Most common. For image cards, hero backgrounds, avatars.</span></div>
+    <div class="item"><span class="name">.object-contain</span><span class="desc">object-fit: contain — shows full image, may letterbox</span><span class="why">For product images, logos, diagrams that must not be cropped.</span></div>
+    <div class="item"><span class="name">.object-fill <span class="tag tag--proposed">proposed</span></span><span class="desc">object-fit: fill — stretches to fill (may distort)</span><span class="why">For decorative patterns and backgrounds where distortion is acceptable. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.object-scale-down <span class="tag tag--proposed">proposed</span></span><span class="desc">object-fit: scale-down — smaller of none or contain</span><span class="why">For mixed-size logos in a logo wall — never upscales small logos. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.object-center</span><span class="desc">object-position: center</span><span class="why">Default. Centers the crop focal point.</span></div>
+    <div class="item"><span class="name">.object-top</span><span class="desc">object-position: top</span><span class="why">Portrait photos — preserves faces at the top.</span></div>
+    <div class="item"><span class="name">.object-bottom</span><span class="desc">object-position: bottom</span><span class="why">Landscape photos where the subject is at the bottom.</span></div>
+    <div class="item"><span class="name">.object-left <span class="tag tag--proposed">proposed</span></span><span class="desc">object-position: left</span><span class="why">Left-aligned subjects. Completing the position family. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.object-right <span class="tag tag--proposed">proposed</span></span><span class="desc">object-position: right</span><span class="why">Right-aligned subjects. Completing the position family. Documented in UTILITIES.md; missing from CSS.</span></div>
+  </div>
+
+  <h3 class="subheading">Cursor</h3>
+  <div class="rationale">
+    Cursor utilities communicate interactivity and state. They're functional accessibility cues, not decorative — they belong in core utilities.
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">.cursor-pointer</span><span class="desc">cursor: pointer — hand icon</span><span class="why">For all clickable elements that aren't native <code>&lt;a&gt;</code> or <code>&lt;button&gt;</code> (custom interactive divs, card-links).</span></div>
+    <div class="item"><span class="name">.cursor-default</span><span class="desc">cursor: default — arrow icon</span><span class="why">Resets pointer on elements that inherit it from a parent interactive context.</span></div>
+    <div class="item"><span class="name">.cursor-text</span><span class="desc">cursor: text — I-beam</span><span class="why">For editable content areas that don't use native inputs.</span></div>
+    <div class="item"><span class="name">.cursor-not-allowed</span><span class="desc">cursor: not-allowed — circle+slash</span><span class="why">Disabled interactive elements. Pair with <code>pointer-events: none</code> to also block clicks.</span></div>
+    <div class="item"><span class="name">.cursor-wait <span class="tag tag--proposed">proposed</span></span><span class="desc">cursor: wait — hourglass/spinner</span><span class="why">Loading state feedback — shows the user the system is processing. Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.cursor-grab <span class="tag tag--proposed">proposed</span></span><span class="desc">cursor: grab — open hand</span><span class="why">For draggable elements (image galleries, kanban cards, carousels). Documented in UTILITIES.md; missing from CSS.</span></div>
+    <div class="item"><span class="name">.cursor-grabbing <span class="tag tag--proposed">proposed</span></span><span class="desc">cursor: grabbing — closed hand</span><span class="why">Active drag state — apply via JS <code>:active</code> or <code>dragging</code> class. Pair with <code>cursor-grab</code>. Documented in UTILITIES.md; missing from CSS.</span></div>
+  </div>
+
+  <h3 class="subheading">Motion utilities (a11y layer — respects prefers-reduced-motion)</h3>
+  <div class="rationale">
+    In <code>@layer slashed.a11y</code> — always beats decorative and visual layers. These utilities <em>guarantee</em> user motion preference is respected even when consumer BEM rules add animations.
+    <span class="when-not">Use <code>motion-safe:*</code> variants instead of bare animation utilities whenever possible — they are the safer default.</span>
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">.motion-safe:transition</span><span class="desc">Applies transition only when prefers-reduced-motion: no-preference</span><span class="why">Safe default for all hover transitions. No motion for users who requested reduced motion.</span></div>
+    <div class="item"><span class="name">.motion-safe:animate-fade-in / -slide-up / -scale-in / -spin</span><span class="desc">Animations that only play when motion is OK</span></div>
+    <div class="item"><span class="name">.motion-safe:hover-lift</span><span class="desc">Hover translate+shadow only when motion OK</span></div>
+    <div class="item"><span class="name">.motion-reduce:animate-none</span><span class="desc">Forces animation: none — overrides any animation rule including unlayered BEM</span><span class="why">Emergency kill-switch for animations on a specific element for users with vestibular disorders.</span></div>
+    <div class="item"><span class="name">.motion-reduce:transition-none</span><span class="desc">Forces transition: none</span></div>
   </div>
 </section>
 
@@ -665,64 +1093,75 @@
 <section class="section" id="responsive">
   <h2 class="section-title">Responsive Variants <span class="meta">sm: 30em · md: 48em · lg: 64em · xl: 80em</span></h2>
 
-  <div class="intro-note">
-    Prefix any layout utility with a breakpoint to apply at that viewport and up.
-    Spacing/typography is auto-fluid via <code>clamp()</code> tokens — responsive variants cover discrete layout switches and specific overrides.
+  <div class="rationale">
+    <strong>Why breakpoint prefixes:</strong> Responsive variants handle discrete layout <em>switches</em> — changing direction, showing/hiding, switching column counts. You shouldn't need them for spacing or typography because those are already fluid via <code>clamp()</code> tokens. The breakpoint values are hardcoded in <code>slashed-utilities.css</code> (CSS custom properties can't be used inside <code>@media</code>).
+    <span class="when-not">Don't use breakpoint utilities for spacing changes — fluid tokens handle that automatically. Don't use them inside layout primitives that use <code>@container</code> — those respond to their own width, not the viewport. Use breakpoint utilities only for viewport-level layout switches (show/hide a mobile menu, collapse columns to single).</span>
   </div>
 
   <div class="class-grid">
-    <div class="item"><span class="name">.sm: / .md: / .lg: / .xl:</span><span class="desc">Breakpoint prefixes (480 / 768 / 1024 / 1280 px)</span></div>
-    <div class="item"><span class="name">.md:flex / .md:grid / .md:hidden</span><span class="desc">Display switches</span></div>
-    <div class="item"><span class="name">.md:flex-row / .md:flex-col</span><span class="desc">Direction switches</span></div>
-    <div class="item"><span class="name">.md:grid-2 / -3 / -4</span><span class="desc">Grid columns at breakpoint</span></div>
-    <div class="item"><span class="name">.md:items-* / .md:justify-*</span><span class="desc">Alignment at breakpoint</span></div>
-    <div class="item"><span class="name">.md:gap-m / -l / -xl</span><span class="desc">Gap at breakpoint</span></div>
-    <div class="item"><span class="name">.md:text-left / -center / -right</span><span class="desc">Align at breakpoint</span></div>
-    <div class="item"><span class="name">.md:p-0 / .md:pt-0 / .md:mt-0 / .md:gap-0</span><span class="desc">Zero resets at breakpoint</span></div>
-    <div class="item"><span class="name">.md:col-span-2 / -full</span><span class="desc">Grid span at breakpoint</span></div>
-    <div class="item"><span class="name">.md:order-first / -last / -none</span><span class="desc">Order at breakpoint</span></div>
+    <div class="item"><span class="name">.sm: / .md: / .lg: / .xl:</span><span class="desc">Breakpoint prefixes — 30em / 48em / 64em / 80em (≈480 / 768 / 1024 / 1280px)</span><span class="why">Mobile-first: the prefixed class activates at the breakpoint and up.</span></div>
+    <div class="item"><span class="name">.md:flex / .md:grid / .md:hidden</span><span class="desc">Display switches at breakpoint</span><span class="why"><code>.hidden.md:flex</code> — hidden on mobile, flex from md. The standard desktop nav pattern.</span></div>
+    <div class="item"><span class="name">.md:flex-row / .md:flex-col</span><span class="desc">Direction switch at breakpoint</span><span class="why"><code>.flex-col.md:flex-row</code> — stack on mobile, horizontal from md.</span></div>
+    <div class="item"><span class="name">.md:grid-2 / -3 / -4</span><span class="desc">Grid column count at breakpoint</span><span class="why"><code>.grid.md:grid-3.lg:grid-4</code> — 1-col → 3-col → 4-col progression.</span></div>
+    <div class="item"><span class="name">.md:items-* / .md:justify-*</span><span class="desc">Alignment at breakpoint</span><span class="why">When layout direction changes, alignment often needs to flip too (e.g. <code>items-center</code> → <code>md:items-start</code>).</span></div>
+    <div class="item"><span class="name">.md:gap-m / -l / -xl</span><span class="desc">Gap at breakpoint</span><span class="why">Wider gap on larger screens where items have more breathing room.</span></div>
+    <div class="item"><span class="name">.md:text-left / -center / -right</span><span class="desc">Text alignment switch at breakpoint</span><span class="why">Center text on mobile (narrow), left-align on desktop (wide). Very common for section headers.</span></div>
+    <div class="item"><span class="name">.md:p-0 / .md:pt-0 / .md:mt-0 / .md:gap-0</span><span class="desc">Zero resets at breakpoint</span><span class="why">Remove mobile-specific spacing when desktop layout has built-in spacing.</span></div>
+    <div class="item"><span class="name">.md:col-span-2 / -full</span><span class="desc">Grid span at breakpoint</span><span class="why">Elements that should be full-width on mobile but span 2 columns on desktop.</span></div>
+    <div class="item"><span class="name">.md:order-first / -last / -none</span><span class="desc">Flex/grid order at breakpoint</span><span class="why">Visual reorder without changing DOM — image before text on desktop, below on mobile.</span></div>
+    <div class="item"><span class="name">.md:w-full / .md:w-auto</span><span class="desc">Width switch at breakpoint</span><span class="why">Full-width buttons on mobile, auto-width inline on desktop.</span></div>
   </div>
 
   <pre class="code-block"><code><span class="c-comment">&lt;!-- Stack on mobile, 3-col md+, 4-col lg+ --&gt;</span>
 <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-string">"grid md:grid-3 lg:grid-4 gap-m md:gap-l"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/div&gt;</span>
 
 <span class="c-comment">&lt;!-- Hidden below md, flex from md+ --&gt;</span>
-<span class="c-tag">&lt;nav</span> <span class="c-attr">class</span>=<span class="c-string">"hidden md:flex items-center gap-l"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/nav&gt;</span></code></pre>
+<span class="c-tag">&lt;nav</span> <span class="c-attr">class</span>=<span class="c-string">"hidden md:flex items-center gap-l"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/nav&gt;</span>
+
+<span class="c-comment">&lt;!-- Center text on mobile, left-align on md+ --&gt;</span>
+<span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-string">"cs-section-header text-center md:text-left cs-section-header--left"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/div&gt;</span></code></pre>
 </section>
 
 <!-- ============================================================ A11Y -->
 <section class="section" id="a11y">
   <h2 class="section-title">Accessibility, Print, Dark Mode</h2>
 
+  <div class="rationale">
+    <strong>Why this section exists:</strong> These utilities live in <code>@layer slashed.a11y</code> — the highest-specificity layer in the framework. They override everything below without <code>!important</code>. This is intentional: accessibility and user preferences must never lose to component or utility rules.
+    <span class="when-not">Don't use <code>.dark:*</code> utilities as a substitute for proper semantic dark-mode tokens. If a component should adapt to dark mode, it should use <code>light-dark()</code> in its token definitions — not require a <code>.dark:*</code> override on every instance.</span>
+  </div>
+
   <h3 class="subheading">Accessibility</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.sr-only</span><span class="desc">Visually hidden, screen-reader accessible</span></div>
-    <div class="item"><span class="name">.not-sr-only</span><span class="desc">Undo .sr-only</span></div>
-    <div class="item"><span class="name">.skip-to-content</span><span class="desc">Skip-to-content link pattern</span></div>
-    <div class="item"><span class="name">.has-invalid</span><span class="desc">:has(:user-invalid) wrapper</span></div>
-    <div class="item"><span class="name">.has-checked</span><span class="desc">:has(:checked) wrapper</span></div>
+    <div class="item"><span class="name">.sr-only</span><span class="desc">Visually hidden but accessible to screen readers (clip + absolute)</span><span class="why">The standard accessible-label pattern. Use for icon-only buttons, skip links, and extra context for AT users. Does NOT remove from tab order.</span></div>
+    <div class="item"><span class="name">.not-sr-only</span><span class="desc">Reverses <code>.sr-only</code> — restores visual display</span><span class="why">For focus-visible skip links that should appear on keyboard focus but stay hidden otherwise.</span></div>
+    <div class="item"><span class="name">.skip-to-content</span><span class="desc">Skip-to-main-content link (visible on focus only)</span><span class="why">WCAG 2.4.1 (Level A) requirement — allows keyboard users to skip repeated navigation. Required on every page.</span></div>
+    <div class="item"><span class="name">.has-invalid</span><span class="desc">Applies error styles when a child input is in <code>:user-invalid</code> state</span><span class="why">For styling the wrapper container when an input is invalid — <code>:has(:user-invalid)</code> — without JS. Works with <code>.cs-form-group</code>.</span></div>
+    <div class="item"><span class="name">.has-checked</span><span class="desc">Applies styles when a child checkbox/radio is <code>:checked</code></span><span class="why">For custom toggle cards, selection states, and filter groups. Native <code>:has(:checked)</code> replaces JS toggle-class patterns.</span></div>
+    <div class="item"><span class="name">.scroll-mt-header / .scroll-pt-header</span><span class="desc">Offset scroll targets below sticky header (uses <code>--header-height</code>)</span><span class="why">Prevents anchor links from landing under the sticky navbar. Required when using <code>scroll-behavior: smooth</code> and a sticky header.</span></div>
   </div>
 
   <h3 class="subheading">Print</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.print:hidden / :block</span><span class="desc">Print visibility toggles</span></div>
-    <div class="item"><span class="name">.print:text-black / :bg-white</span><span class="desc">Force print colors</span></div>
-    <div class="item"><span class="name">.print:shadow-none / :border-none</span><span class="desc">Strip visual effects</span></div>
-    <div class="item"><span class="name">.print:p-0 / :m-0</span><span class="desc">Zero spacing for print</span></div>
+    <div class="item"><span class="name">.print:hidden / .print:block</span><span class="desc">Show/hide elements in print media</span><span class="why">Hide nav, ads, sticky UI in print. Show print-only content (URLs after links).</span></div>
+    <div class="item"><span class="name">.print:text-black / .print:bg-white</span><span class="desc">Force high-contrast print colors</span><span class="why">Dark mode print pages often print with a black background — reset to white/black for paper.</span></div>
+    <div class="item"><span class="name">.print:shadow-none / .print:border-none</span><span class="desc">Strip visual effects for print</span><span class="why">Shadows don't render well in print. Remove them to avoid gray blobs.</span></div>
+    <div class="item"><span class="name">.print:p-0 / .print:m-0</span><span class="desc">Zero spacing for print layout</span><span class="why">Print layout often needs different spacing than screen. Reset large screen gaps for paper.</span></div>
   </div>
 
-  <h3 class="subheading">Dark mode</h3>
+  <h3 class="subheading">Dark mode overrides</h3>
   <div class="class-grid">
-    <div class="item"><span class="name">.dark:hidden / :block / :flex</span><span class="desc">Dark-mode visibility</span></div>
-    <div class="item"><span class="name">.dark:bg-surface / :bg-neutral-900</span><span class="desc">Dark-specific backgrounds</span></div>
-    <div class="item"><span class="name">.dark:text-white</span><span class="desc">Dark-specific text color</span></div>
+    <div class="item"><span class="name">.dark:hidden / .dark:block / .dark:flex</span><span class="desc">Display overrides in dark mode</span><span class="why">For showing/hiding dark-mode specific elements — e.g. a light-mode logo vs dark-mode logo.</span></div>
+    <div class="item"><span class="name">.dark:bg-surface / .dark:bg-neutral-900</span><span class="desc">Dark-mode specific backgrounds</span><span class="why">When the semantic token isn't enough and you need a specific dark-mode background on a specific element.</span></div>
+    <div class="item"><span class="name">.dark:text-white</span><span class="desc">Force white text in dark mode</span><span class="why">For elements that use a light-mode-specific background color that needs white text contrast in dark mode.</span></div>
   </div>
 </section>
 
 <div class="no-results" id="no-results" style="display:none;">No classes match your filter.</div>
 
 <footer class="footer-note">
-  SLASHED v0.4.6.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License
+  SLASHED v0.4.8.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
+  <span style="font-size:10px;opacity:0.6;">Cheatsheet updated for 0.5.0.0 planning · Classes marked <span class="tag tag--proposed" style="vertical-align:middle">proposed</span> are pending approval before implementation · Classes marked <span class="tag tag--breaking" style="vertical-align:middle">breaking rename</span> will change in 0.4.7.0 or 0.4.8.0</span>
 </footer>
 
 <script>

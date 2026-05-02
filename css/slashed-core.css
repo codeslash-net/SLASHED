@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Core — v0.4.6.0
+   SLASHED Core — v0.4.8.0
    Reset, base element defaults, layout primitives, a11y, print.
    Baseline: Chrome 123+, Firefox 120+, Safari 17.5+, Edge 123+ (graceful fallbacks for Safari 16.2–17.4)
    ========================================================================== */
@@ -1294,13 +1294,24 @@
   }
 
   /* ----- Stagger ----- */
-  /* Set --_i as an inline style on each child: style="--_i: 0", style="--_i: 1", etc.
-     CSS sibling-index() will replace this pattern when cross-browser support arrives. */
+  /* Polyfill path: set --_i as an inline style on each child via initStagger().
+     Native CSS path: sibling-index() (Baseline Newly Available: Chrome 130+,
+     Firefox 131+, Safari 18+) — used automatically when supported. */
 
   @media (prefers-reduced-motion: no-preference) {
     .stagger > * {
       animation: fade-in 0.3s var(--ease-out, ease-out) both;
       animation-delay: calc(var(--_i, 0) * var(--stagger-delay, var(--duration-stagger, 80ms)));
+    }
+  }
+
+  @supports (animation-delay: calc(sibling-index() * 1ms)) {
+    @media (prefers-reduced-motion: no-preference) {
+      .stagger > * {
+        animation-delay: calc(
+          (sibling-index() - 1) * var(--stagger-delay, var(--duration-stagger, 80ms))
+        );
+      }
     }
   }
 

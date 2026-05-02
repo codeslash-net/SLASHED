@@ -301,119 +301,6 @@ audit findings.
 
 ---
 
-#### Cheatsheet / docs vs. CSS parity audit
-
-No audit dependency. Fix in the same pass as battle-test pass #2.
-
-`cheatsheet.html` and `docs/UTILITIES.md` document classes that do not
-exist in `slashed-utilities.css`. For each phantom class, decide:
-implement it (if the pattern is genuinely useful and fits the framework
-philosophy) or remove the documentation entry. Classes that require
-implementation become additive utilities — document them in CHANGELOG.
-Classes that are simply deleted from docs need no CHANGELOG entry.
-
-Known phantom classes to evaluate:
-
-| Class | Documented in | Disposition |
-|---|---|---|
-| `.border-4` | cheatsheet | Evaluate: only `-0` and `-2` exist |
-| `.border-default` | cheatsheet | Evaluate |
-| `.self-stretch` | cheatsheet + docs | Implement or remove |
-| `.self-auto` | cheatsheet | Implement or remove |
-| `.justify-around` | docs | Implement or remove |
-| `.justify-evenly` | docs | Implement or remove |
-| `.inline` | docs | Implement (`display: inline`) |
-| `.inline-grid` | docs | Implement |
-| `.contents` | docs | Implement (`display: contents`) |
-| `.static` | docs | Implement (`position: static`) |
-| `.shrink` | docs | Implement (`.shrink-0` already exists) |
-| `.start-0` / `.end-0` | docs + cheatsheet | Implement (inset logical aliases) |
-| `.h-min` / `.h-max` | docs | Implement |
-| `.min-w-full` | docs | Implement |
-| `.max-w-prose` / `.max-w-none` / `.max-w-full` | docs | Evaluate |
-| `.w-screen` | docs | Implement |
-| `.masonry--l` | cheatsheet | Remove (`.bento` has `--tall`; masonry has no `-l` variant) |
-
-After the audit, add a CI step or note to the cheatsheet content audit
-(Path to 1.0) to prevent future doc/CSS drift.
-
----
-
-#### Component rename: `cs-skeleton-line` → `cs-skeleton__line`
-
-**File:** `css/slashed-components.css`.
-
-**Problem:** `.cs-skeleton-line` violates SLASHED's BEM convention. It is an
-element of `.cs-skeleton` (a visual loading placeholder), not a standalone
-component. The correct BEM name is `.cs-skeleton__line`.
-
-**This is a breaking change** (pre-0.8 — no migration doc required).
-
-**Fix:**
-1. Rename `.cs-skeleton-line` to `.cs-skeleton__line` in
-   `slashed-components.css`.
-2. Update `cheatsheet.html` if it references the old name.
-3. Update slashed-blueprints to follow the rename.
-
----
-
-#### CSS modernization: `sibling-index()` native stagger
-
-**Files:** `css/slashed-core.css` (stagger behavioral pattern),
-`js/slashed-ui.js` (`initStagger`).
-
-`sibling-index()` is Baseline Newly Available (Chrome 130+, Firefox 131+,
-Safari 18+). It replaces `slashedUI.initStagger()` which manually sets
-`--_i` on each `.stagger` child to polyfill native sibling indexing.
-
-**Plan:**
-
-1. In `slashed-core.css`, add native CSS stagger alongside the existing
-   `--_i` pattern:
-   ```css
-   @supports (animation-delay: calc(sibling-index() * 1ms)) {
-     @media (prefers-reduced-motion: no-preference) {
-       .stagger > * {
-         animation-delay: calc(
-           (sibling-index() - 1) * var(--stagger-delay, var(--duration-stagger, 80ms))
-         );
-       }
-     }
-   }
-   ```
-2. Keep `initStagger()` in `js/slashed-ui.js` as a polyfill for browsers
-   below the Baseline Newly Available threshold. Add a comment noting it
-   is scheduled for deprecation when SLASHED's baseline advances past
-   Chrome 130 / Firefox 131 / Safari 18.
-3. No change to the public API or HTML markup — consumers using
-   `slashedUI.initStagger()` continue to work; browsers that support
-   `sibling-index()` use the CSS path automatically.
-
----
-
-#### CSS modernization: extend `text-box` trim to more components
-
-**File:** `css/slashed-components.css`
-
-`text-box: trim-both cap alphabetic` is already used in `.cs-btn` behind
-`@supports (text-box: trim-both cap alphabetic)`. Extend the same
-`@supports` block to components where tight optical vertical centering
-matters:
-
-- `.cs-badge` — inline labels where pixel-perfect baseline alignment is
-  visible next to other inline elements.
-- `.cs-nav-link` — navigation items where cap-height centering improves
-  visual rhythm.
-- `.cs-chip` — compact interactive tags where glyph whitespace is
-  visually prominent.
-- `.cs-eyebrow` — all-caps label above headings where leading whitespace
-  creates unwanted gap.
-
-Implementation: add each selector to the existing `@supports` block in
-`.cs-btn`, or create a shared `@supports` block covering all affected
-components if that is cleaner.
-
----
 
 ### CSS modernization track — ongoing
 
@@ -594,6 +481,10 @@ when planning the version that will become 1.0.
 Items that have been proposed in the past but are not pending. Documented
 here to prevent re-addition.
 
+- **BEM fix: `.cs-skeleton-line` → `.cs-skeleton__line`** — shipped in `0.4.8.0`. Breaking rename in `slashed-components.css`; cheatsheet updated.
+- **`sibling-index()` native stagger** — shipped in `0.4.8.0`. `@supports` block added in `slashed-core.css`; `initStagger()` in `slashed-ui.js` remains as polyfill for `Chrome <130` / `Firefox <131` / `Safari <18`.
+- **`text-box` trim extended to `.cs-badge`, `.cs-nav-link`, `.cs-chip`, `.cs-eyebrow`** — shipped in `0.4.8.0`. Added to the existing `@supports (text-box: trim-both cap alphabetic)` block in `slashed-components.css`.
+- **Cheatsheet / docs vs. CSS parity audit + phantom class sweep** — shipped in `0.4.7.0`. All documented-but-missing utility classes implemented (`.inline`, `.inline-grid`, `.contents`, `.static`, `.shrink`, `.justify-around`, `.justify-evenly`, `.self-stretch`, `.self-auto`, `.start-0`, `.end-0`, `.h-min`, `.h-max`, `.max-w-full`, `.max-w-none`, `.max-w-prose`, `.overflow-scroll`, `.overflow-visible`, `.overflow-y-auto`, `.object-fill`, `.object-scale-down`, `.object-left`, `.object-right`, `.cursor-wait`, `.cursor-grab`, `.cursor-grabbing`, `.border-4`). Phantom `.masonry--l` and `.border-default` removed from docs. `.max-prose` renamed to `.max-w-prose`. `--ease-inout` renamed to `--ease-in-out`. Cheatsheet updated with per-class/token justification pass.
 - **Container token rename (T4)** — shipped in `0.4.6.0`.
   `--container-xs/sm/narrow` → `--container-dialog/form/prose`; added
   `--container-wide` (90rem) and `--container-full` (none).

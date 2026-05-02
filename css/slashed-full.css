@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Full Bundle — v0.4.6.0
+   SLASHED Full Bundle — v0.4.8.0
    Concatenation of: tokens-default + slashed-core + slashed-components + slashed-utilities
    Does NOT include slashed-utilities-visual.css (opt-in separately).
    Does NOT include slashed-experimental.css (opt-in separately; see INSTALLATION.md).
@@ -7,7 +7,7 @@
    ========================================================================== */
 
 /* ==========================================================================
-   SLASHED Tokens — Default — v0.4.6.0
+   SLASHED Tokens — Default — v0.4.8.0
    ========================================================================== */
 
 /* ================================================================
@@ -456,7 +456,7 @@
 
   --ease-out:     cubic-bezier(0.25, 0, 0.15, 1);
   --ease-in:      cubic-bezier(0.5, 0, 0.75, 0.25);
-  --ease-inout:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* ===== Containers — semantic, intent-named ===== */
@@ -709,7 +709,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Core — v0.4.6.0
+   SLASHED Core — v0.4.8.0
    Reset, base element defaults, layout primitives, a11y, print.
    Baseline: Chrome 123+, Firefox 120+, Safari 17.5+, Edge 123+ (graceful fallbacks for Safari 16.2–17.4)
    ========================================================================== */
@@ -2004,13 +2004,24 @@
   }
 
   /* ----- Stagger ----- */
-  /* Set --_i as an inline style on each child: style="--_i: 0", style="--_i: 1", etc.
-     CSS sibling-index() will replace this pattern when cross-browser support arrives. */
+  /* Polyfill path: set --_i as an inline style on each child via initStagger().
+     Native CSS path: sibling-index() (Baseline Newly Available: Chrome 130+,
+     Firefox 131+, Safari 18+) — used automatically when supported. */
 
   @media (prefers-reduced-motion: no-preference) {
     .stagger > * {
       animation: fade-in 0.3s var(--ease-out, ease-out) both;
       animation-delay: calc(var(--_i, 0) * var(--stagger-delay, var(--duration-stagger, 80ms)));
+    }
+  }
+
+  @supports (animation-delay: calc(sibling-index() * 1ms)) {
+    @media (prefers-reduced-motion: no-preference) {
+      .stagger > * {
+        animation-delay: calc(
+          (sibling-index() - 1) * var(--stagger-delay, var(--duration-stagger, 80ms))
+        );
+      }
     }
   }
 
@@ -2167,7 +2178,7 @@
 @layer slashed.overrides {}
 
 /* ==========================================================================
-   SLASHED Components — v0.4.6.0
+   SLASHED Components — v0.4.8.0
    Interactive UI components, form patterns, animation patterns.
    Requires: slashed-core.css (or slashed-full.css)
    ========================================================================== */
@@ -2323,11 +2334,15 @@
                 box-shadow var(--duration-fast) var(--ease-out),
                 transform var(--duration-fast) var(--ease-out);
   }
-  /* Optical vertical centering of button text. Chrome 135+; ignored elsewhere. */
+  /* Optical vertical centering where glyph whitespace would otherwise be visible. Chrome 135+. */
   @supports (text-box: trim-both cap alphabetic) {
     .cs-btn--primary,
     .cs-btn--outline,
-    .cs-btn--ghost {
+    .cs-btn--ghost,
+    .cs-badge,
+    .cs-nav-link,
+    .cs-chip,
+    .cs-eyebrow {
       text-box: trim-both cap alphabetic;
     }
   }
@@ -2738,7 +2753,7 @@
   .cs-stat--inline > span { order: -1; }
 
   /* ----- Skeleton loader ----- */
-  /* ⚠️ .cs-skeleton-line must be a direct child of .cs-skeleton to correctly inherit
+  /* .cs-skeleton__line must be a direct child of .cs-skeleton to correctly inherit
      the animation and background-size values. Deeper nesting desynchronizes the animation.
      Uses --color-border for the shimmer midpoint — adapts correctly in dark mode. */
 
@@ -2756,8 +2771,9 @@
     user-select: none;
     pointer-events: none;
   }
-  .cs-skeleton * { visibility: hidden; }
-  .cs-skeleton-line {
+  .cs-skeleton > * { visibility: hidden; }
+  .cs-skeleton > .cs-skeleton__line {
+    display: block;
     height: 0.75em;
     border-radius: var(--radius-xs);
     background: inherit;
@@ -5341,7 +5357,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Utilities — v0.4.6.0
+   SLASHED Utilities — v0.4.8.0
    Layout, functional, and inline typographic composition utilities.
 
    PHILOSOPHY:
@@ -5648,7 +5664,6 @@
   .break-words       { overflow-wrap: break-word; }
   .wrap-anywhere     { overflow-wrap: anywhere; }
   .whitespace-nowrap { white-space: nowrap; }
-  .max-prose         { max-width: var(--container-prose); }
 
   /* ----- Text colors ----- */
 
@@ -5688,9 +5703,12 @@
 
   .block        { display: block; }
   .inline-block { display: inline-block; }
+  .inline       { display: inline; }
   .flex         { display: flex; }
   .inline-flex  { display: inline-flex; }
   .grid         { display: grid; }
+  .inline-grid  { display: inline-grid; }
+  .contents     { display: contents; }
   .hidden       { display: none; }
 
   /* ----- Flex ----- */
@@ -5705,6 +5723,7 @@
   .flex-none        { flex: none; }
   .grow             { flex-grow: 1; }
   .grow-0           { flex-grow: 0; }
+  .shrink           { flex-shrink: 1; }
   .shrink-0         { flex-shrink: 0; }
 
   /* ----- Alignment ----- */
@@ -5719,10 +5738,14 @@
   .justify-center  { justify-content: center; }
   .justify-end     { justify-content: flex-end; }
   .justify-between { justify-content: space-between; }
+  .justify-around  { justify-content: space-around; }
+  .justify-evenly  { justify-content: space-evenly; }
 
-  .self-start  { align-self: flex-start; }
-  .self-center { align-self: center; }
-  .self-end    { align-self: flex-end; }
+  .self-start   { align-self: flex-start; }
+  .self-center  { align-self: center; }
+  .self-end     { align-self: flex-end; }
+  .self-stretch { align-self: stretch; }
+  .self-auto    { align-self: auto; }
 
   .place-center { display: grid; place-items: center; }
 
@@ -5765,7 +5788,11 @@
   .w-min   { width: min-content; }
   .w-max   { width: max-content; }
   .h-fit   { height: fit-content; }
+  .min-w-0    { min-width: 0; }
   .min-w-full { min-width: 100%; }
+  .max-w-full { max-width: 100%; }
+  .max-w-none { max-width: none; }
+  .max-w-prose { max-width: var(--container-prose); }
   .max-h-full { max-height: 100%; }
 
   /* Parent-relative fractions */
@@ -5800,10 +5827,11 @@
   .h-auto   { height: auto; }
   .h-screen { height: 100vh; height: 100dvh; }
   .h-svh    { height: 100svh; }
+  .h-min    { height: min-content; }
+  .h-max    { height: max-content; }
 
   .min-h-screen { min-height: 100vh; min-height: 100dvh; }
   .min-h-0      { min-height: 0; }
-  .min-w-0      { min-width: 0; }
   .max-h-screen { max-height: 100vh; max-height: 100dvh; }
 
   .aspect-video  { aspect-ratio: 16 / 9; }
@@ -5813,6 +5841,7 @@
 
   /* ----- Position ----- */
 
+  .static   { position: static; }
   .relative { position: relative; }
   .absolute { position: absolute; }
   .fixed    { position: fixed; }
@@ -5825,6 +5854,8 @@
   .right-0   { inset-inline-end: 0; }
   .bottom-0  { inset-block-end: 0; }
   .left-0    { inset-inline-start: 0; }
+  .start-0   { inset-inline-start: 0; }
+  .end-0     { inset-inline-end: 0; }
 
   /* ----- Z-index ----- */
 
@@ -5856,15 +5887,23 @@
 
   /* ----- Object fit & overflow ----- */
 
-  .object-cover   { object-fit: cover; }
-  .object-contain { object-fit: contain; }
-  .object-top     { object-position: top; }
-  .object-bottom  { object-position: bottom; }
-  .object-center  { object-position: center; }
-  .overflow-hidden { overflow: hidden; }
-  .overflow-auto   { overflow: auto; }
-  .overflow-x-auto { overflow-x: auto; }
-  .scrollbar-thin  { scrollbar-width: thin; }
+  .object-cover      { object-fit: cover; }
+  .object-contain    { object-fit: contain; }
+  .object-fill       { object-fit: fill; }
+  .object-scale-down { object-fit: scale-down; }
+  .object-top        { object-position: top; }
+  .object-bottom     { object-position: bottom; }
+  .object-center     { object-position: center; }
+  .object-left       { object-position: left; }
+  .object-right      { object-position: right; }
+
+  .overflow-hidden  { overflow: hidden; }
+  .overflow-auto    { overflow: auto; }
+  .overflow-scroll  { overflow: scroll; }
+  .overflow-visible { overflow: visible; }
+  .overflow-x-auto  { overflow-x: auto; }
+  .overflow-y-auto  { overflow-y: auto; }
+  .scrollbar-thin   { scrollbar-width: thin; }
 
   .overscroll-contain { overscroll-behavior: contain; }
   .overscroll-none    { overscroll-behavior: none; }
@@ -5884,6 +5923,9 @@
   .cursor-default      { cursor: default; }
   .cursor-text         { cursor: text; }
   .cursor-not-allowed  { cursor: not-allowed; }
+  .cursor-wait         { cursor: wait; }
+  .cursor-grab         { cursor: grab; }
+  .cursor-grabbing     { cursor: grabbing; }
   .select-none         { user-select: none; }
   .pointer-events-none { pointer-events: none; }
   .appearance-none     { appearance: none; -webkit-appearance: none; }
