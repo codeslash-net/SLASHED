@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Full Bundle — v0.4.7.0
+   SLASHED Full Bundle — v0.4.8.0
    Concatenation of: tokens-default + slashed-core + slashed-components + slashed-utilities
    Does NOT include slashed-utilities-visual.css (opt-in separately).
    Does NOT include slashed-experimental.css (opt-in separately; see INSTALLATION.md).
@@ -7,7 +7,7 @@
    ========================================================================== */
 
 /* ==========================================================================
-   SLASHED Tokens — Default — v0.4.7.0
+   SLASHED Tokens — Default — v0.4.8.0
    ========================================================================== */
 
 /* ================================================================
@@ -709,7 +709,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Core — v0.4.7.0
+   SLASHED Core — v0.4.8.0
    Reset, base element defaults, layout primitives, a11y, print.
    Baseline: Chrome 123+, Firefox 120+, Safari 17.5+, Edge 123+ (graceful fallbacks for Safari 16.2–17.4)
    ========================================================================== */
@@ -2004,13 +2004,24 @@
   }
 
   /* ----- Stagger ----- */
-  /* Set --_i as an inline style on each child: style="--_i: 0", style="--_i: 1", etc.
-     CSS sibling-index() will replace this pattern when cross-browser support arrives. */
+  /* Polyfill path: set --_i as an inline style on each child via initStagger().
+     Native CSS path: sibling-index() (Baseline Newly Available: Chrome 130+,
+     Firefox 131+, Safari 18+) — used automatically when supported. */
 
   @media (prefers-reduced-motion: no-preference) {
     .stagger > * {
       animation: fade-in 0.3s var(--ease-out, ease-out) both;
       animation-delay: calc(var(--_i, 0) * var(--stagger-delay, var(--duration-stagger, 80ms)));
+    }
+  }
+
+  @supports (animation-delay: calc(sibling-index() * 1ms)) {
+    @media (prefers-reduced-motion: no-preference) {
+      .stagger > * {
+        animation-delay: calc(
+          (sibling-index() - 1) * var(--stagger-delay, var(--duration-stagger, 80ms))
+        );
+      }
     }
   }
 
@@ -2167,7 +2178,7 @@
 @layer slashed.overrides {}
 
 /* ==========================================================================
-   SLASHED Components — v0.4.7.0
+   SLASHED Components — v0.4.8.0
    Interactive UI components, form patterns, animation patterns.
    Requires: slashed-core.css (or slashed-full.css)
    ========================================================================== */
@@ -2323,11 +2334,15 @@
                 box-shadow var(--duration-fast) var(--ease-out),
                 transform var(--duration-fast) var(--ease-out);
   }
-  /* Optical vertical centering of button text. Chrome 135+; ignored elsewhere. */
+  /* Optical vertical centering where glyph whitespace would otherwise be visible. Chrome 135+. */
   @supports (text-box: trim-both cap alphabetic) {
     .cs-btn--primary,
     .cs-btn--outline,
-    .cs-btn--ghost {
+    .cs-btn--ghost,
+    .cs-badge,
+    .cs-nav-link,
+    .cs-chip,
+    .cs-eyebrow {
       text-box: trim-both cap alphabetic;
     }
   }
@@ -2738,7 +2753,7 @@
   .cs-stat--inline > span { order: -1; }
 
   /* ----- Skeleton loader ----- */
-  /* ⚠️ .cs-skeleton-line must be a direct child of .cs-skeleton to correctly inherit
+  /* .cs-skeleton__line must be a direct child of .cs-skeleton to correctly inherit
      the animation and background-size values. Deeper nesting desynchronizes the animation.
      Uses --color-border for the shimmer midpoint — adapts correctly in dark mode. */
 
@@ -2757,7 +2772,7 @@
     pointer-events: none;
   }
   .cs-skeleton * { visibility: hidden; }
-  .cs-skeleton-line {
+  .cs-skeleton__line {
     height: 0.75em;
     border-radius: var(--radius-xs);
     background: inherit;
@@ -5341,7 +5356,7 @@
 }
 
 /* ==========================================================================
-   SLASHED Utilities — v0.4.7.0
+   SLASHED Utilities — v0.4.8.0
    Layout, functional, and inline typographic composition utilities.
 
    PHILOSOPHY:

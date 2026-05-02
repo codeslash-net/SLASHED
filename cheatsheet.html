@@ -658,8 +658,8 @@
   <div class="class-grid">
     <div class="item"><span class="name">.cs-media</span><span class="desc">Image / video wrapper with overflow clip and radius</span><span class="why">Wraps images and embeds — handles border-radius + overflow-clip so the child image inherits the radius correctly.</span></div>
     <div class="item"><span class="name">[data-icon]="s/m/l/xl"</span><span class="desc">SVG icon sizing via attribute (16/20/24/32px)</span><span class="why">Token-driven icon sizing without per-icon classes — <code>data-icon="m"</code> on any <code>&lt;svg&gt;</code> sets width + height.</span></div>
-    <div class="item"><span class="name">.cs-skeleton <span class="tag tag--issue">⚠ issue</span></span><span class="desc">Skeleton loading placeholder (shimmer animation)</span><span class="why">Loading state. Note: <code>.cs-skeleton-line</code> is a BEM violation — it will be renamed to <code>.cs-skeleton__line</code> in 0.4.8.0.</span></div>
-    <div class="item"><span class="name">.cs-skeleton-line <span class="tag tag--breaking">breaking rename</span></span><span class="desc">Skeleton line element → becomes <code>.cs-skeleton__line</code> in 0.4.8.0</span><span class="why">Current name violates BEM — a modifier uses <code>--</code>, an element uses <code>__</code>. This is a standalone class that should be a BEM element of <code>.cs-skeleton</code>.</span></div>
+    <div class="item"><span class="name">.cs-skeleton</span><span class="desc">Skeleton loading placeholder (shimmer animation)</span><span class="why">Loading state. Use <code>.cs-skeleton__line</code> for child line elements.</span></div>
+    <div class="item"><span class="name">.cs-skeleton__line <span class="tag tag--breaking">renamed in 0.4.8.0</span></span><span class="desc">Skeleton line element (was <code>.cs-skeleton-line</code>)</span><span class="why">Renamed from <code>.cs-skeleton-line</code> to correct the BEM violation — element classes use <code>__</code>, not standalone names.</span></div>
     <div class="item"><span class="name">.cs-chip / .cs-nav-link / .cs-nav-link--active</span><span class="desc">Chip button and navigation link components</span><span class="why">UI chip for filter bars, tag selection. Nav link with active/current state styling.</span></div>
     <div class="item"><span class="name">.cs-tabs / .cs-tab / .cs-tab-panel</span><span class="desc">Tab interface (pure-CSS baseline + optional JS ARIA enhancement)</span><span class="why">Pure-CSS tabs use <code>:has(:checked)</code> on radio inputs. <code>initTabsAccessible()</code> upgrades to full ARIA tabs with keyboard navigation.</span></div>
     <div class="item"><span class="name">.cs-modal / .cs-modal__header / .cs-modal__body / .cs-modal__footer</span><span class="desc">Native <code>&lt;dialog&gt;</code> modal with <code>@starting-style</code> animation</span><span class="why">Wraps native <code>&lt;dialog&gt;</code> — correct backdrop handling, <code>closeModal()</code>/<code>initModalFocusRestore()</code> for full accessibility.</span></div>
@@ -1160,7 +1160,7 @@
 <div class="no-results" id="no-results" style="display:none;">No classes match your filter.</div>
 
 <footer class="footer-note">
-  SLASHED v0.4.7.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
+  SLASHED v0.4.8.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
   <span style="font-size:10px;opacity:0.6;">Cheatsheet updated for 0.5.0.0 planning · Classes marked <span class="tag tag--proposed" style="vertical-align:middle">proposed</span> are pending approval before implementation · Classes marked <span class="tag tag--breaking" style="vertical-align:middle">breaking rename</span> will change in 0.4.7.0 or 0.4.8.0</span>
 </footer>
 

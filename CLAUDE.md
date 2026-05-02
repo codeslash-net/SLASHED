@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Current version: **0.4.7.0** (pre-1.0).
+Current version: **0.4.8.0** (pre-1.0).
 
 See **`CONTRIBUTING.md`** for repo layout, full gotchas list, versioning
 policy, and testing procedures. See **`ROADMAP.md`** for pending work.

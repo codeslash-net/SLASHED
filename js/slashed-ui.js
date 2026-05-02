@@ -165,9 +165,11 @@
 
   /* ---------------------------------------------------------------
      5. Stagger — auto-set --_i index on children
-     CSS platform gap: sibling-index() is not yet cross-browser,
-     so we set --_i from JS for stagger animations. Unrelated to the
-     flexbox/grid `gap` property, which is natively supported.
+     Polyfill for CSS sibling-index() (Baseline Newly Available: Chrome 130+,
+     Firefox 131+, Safari 18+). Browsers that support sibling-index() use the
+     native CSS path in slashed-core.css automatically; this function is only
+     needed for older browsers. Scheduled for deprecation when the framework
+     baseline advances past those versions.
      Call initStagger() after any dynamic content render.
   --------------------------------------------------------------- */
   function initStagger(root) {

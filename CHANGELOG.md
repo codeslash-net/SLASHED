@@ -10,6 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.8.0] — 2026-05-02 — BEM fix + CSS modernization
+
+### Breaking
+
+- `.cs-skeleton-line` → `.cs-skeleton__line` in `slashed-components.css`. Find-replace in consumer HTML.
+
+### Added — CSS modernization
+
+- `slashed-core.css`: native `sibling-index()` stagger path behind `@supports (animation-delay: calc(sibling-index() * 1ms))` + `prefers-reduced-motion: no-preference` guard. Browsers supporting sibling-index() (Chrome 130+, Firefox 131+, Safari 18+) now use the CSS path automatically; `initStagger()` continues to serve as a polyfill for older browsers.
+- `slashed-components.css`: `text-box: trim-both cap alphabetic` extended to `.cs-badge`, `.cs-nav-link`, `.cs-chip`, `.cs-eyebrow` in the existing `@supports (text-box: trim-both cap alphabetic)` block. Was already applied to `.cs-btn`.
+
+### Changed
+
+- `js/slashed-ui.js`: `initStagger()` comment updated to document native CSS path and note polyfill status.
+
+---
+
 ## [0.4.7.0] — 2026-05-02 — Phantom class sweep + family completion
 
 ### Breaking

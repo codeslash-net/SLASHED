@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Components — v0.4.7.0
+   SLASHED Components — v0.4.8.0
    Interactive UI components, form patterns, animation patterns.
    Requires: slashed-core.css (or slashed-full.css)
    ========================================================================== */
@@ -155,11 +155,15 @@
                 box-shadow var(--duration-fast) var(--ease-out),
                 transform var(--duration-fast) var(--ease-out);
   }
-  /* Optical vertical centering of button text. Chrome 135+; ignored elsewhere. */
+  /* Optical vertical centering where glyph whitespace would otherwise be visible. Chrome 135+. */
   @supports (text-box: trim-both cap alphabetic) {
     .cs-btn--primary,
     .cs-btn--outline,
-    .cs-btn--ghost {
+    .cs-btn--ghost,
+    .cs-badge,
+    .cs-nav-link,
+    .cs-chip,
+    .cs-eyebrow {
       text-box: trim-both cap alphabetic;
     }
   }
@@ -570,7 +574,7 @@
   .cs-stat--inline > span { order: -1; }
 
   /* ----- Skeleton loader ----- */
-  /* ⚠️ .cs-skeleton-line must be a direct child of .cs-skeleton to correctly inherit
+  /* .cs-skeleton__line must be a direct child of .cs-skeleton to correctly inherit
      the animation and background-size values. Deeper nesting desynchronizes the animation.
      Uses --color-border for the shimmer midpoint — adapts correctly in dark mode. */
 
@@ -589,7 +593,7 @@
     pointer-events: none;
   }
   .cs-skeleton * { visibility: hidden; }
-  .cs-skeleton-line {
+  .cs-skeleton__line {
     height: 0.75em;
     border-radius: var(--radius-xs);
     background: inherit;
