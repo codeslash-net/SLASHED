@@ -3,7 +3,7 @@
 > Forward-looking only. Shipped work lives in [`CHANGELOG.md`](CHANGELOG.md).
 > Reviewed at every framework version bump.
 >
-> **Last reviewed:** v0.4.6.0 (2026-05-01).
+> **Last reviewed:** v0.4.6.0 (2026-05-02). Items labelled `0.5.0.0` are implemented in the codebase; the version tag has not yet been cut.
 
 This file is the single authoritative list of what is *not yet shipped*. If
 something is here and has since shipped, move it to the corresponding
@@ -357,112 +357,6 @@ component. The correct BEM name is `.cs-skeleton__line`.
 
 ---
 
-#### `initTabsAccessible()` — WAI-ARIA Tabs keyboard pattern
-
-**File:** `js/slashed-ui.js` — add as a new exported function.
-
-Add as a separate opt-in function. Does not replace `initTabs()` (which
-syncs `.is-active` for SSR / no-`:has()` environments and stays in place).
-
-**Behaviour to implement:**
-
-- Arrow Left / Arrow Right move focus between tab inputs within the same
-  `.cs-tabs__list`.
-- Home moves focus to the first tab; End moves to the last.
-- Focused tab is auto-selected (activates its panel) — recommended pattern
-  per WAI-ARIA Authoring Practices Guide for tabs.
-- `aria-selected="true"` on the active tab's label; `aria-selected="false"`
-  on all others.
-- Roving tabindex: `tabindex="0"` on the active tab; `tabindex="-1"` on
-  all others.
-
-**Usage:** `slashedUI.initTabsAccessible()` — call instead of or alongside
-`initTabs()`.
-
----
-
-#### `initModalFocusRestore()` — focus restoration on dialog close
-
-**File:** `js/slashed-ui.js` — add as a new exported function.
-
-Native `<dialog showModal()>` already traps focus inside the dialog and
-handles the Escape key natively. The remaining gap is returning focus to
-the element that triggered `showModal()` when the dialog closes.
-
-**Behaviour:**
-
-- On `[data-modal-trigger]` click (or equivalent), record
-  `document.activeElement` as the restore target.
-- On the `dialog` `close` event, call `restoreTarget.focus()`.
-- Guard: if `restoreTarget` no longer exists in the DOM (e.g. a dynamic
-  list item that was removed), fall back to `document.body`.
-
-**Usage:** `slashedUI.initModalFocusRestore()` — call once on page load.
-
----
-
-#### Nav-dropdown keyboard navigation
-
-**File:** `js/slashed-ui.js` — extend `initNavDropdowns()`.
-
-Current behaviour: Escape closes, click-outside closes, `aria-expanded`
-is synced on toggle. Add:
-
-- Arrow Down on `summary` → opens the dropdown and moves focus to the
-  first `.cs-nav-dropdown__link` item.
-- Arrow Down / Arrow Up → cycle focus between `__link` items within the
-  open menu.
-- Home → first `__link`; End → last `__link`.
-- First-letter navigation: pressing a printable character moves focus to
-  the next `__link` whose visible text starts with that character
-  (case-insensitive).
-- Escape → close dropdown, return focus to `summary`.
-- Tab (forward or back) → close dropdown (focus leaves naturally via
-  browser default).
-
----
-
-#### Toast assertive urgency
-
-**File:** `js/slashed-ui.js` — extend `toast()`.
-
-Add `urgency` option to the existing `toast(opts)` API:
-
-```js
-slashedUI.toast({ body: 'Upload failed.', variant: 'error', urgency: 'assertive' })
-```
-
-When `urgency: 'assertive'` is set, the toast element receives
-`role="alert"` instead of `role="status"`. Screen readers using `alert`
-role interrupt the current announcement to read the message immediately.
-Use only for errors and critical failures — never for informational toasts.
-
-Default remains `role="status"` (polite). No existing usage is affected.
-The `urgency` key is ignored if absent.
-
----
-
-#### Form-group error `aria-live` wiring
-
-**File:** `js/slashed-ui.js` — add `initFormGroups()`.
-
-`.cs-form-group__error` is visually hidden until `:user-invalid` triggers.
-Once it becomes visible, screen readers do not announce it because the
-visibility change is CSS-only with no DOM mutation.
-
-**Behaviour:**
-
-- On init, add `aria-live="polite"` and `aria-atomic="true"` to every
-  `.cs-form-group__error` element in the document.
-- Add a unique `id` to each `__error` and a corresponding
-  `aria-describedby` on its sibling `__input`, linking them for screen
-  readers that do not implement `aria-live` reliably on initially-hidden
-  elements.
-
-**Call in `init()`** alongside the other `init*` functions.
-
----
-
 #### CSS modernization: `sibling-index()` native stagger
 
 **Files:** `css/slashed-core.css` (stagger behavioral pattern),
@@ -601,184 +495,6 @@ add a PostCSS simulation step — buildless is a hard constraint.
 use `@container` queries (see C2) and no longer contain hardcoded breakpoints.
 The `@custom-media` problem is therefore limited to `slashed-utilities.css`
 only — reduced scope compared to previous description.
-
----
-
-#### T1 — Remove `--font-weight-*` (8 tokens), rename 1
-
-**File:** `css/tokens-default.css`
-
-Remove:
-
-```text
---font-weight-thin, --font-weight-extralight, --font-weight-light,
---font-weight-normal, --font-weight-medium, --font-weight-semibold,
---font-weight-extrabold, --font-weight-black
-```
-
-Rename:
-
-```text
---font-weight-bold: 700  →  --font-weight-heading: 700
-```
-
----
-
-#### T2 — Trim alpha variants to 3 steps
-
-**File:** `css/tokens-default.css`
-
-Remove for `--primary`, `--secondary`, and `--accent` in the light block, dark
-block, and legacy fallback block:
-
-```text
---primary-a10, --primary-a90
---secondary-a10, --secondary-a90
---accent-a10, --accent-a90
-```
-
-Keep: `a25`, `a50`, `a75`. The legacy-fallback block must align with the modern
-block — 3 steps, consistently.
-
----
-
-#### T3 — Remove `--text-6xl` through `--text-9xl`
-
-**File:** `css/tokens-default.css`
-
-Remove:
-
-```text
---text-6xl, --text-7xl, --text-8xl, --text-9xl
-```
-
-Scale ends at `--text-5xl` (64–96 px). `--text-fluid-hero` serves hero
-sections.
-
----
-
-#### T5 — Differentiate `--color-text-faint` and `--color-text-disabled`
-
-**File:** `css/tokens-default.css`
-
-Light mode:
-
-```text
---color-text-faint:    var(--neutral-400)  (unchanged)
---color-text-disabled: var(--neutral-300)  (was: --neutral-400)
-```
-
-Add a comment at `--color-text-disabled` explaining the intent: WCAG exempts
-disabled elements from contrast requirements; this value is intentionally below
-AA.
-
----
-
-#### T6 — Fix `--shadow-inner`
-
-**File:** `css/tokens-default.css`
-
-```css
-/* BEFORE: */
---shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-
-/* AFTER: */
---shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 1.5));
-```
-
----
-
-#### T7 — Add `--duration-enter` and `--duration-exit`
-
-**File:** `css/tokens-default.css`
-
-Add after the existing duration token block:
-
-```css
---duration-enter: var(--duration-normal);
---duration-exit:  var(--duration-fast);
-```
-
----
-
-#### T8 — Add `--z-above`
-
-**File:** `css/tokens-default.css`
-
-Insert between `--z-docked` and `--z-sticky`:
-
-```css
---z-above: 100;
-```
-
-Update the comment on the z-index scale to clarify that `--z-sticky` and above
-intentionally do not beat the WP admin bar (99999) — only `--z-max` does.
-
----
-
-#### K1 — Replace `--font-weight-bold` and derivatives in components
-
-**File:** `css/slashed-components.css`
-
-Replace every `var(--font-weight-bold)` with `var(--font-weight-heading, 700)`
-and every `var(--font-weight-semibold)` with the literal `600`.
-
----
-
-#### K2 — Use `--duration-enter` / `--duration-exit` on component animations
-
-**File:** `css/slashed-components.css`
-
-Audit all enter/exit animations: modal open/close, tooltip show/hide, dropdown
-open/close, popover. Replace:
-
-- Entry animations → `var(--duration-enter)`
-- Exit animations → `var(--duration-exit)`
-
----
-
-#### U1 — Remove utility classes for removed typography tokens
-
-**File:** `css/slashed-utilities.css`
-
-Remove:
-
-```text
-.text-6xl, .text-7xl, .text-8xl, .text-9xl
-```
-
-These correspond to the tokens removed in T3.
-
----
-
-#### U2 — Update breakpoints comment
-
-**File:** `css/slashed-utilities.css`
-
-The current comment states that breakpoints exist in this file only and that
-`slashed-core.css` breakpoints are separate. After C2 that is no longer true.
-Replace with:
-
-```css
-/* BREAKPOINTS — configure once per project before use.
-   This is the ONLY file with hardcoded breakpoint values.
-   slashed-core.css layout primitives use @container queries
-   and do not need to be updated when changing breakpoints. */
-```
-
----
-
-#### D1 — Add `docs/BRICKS.md` (new file)
-
-**File:** `docs/BRICKS.md` (new)
-
-Sections to include:
-
-- Synchronising breakpoints with the Bricks GUI (when and how to
-  find-replace in `slashed-utilities.css`)
-- Prefer `cq-*` utility classes over `md:` / `lg:` when styling inside Bricks
-- Layout primitives after C2 are container-aware and do not require
-  breakpoint synchronisation
 
 ---
 
@@ -945,3 +661,20 @@ here to prevent re-addition.
   bundle file multiplies maintenance surface (two files to keep in sync,
   two CI checks) for a workflow that is already possible. Document the
   multi-file load path in README more visibly instead.
+- **`initTabsAccessible()`** — shipped in `0.5.0.0`. WAI-ARIA Tabs keyboard pattern: arrow navigation, roving tabindex, auto-select, `aria-selected` wiring.
+- **`initModalFocusRestore()`** — shipped in `0.5.0.0`. Returns focus to the trigger element when `<dialog>` closes; if the trigger is unavailable or removed, focus restoration is skipped (no `document.body` fallback).
+- **Nav-dropdown keyboard navigation** — shipped in `0.5.0.0`. Arrow Up/Down, Home/End, first-letter jump, Escape closes, Tab closes via browser default.
+- **Toast `urgency: 'assertive'` option** — shipped in `0.5.0.0`. Sets `role="alert"` for immediate screen-reader interruption on errors; default `role="status"` unchanged.
+- **`initFormGroups()` aria-live wiring** — shipped in `0.5.0.0`. Adds `aria-live="polite"` / `aria-atomic="true"` to `.cs-form-group__error` and sets `aria-errormessage` on the associated input pointing to the error element's id.
+- **T1 (font-weight token cleanup)** — shipped in `0.5.0.0`. Removed 8 `--font-weight-*` tokens; renamed `--font-weight-bold` → `--font-weight-heading`.
+- **T2 (alpha variant trim)** — shipped in `0.5.0.0`. Alpha variants reduced to 3 steps (`a25`, `a50`, `a75`) for `--primary`, `--secondary`, `--accent`.
+- **T3 (`--text-6xl` through `--text-9xl` removal)** — shipped in `0.5.0.0`. Scale ends at `--text-5xl`; `--text-fluid-hero` covers hero-scale type.
+- **T5 (`--color-text-faint` vs. `--color-text-disabled` split)** — shipped in `0.5.0.0`. `--color-text-disabled` is now `--neutral-300` with a WCAG-exemption comment.
+- **T6 (`--shadow-inner` fix)** — shipped in `0.5.0.0`. Now uses `calc(var(--shadow-strength) * 1.5)` instead of a hardcoded opacity value.
+- **T7 (`--duration-enter` / `--duration-exit`)** — shipped in `0.5.0.0`. Semantic enter/exit duration tokens added after the existing duration block.
+- **T8 (`--z-above`)** — shipped in `0.5.0.0`. New z-index tier (`100`) inserted between `--z-docked` and `--z-sticky`.
+- **K1 (component font-weight token)** — shipped in `0.5.0.0`. `var(--font-weight-bold)` → `var(--font-weight-heading, 700)` in all components.
+- **K2 (component animation duration tokens)** — shipped in `0.5.0.0`. Entry/exit animations updated to `var(--duration-enter)` / `var(--duration-exit)`.
+- **U1 (remove oversized typography utility classes)** — shipped in `0.5.0.0`. `.text-6xl` through `.text-9xl` removed from `slashed-utilities.css`.
+- **U2 (breakpoints comment update)** — shipped in `0.5.0.0`. Comment in `slashed-utilities.css` updated to reflect container-query layout in `slashed-core.css`.
+- **D1 (`docs/BRICKS.md`)** — shipped in `0.5.0.0`. Bricks Builder integration guide added covering breakpoint sync, `cq-*` utilities, and container-aware layout primitives.
