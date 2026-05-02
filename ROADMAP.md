@@ -301,44 +301,6 @@ audit findings.
 
 ---
 
-#### Cheatsheet / docs vs. CSS parity audit
-
-No audit dependency. Fix in the same pass as battle-test pass #2.
-
-`cheatsheet.html` and `docs/UTILITIES.md` document classes that do not
-exist in `slashed-utilities.css`. For each phantom class, decide:
-implement it (if the pattern is genuinely useful and fits the framework
-philosophy) or remove the documentation entry. Classes that require
-implementation become additive utilities — document them in CHANGELOG.
-Classes that are simply deleted from docs need no CHANGELOG entry.
-
-Known phantom classes to evaluate:
-
-| Class | Documented in | Disposition |
-|---|---|---|
-| `.border-4` | cheatsheet | Evaluate: only `-0` and `-2` exist |
-| `.border-default` | cheatsheet | Evaluate |
-| `.self-stretch` | cheatsheet + docs | Implement or remove |
-| `.self-auto` | cheatsheet | Implement or remove |
-| `.justify-around` | docs | Implement or remove |
-| `.justify-evenly` | docs | Implement or remove |
-| `.inline` | docs | Implement (`display: inline`) |
-| `.inline-grid` | docs | Implement |
-| `.contents` | docs | Implement (`display: contents`) |
-| `.static` | docs | Implement (`position: static`) |
-| `.shrink` | docs | Implement (`.shrink-0` already exists) |
-| `.start-0` / `.end-0` | docs + cheatsheet | Implement (inset logical aliases) |
-| `.h-min` / `.h-max` | docs | Implement |
-| `.min-w-full` | docs | Implement |
-| `.max-w-prose` / `.max-w-none` / `.max-w-full` | docs | Evaluate |
-| `.w-screen` | docs | Implement |
-| `.masonry--l` | cheatsheet | Remove (`.bento` has `--tall`; masonry has no `-l` variant) |
-
-After the audit, add a CI step or note to the cheatsheet content audit
-(Path to 1.0) to prevent future doc/CSS drift.
-
----
-
 #### Component rename: `cs-skeleton-line` → `cs-skeleton__line`
 
 **File:** `css/slashed-components.css`.
@@ -594,6 +556,7 @@ when planning the version that will become 1.0.
 Items that have been proposed in the past but are not pending. Documented
 here to prevent re-addition.
 
+- **Cheatsheet / docs vs. CSS parity audit + phantom class sweep** — shipped in `0.4.7.0`. All documented-but-missing utility classes implemented (`.inline`, `.inline-grid`, `.contents`, `.static`, `.shrink`, `.justify-around`, `.justify-evenly`, `.self-stretch`, `.self-auto`, `.start-0`, `.end-0`, `.h-min`, `.h-max`, `.max-w-full`, `.max-w-none`, `.max-w-prose`, `.overflow-scroll`, `.overflow-visible`, `.overflow-y-auto`, `.object-fill`, `.object-scale-down`, `.object-left`, `.object-right`, `.cursor-wait`, `.cursor-grab`, `.cursor-grabbing`, `.border-4`). Phantom `.masonry--l` and `.border-default` removed from docs. `.max-prose` renamed to `.max-w-prose`. `--ease-inout` renamed to `--ease-in-out`. Cheatsheet updated with per-class/token justification pass.
 - **Container token rename (T4)** — shipped in `0.4.6.0`.
   `--container-xs/sm/narrow` → `--container-dialog/form/prose`; added
   `--container-wide` (90rem) and `--container-full` (none).

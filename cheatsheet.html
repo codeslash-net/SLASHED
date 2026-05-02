@@ -493,11 +493,7 @@
     <div class="item"><span class="name">--duration-stagger</span><span class="val">80ms</span><span class="why">Delay between stagger children. Used by <code>.stagger</code> layout and <code>sibling-index()</code> CSS path.</span></div>
     <div class="item"><span class="name">--ease-out</span><span class="val">cubic-bezier(0.25, 0, 0.15, 1)</span><span class="why">Enter animations — fast start, settle at end.</span></div>
     <div class="item"><span class="name">--ease-in</span><span class="val">cubic-bezier(0.5, 0, 0.75, 0.25)</span><span class="why">Exit animations — slow start, fast end.</span></div>
-    <div class="item">
-      <span class="name">--ease-inout <span class="tag tag--issue">⚠ name</span></span>
-      <span class="val">cubic-bezier(0.4, 0, 0.2, 1)</span>
-      <span class="why"><strong>CSS name is <code>--ease-inout</code> but docs reference <code>--ease-in-out</code>.</strong> Will be renamed to <code>--ease-in-out</code> in 0.4.7.0 (breaking, pre-0.8 = no migration doc needed). Reference <code>var(--ease-in-out)</code> going forward.</span>
-    </div>
+    <div class="item"><span class="name">--ease-in-out <span class="tag tag--breaking">renamed in 0.4.7.0</span></span><span class="val">cubic-bezier(0.4, 0, 0.2, 1)</span><span class="why">Standard ease-in-out. Renamed from <code>--ease-inout</code> to match the naming convention of other ease tokens. Use <code>var(--ease-in-out)</code>.</span></div>
     <div class="item"><span class="name">--ease-spring</span><span class="val">cubic-bezier(0.34, 1.56, 0.64, 1)</span><span class="why">Playful overshoot. Use for fun hover effects and micro-interactions, not page transitions.</span></div>
   </div>
 
@@ -1027,7 +1023,7 @@
     <div class="item"><span class="name">.transition-colors</span><span class="desc">Transition only color and background</span><span class="why">For text color and background-only transitions — lighter than full <code>.transition</code>.</span></div>
     <div class="item"><span class="name">.transition-none</span><span class="desc">Transitions disabled</span><span class="why">For instant state changes that shouldn't animate (e.g. disabled inputs).</span></div>
     <div class="item"><span class="name">.duration-fast / -normal / -slow</span><span class="desc">150ms / 250ms / 400ms</span><span class="why">Override the duration of a <code>.transition</code> inline.</span></div>
-    <div class="item"><span class="name">.ease-out / -in / -in-out</span><span class="desc">Timing function overrides</span><span class="why">Note: in CSS the token is <code>--ease-inout</code> — will be renamed to <code>--ease-in-out</code> in 0.4.7.0.</span></div>
+    <div class="item"><span class="name">.ease-out / -in / -in-out</span><span class="desc">Timing function overrides (<code>var(--ease-out/in/in-out)</code>)</span><span class="why">Token renamed: <code>--ease-inout</code> → <code>--ease-in-out</code> in 0.4.7.0. Use <code>var(--ease-in-out)</code>.</span></div>
     <div class="item"><span class="name">.animate-fade-in / -scale-in / -slide-up / -spin</span><span class="desc">Load animations</span><span class="why">For elements that appear on page load. Prefer <code>.motion-safe:animate-*</code> variants to respect user motion preference.</span></div>
     <div class="item"><span class="name">.hover-lift</span><span class="desc">Hover: translate up + shadow increase</span><span class="why">Interactive card hover feedback. Use <code>.motion-safe:hover-lift</code> for motion-aware version.</span></div>
   </div>
@@ -1164,7 +1160,7 @@
 <div class="no-results" id="no-results" style="display:none;">No classes match your filter.</div>
 
 <footer class="footer-note">
-  SLASHED v0.4.6.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
+  SLASHED v0.4.7.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
   <span style="font-size:10px;opacity:0.6;">Cheatsheet updated for 0.5.0.0 planning · Classes marked <span class="tag tag--proposed" style="vertical-align:middle">proposed</span> are pending approval before implementation · Classes marked <span class="tag tag--breaking" style="vertical-align:middle">breaking rename</span> will change in 0.4.7.0 or 0.4.8.0</span>
 </footer>
 

@@ -10,6 +10,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.7.0] — 2026-05-02 — Phantom class sweep + family completion
+
+### Breaking
+
+- `--ease-inout` → `--ease-in-out` in `tokens-default.css`. Find-replace in any consumer CSS that references `var(--ease-inout)`.
+- `.max-prose` → `.max-w-prose` in `slashed-utilities.css`. Rename in consumer HTML.
+
+### Added — utilities (`slashed-utilities.css`)
+
+**Display:** `.inline`, `.inline-grid`, `.contents`
+
+**Flex:** `.shrink` (restores default `flex-shrink: 1`; was missing — `.shrink-0` existed alone)
+
+**Alignment:** `.justify-around`, `.justify-evenly`, `.self-stretch`, `.self-auto`
+
+**Position:** `.static` (resets any position value back to normal flow)
+
+**Inset:** `.start-0` (`inset-inline-start: 0`), `.end-0` (`inset-inline-end: 0`) — logical equivalents of `.left-0`/`.right-0`
+
+**Sizing:** `.h-min`, `.h-max`, `.max-w-full`, `.max-w-none`, `.max-w-prose` (renamed from `.max-prose`)
+
+**Overflow:** `.overflow-scroll`, `.overflow-visible`, `.overflow-y-auto` — completing the family (`.overflow-hidden`, `.overflow-auto`, `.overflow-x-auto` already existed)
+
+**Object:** `.object-fill`, `.object-scale-down`, `.object-left`, `.object-right` — completing both fit and position families
+
+**Cursor:** `.cursor-wait`, `.cursor-grab`, `.cursor-grabbing` — completing the family
+
+### Added — visual utilities (`slashed-utilities-visual.css`)
+
+**Border width:** `.border-4` — completes the `0 / 1 / 2 / 4px` family
+
+### Docs
+
+- `docs/UTILITIES.md` — z-index section now documents all 14 utility classes (previously only 7)
+- `docs/UTILITIES.md` — new classes added above documented in all relevant sections
+- `cheatsheet.html` — complete per-class and per-token justification pass; all sections now include group rationale, per-item `.why` justifications, and status tags (`proposed` / `breaking` / `⚠ issue`)
+
+---
+
 ## [unreleased]
 
 ### Fixed (review pass on PR #4)

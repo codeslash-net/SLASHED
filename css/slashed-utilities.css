@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Utilities — v0.4.6.0
+   SLASHED Utilities — v0.4.7.0
    Layout, functional, and inline typographic composition utilities.
 
    PHILOSOPHY:
@@ -306,7 +306,6 @@
   .break-words       { overflow-wrap: break-word; }
   .wrap-anywhere     { overflow-wrap: anywhere; }
   .whitespace-nowrap { white-space: nowrap; }
-  .max-prose         { max-width: var(--container-prose); }
 
   /* ----- Text colors ----- */
 
@@ -346,9 +345,12 @@
 
   .block        { display: block; }
   .inline-block { display: inline-block; }
+  .inline       { display: inline; }
   .flex         { display: flex; }
   .inline-flex  { display: inline-flex; }
   .grid         { display: grid; }
+  .inline-grid  { display: inline-grid; }
+  .contents     { display: contents; }
   .hidden       { display: none; }
 
   /* ----- Flex ----- */
@@ -363,6 +365,7 @@
   .flex-none        { flex: none; }
   .grow             { flex-grow: 1; }
   .grow-0           { flex-grow: 0; }
+  .shrink           { flex-shrink: 1; }
   .shrink-0         { flex-shrink: 0; }
 
   /* ----- Alignment ----- */
@@ -377,10 +380,14 @@
   .justify-center  { justify-content: center; }
   .justify-end     { justify-content: flex-end; }
   .justify-between { justify-content: space-between; }
+  .justify-around  { justify-content: space-around; }
+  .justify-evenly  { justify-content: space-evenly; }
 
-  .self-start  { align-self: flex-start; }
-  .self-center { align-self: center; }
-  .self-end    { align-self: flex-end; }
+  .self-start   { align-self: flex-start; }
+  .self-center  { align-self: center; }
+  .self-end     { align-self: flex-end; }
+  .self-stretch { align-self: stretch; }
+  .self-auto    { align-self: auto; }
 
   .place-center { display: grid; place-items: center; }
 
@@ -423,7 +430,11 @@
   .w-min   { width: min-content; }
   .w-max   { width: max-content; }
   .h-fit   { height: fit-content; }
+  .min-w-0    { min-width: 0; }
   .min-w-full { min-width: 100%; }
+  .max-w-full { max-width: 100%; }
+  .max-w-none { max-width: none; }
+  .max-w-prose { max-width: var(--container-prose); }
   .max-h-full { max-height: 100%; }
 
   /* Parent-relative fractions */
@@ -458,10 +469,11 @@
   .h-auto   { height: auto; }
   .h-screen { height: 100vh; height: 100dvh; }
   .h-svh    { height: 100svh; }
+  .h-min    { height: min-content; }
+  .h-max    { height: max-content; }
 
   .min-h-screen { min-height: 100vh; min-height: 100dvh; }
   .min-h-0      { min-height: 0; }
-  .min-w-0      { min-width: 0; }
   .max-h-screen { max-height: 100vh; max-height: 100dvh; }
 
   .aspect-video  { aspect-ratio: 16 / 9; }
@@ -471,6 +483,7 @@
 
   /* ----- Position ----- */
 
+  .static   { position: static; }
   .relative { position: relative; }
   .absolute { position: absolute; }
   .fixed    { position: fixed; }
@@ -483,6 +496,8 @@
   .right-0   { inset-inline-end: 0; }
   .bottom-0  { inset-block-end: 0; }
   .left-0    { inset-inline-start: 0; }
+  .start-0   { inset-inline-start: 0; }
+  .end-0     { inset-inline-end: 0; }
 
   /* ----- Z-index ----- */
 
@@ -514,15 +529,23 @@
 
   /* ----- Object fit & overflow ----- */
 
-  .object-cover   { object-fit: cover; }
-  .object-contain { object-fit: contain; }
-  .object-top     { object-position: top; }
-  .object-bottom  { object-position: bottom; }
-  .object-center  { object-position: center; }
-  .overflow-hidden { overflow: hidden; }
-  .overflow-auto   { overflow: auto; }
-  .overflow-x-auto { overflow-x: auto; }
-  .scrollbar-thin  { scrollbar-width: thin; }
+  .object-cover      { object-fit: cover; }
+  .object-contain    { object-fit: contain; }
+  .object-fill       { object-fit: fill; }
+  .object-scale-down { object-fit: scale-down; }
+  .object-top        { object-position: top; }
+  .object-bottom     { object-position: bottom; }
+  .object-center     { object-position: center; }
+  .object-left       { object-position: left; }
+  .object-right      { object-position: right; }
+
+  .overflow-hidden  { overflow: hidden; }
+  .overflow-auto    { overflow: auto; }
+  .overflow-scroll  { overflow: scroll; }
+  .overflow-visible { overflow: visible; }
+  .overflow-x-auto  { overflow-x: auto; }
+  .overflow-y-auto  { overflow-y: auto; }
+  .scrollbar-thin   { scrollbar-width: thin; }
 
   .overscroll-contain { overscroll-behavior: contain; }
   .overscroll-none    { overscroll-behavior: none; }
@@ -542,6 +565,9 @@
   .cursor-default      { cursor: default; }
   .cursor-text         { cursor: text; }
   .cursor-not-allowed  { cursor: not-allowed; }
+  .cursor-wait         { cursor: wait; }
+  .cursor-grab         { cursor: grab; }
+  .cursor-grabbing     { cursor: grabbing; }
   .select-none         { user-select: none; }
   .pointer-events-none { pointer-events: none; }
   .appearance-none     { appearance: none; -webkit-appearance: none; }

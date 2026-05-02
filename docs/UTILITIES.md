@@ -183,9 +183,12 @@ Classes: `.h1`, `.h2`, `.h3`, `.h4`, `.h5`, `.h6`
 |-------|-------|
 | `.block` | `display: block` |
 | `.inline-block` | `display: inline-block` |
+| `.inline` | `display: inline` |
 | `.flex` | `display: flex` |
 | `.inline-flex` | `display: inline-flex` |
 | `.grid` | `display: grid` |
+| `.inline-grid` | `display: inline-grid` |
+| `.contents` | `display: contents` |
 | `.hidden` | `display: none` |
 
 ---
@@ -264,10 +267,18 @@ Single primitive driven by an inline instance token:
 | `.justify-center` | `justify-content: center` |
 | `.justify-end` | `justify-content: flex-end` |
 | `.justify-between` | `justify-content: space-between` |
+| `.justify-around` | `justify-content: space-around` |
+| `.justify-evenly` | `justify-content: space-evenly` |
 
 ### Self-alignment (grid/flex children)
 
-`.self-start`, `.self-center`, `.self-end`
+| Class | Value |
+|-------|-------|
+| `.self-start` | `align-self: flex-start` |
+| `.self-center` | `align-self: center` |
+| `.self-end` | `align-self: flex-end` |
+| `.self-stretch` | `align-self: stretch` |
+| `.self-auto` | `align-self: auto` (inherits container `align-items`) |
 
 ---
 
@@ -275,6 +286,7 @@ Single primitive driven by an inline instance token:
 
 | Class | Value |
 |-------|-------|
+| `.static` | `position: static` (resets any position) |
 | `.relative` | `position: relative` |
 | `.absolute` | `position: absolute` |
 | `.fixed` | `position: fixed` |
@@ -292,13 +304,20 @@ Single primitive driven by an inline instance token:
 
 | Class | Value |
 |-------|-------|
+| `.z-below` | `z-index: var(--z-below)` (−1) — behind page flow |
 | `.z-base` | `z-index: var(--z-base)` (0) |
 | `.z-raised` | `z-index: var(--z-raised)` (1) |
 | `.z-docked` | `z-index: var(--z-docked)` (10) |
+| `.z-above` | `z-index: var(--z-above)` (100) |
 | `.z-sticky` | `z-index: var(--z-sticky)` (1100) |
+| `.z-dropdown` | `z-index: var(--z-dropdown)` (1150) |
+| `.z-banner` | `z-index: var(--z-banner)` (1200) |
 | `.z-overlay` | `z-index: var(--z-overlay)` (1300) |
 | `.z-modal` | `z-index: var(--z-modal)` (1400) |
+| `.z-popover` | `z-index: var(--z-popover)` (1500) |
+| `.z-toast` | `z-index: var(--z-toast)` (1700) |
 | `.z-tooltip` | `z-index: var(--z-tooltip)` (1800) |
+| `.z-max` | `z-index: var(--z-max)` (999999) — emergency override |
 
 ---
 
@@ -325,11 +344,25 @@ Three axes with explicit prefix:
 
 ### Height
 
-`.h-full`, `.h-screen`, `.h-auto`, `.h-fit`, `.h-min`, `.h-max`
+| Class | Value |
+|-------|-------|
+| `.h-full` | `height: 100%` |
+| `.h-screen` | `height: 100vh / 100dvh` |
+| `.h-svh` | `height: 100svh` (mobile-safe) |
+| `.h-auto` | `height: auto` |
+| `.h-fit` | `height: fit-content` |
+| `.h-min` | `height: min-content` |
+| `.h-max` | `height: max-content` |
 
 ### Min / max
 
-`.min-w-0`, `.min-w-full`
+| Class | Value |
+|-------|-------|
+| `.min-w-0` | `min-width: 0` (allows flex/grid children to shrink past content width) |
+| `.min-w-full` | `min-width: 100%` |
+| `.max-w-full` | `max-width: 100%` |
+| `.max-w-none` | `max-width: none` (reset) |
+| `.max-w-prose` | `max-width: var(--container-prose)` (~65ch for reading) |
 
 ### Aspect ratio
 

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Utilities - Visual - v0.4.6.0
+   SLASHED Utilities - Visual - v0.4.7.0
    Optional visual-property utility layer.
 
    PHILOSOPHY:
@@ -43,6 +43,7 @@
   .border         { border: var(--border-width, 1px) solid var(--color-border); }
   .border-0       { border: 0; }
   .border-2       { border-width: 2px; }
+  .border-4       { border-width: 4px; }
   .border-b       { border-block-end: var(--border-width, 1px) solid var(--color-border); }
   .border-t       { border-block-start: var(--border-width, 1px) solid var(--color-border); }
   .border-l       { border-inline-start: var(--border-width, 1px) solid var(--color-border); }
