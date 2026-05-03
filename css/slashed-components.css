@@ -143,6 +143,7 @@
   .cs-modal--drawer-end {
     position: fixed;
     inset-block: 0;
+    inset-inline-start: 0;
     margin: 0;
     max-width: none;
     width: var(--drawer-width, 20rem);

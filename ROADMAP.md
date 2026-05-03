@@ -432,9 +432,11 @@ here to prevent re-addition.
   fallback can be removed (depends on baseline advancing past
   Firefox 132).
 - **`@property` for brand colors** — already shipped in `tokens-default.css`
-  (six `@property --primary / --secondary / --accent / --success /
-  --warning / --error` registrations). Enables CSS transitions between
-  theme switches.
+  (`@property --primary / --secondary / --accent` registrations). Enables
+  CSS transitions between theme switches. Note: `--success`, `--warning`,
+  `--error` had their `@property` registrations removed in `0.5.0.0` — status
+  colors don't benefit from transition registration. `--info` was never
+  registered.
 - **`.cs-tabs` panel selector chain extension to 10** — already shipped.
   Source has `nth-child(1)` through `nth-child(10)` selectors. CHANGELOG
   entry for 0.3.3.0 says "up to 6" — this is corrected in `0.4.3.0`.

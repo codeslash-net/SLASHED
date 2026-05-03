@@ -770,7 +770,18 @@
   .section--xl { padding-block: clamp(8rem, 12vw, 12rem); }
   .section--alt  { background: var(--color-surface-2); }
   .section--soft { background: var(--primary-50);  color: var(--color-text); }
-  .section--bold { background: var(--primary);      color: var(--color-text-on-primary); }
+  .section--bold {
+    background:           var(--primary);
+    color:                var(--color-text-on-primary);
+    --color-text:         var(--color-text-on-primary);
+    --color-text-body:    var(--color-text-on-primary);
+    --color-text-muted:   var(--color-text-on-primary);
+    --color-link:         var(--color-text-on-primary);
+    --color-link-hover:   var(--color-text-on-primary);
+    --color-link-visited: var(--color-text-on-primary);
+    --color-link-active:  var(--color-text-on-primary);
+    --color-border:       color-mix(in srgb, var(--primary) 70%, white);
+  }
   .section-group > .section + .section { padding-block-start: 0; }
 
   /* ----- Container ----- */

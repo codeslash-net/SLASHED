@@ -96,22 +96,37 @@
   /* ----- Background - semantic ----- */
 
   .bg-primary {
-    background:     var(--primary);
-    --color-text:   var(--color-text-on-primary);
-    --color-link:   var(--color-text-on-primary);
-    --color-border: color-mix(in srgb, var(--primary) 70%, white);
+    background:           var(--primary);
+    color:                var(--color-text-on-primary);
+    --color-text:         var(--color-text-on-primary);
+    --color-text-body:    var(--color-text-on-primary);
+    --color-link:         var(--color-text-on-primary);
+    --color-link-hover:   var(--color-text-on-primary);
+    --color-link-visited: var(--color-text-on-primary);
+    --color-link-active:  var(--color-text-on-primary);
+    --color-border:       color-mix(in srgb, var(--primary) 70%, white);
   }
   .bg-secondary {
-    background:     var(--secondary);
-    --color-text:   var(--color-text-on-secondary);
-    --color-link:   var(--color-text-on-secondary);
-    --color-border: color-mix(in srgb, var(--secondary) 70%, white);
+    background:           var(--secondary);
+    color:                var(--color-text-on-secondary);
+    --color-text:         var(--color-text-on-secondary);
+    --color-text-body:    var(--color-text-on-secondary);
+    --color-link:         var(--color-text-on-secondary);
+    --color-link-hover:   var(--color-text-on-secondary);
+    --color-link-visited: var(--color-text-on-secondary);
+    --color-link-active:  var(--color-text-on-secondary);
+    --color-border:       color-mix(in srgb, var(--secondary) 70%, white);
   }
   .bg-accent {
-    background:     var(--accent);
-    --color-text:   var(--color-text-on-accent);
-    --color-link:   var(--color-text-on-accent);
-    --color-border: color-mix(in srgb, var(--accent) 70%, white);
+    background:           var(--accent);
+    color:                var(--color-text-on-accent);
+    --color-text:         var(--color-text-on-accent);
+    --color-text-body:    var(--color-text-on-accent);
+    --color-link:         var(--color-text-on-accent);
+    --color-link-hover:   var(--color-text-on-accent);
+    --color-link-visited: var(--color-text-on-accent);
+    --color-link-active:  var(--color-text-on-accent);
+    --color-border:       color-mix(in srgb, var(--accent) 70%, white);
   }
   .bg-success     { background: var(--success); }
   .bg-warning     { background: var(--warning); }

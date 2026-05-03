@@ -83,6 +83,10 @@ list-style by default)
   `--color-link`, `--color-border` to on-* values, so nested text and
   UI components automatically use correct contrast colors.
 
+### Breaking
+
+- `.isolation-isolate` → `.isolate` (class renamed; old name removed)
+
 ### Removed — visual utilities (`slashed-utilities-visual.css`)
 
 - **`.isolation-isolate`** — replaced by `.isolate` in core utilities.

@@ -127,7 +127,7 @@
   }
 
   function openModal(dialog) {
-    if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+    if (dialog && typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
   }
 
   function toggleModal(dialog) {
@@ -372,7 +372,7 @@
       document.body.appendChild(stack);
     }
     var el = document.createElement('aside');
-    var allowedVariants = { success: true, warning: true, error: true };
+    var allowedVariants = { success: true, warning: true, error: true, info: true };
     var variant = typeof opts.variant === 'string' ? opts.variant.trim() : '';
     el.className = 'cs-toast' + (allowedVariants[variant] ? ' cs-toast--' + variant : '');
     el.setAttribute('role', opts.urgency === 'assertive' ? 'alert' : 'status');

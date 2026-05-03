@@ -931,7 +931,7 @@
   /* ----- Typography: additional text color & word-break ----- */
 
   .text-body    { color: var(--color-text-body); }
-  .text-info    { color: var(--info); }
+  .text-info    { color: var(--info-600); }
 
   .break-all    { word-break: break-all; }
   .break-keep   { word-break: keep-all; }
