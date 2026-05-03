@@ -288,12 +288,19 @@
 
 <nav class="docs-nav">
   <span class="docs-logo">SLASH<span>ED</span></span>
-  <a href="#overview">Overview</a>
   <a href="#tokens">Tokens</a>
   <a href="#layout">Layout</a>
   <a href="#components">Components</a>
-  <a href="#utilities">Utilities</a>
-  <a href="#visual">Visual</a>
+  <a href="#spacing">Spacing</a>
+  <a href="#typography">Typography</a>
+  <a href="#colors">Colors</a>
+  <a href="#display">Display</a>
+  <a href="#flex-grid">Flex/Grid</a>
+  <a href="#borders">Borders</a>
+  <a href="#position">Position</a>
+  <a href="#effects">Effects</a>
+  <a href="#responsive">Responsive</a>
+  <a href="#a11y">A11y</a>
   <a href="#js-api">JS API</a>
   <a href="cheatsheet.html" title="Catalog view">Cheatsheet</a>
   <div class="docs-search">
@@ -884,6 +891,7 @@
 <span class="c-tag">&lt;/div&gt;</span></code></pre></div>
     <div class="item"><div class="name">.cs-banner--info / warning / error</div><div class="desc">Status colour variants.</div><div class="usage">Severity-coded site banners.</div><div class="demo"><div class="cs-banner cs-banner--warning"><div class="cs-banner__message">⚠ Maintenance window tonight.</div></div></div><pre class="code-block"><code>class="cs-banner cs-banner--warning"</code></pre></div>
     <div class="item"><div class="name">.cs-banner--bottom</div><div class="desc">Fixed to bottom of viewport.</div><div class="usage">Cookie banners, persistent CTAs.</div><div class="demo"><div class="cs-banner cs-banner--bottom" style="position:static"><div class="cs-banner__message">Bottom-pinned</div></div></div><pre class="code-block"><code>class="cs-banner cs-banner--bottom"</code></pre></div>
+    <div class="item"><div class="name">.cs-banner--sticky</div><div class="desc">Position sticky at top.</div><div class="usage">Persistent announcement that scrolls with the page.</div><div class="demo"><div class="cs-banner cs-banner--sticky" style="position:static"><div class="cs-banner__message">Sticky banner</div></div></div><pre class="code-block"><code>class="cs-banner cs-banner--sticky"</code></pre></div>
     <div class="item"><div class="name">.cs-banner__message</div><div class="desc">Banner message text (flex: 1).</div><div class="usage">Banner copy slot.</div><div class="demo">(see Banner above)</div><pre class="code-block"><code>class="cs-banner__message"</code></pre></div>
     <div class="item"><div class="name">.cs-banner__actions</div><div class="desc">Action buttons cluster.</div><div class="usage">"Accept", "Dismiss" buttons.</div><div class="demo">(see Banner above)</div><pre class="code-block"><code>class="cs-banner__actions"</code></pre></div>
     <div class="item"><div class="name">.cs-banner__close</div><div class="desc">Close (✕) button.</div><div class="usage">Dismissible banners.</div><div class="demo"><div class="cs-banner cs-banner--info"><div class="cs-banner__message">Dismissable</div><button class="cs-banner__close" aria-label="Close" style="background:none;border:0;cursor:pointer;font-size:1.25rem;opacity:0.5">✕</button></div></div><pre class="code-block"><code><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-string">"cs-banner__close"</span><span class="c-tag">&gt;</span>✕<span class="c-tag">&lt;/button&gt;</span></code></pre></div>
@@ -1183,6 +1191,11 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.cs-toast__icon / __title / __body / __close</div><div class="desc">BEM elements.</div><div class="usage">Icon, title, body text, close (✕).</div><div class="demo">(see Toast above)</div><pre class="code-block"><code>class="cs-toast__close"</code></pre></div>
   </div>
 
+  <h3 class="subheading">Tooltip</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.cs-tooltip / [data-tooltip]</div><div class="desc">Pure-CSS tooltip — text from <code>data-tooltip</code> attribute, revealed on hover/focus.</div><div class="usage">Inline help on icons / buttons.</div><div class="demo"><button class="cs-tooltip" data-tooltip="Hover or focus me" style="padding:0.25rem 0.5rem">Hover me</button></div><pre class="code-block"><code><span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-string">"cs-tooltip"</span> <span class="c-attr">data-tooltip</span>=<span class="c-string">"Help text"</span><span class="c-tag">&gt;</span>?<span class="c-tag">&lt;/button&gt;</span></code></pre></div>
+  </div>
+
   <h3 class="subheading">Quantity input, brand tile, footer, delete</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.cs-quantity-input</div><div class="desc">Stepper input for quantities.</div><div class="usage">Cart quantity controls.</div><div class="demo"><div class="cs-quantity-input"><button class="cs-quantity-input__btn">−</button><input type="number" class="cs-quantity-input__value" value="1" min="0" style="width:3rem;text-align:center"><button class="cs-quantity-input__btn">+</button></div></div><pre class="code-block"><code><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-string">"cs-quantity-input"</span><span class="c-tag">&gt;</span>
@@ -1200,15 +1213,15 @@ class="cs-modal__foot"</code></pre></div>
   </div>
 </section>
 
-<!-- ============================================================ UTILITIES -->
-<section class="section" id="utilities">
-  <h2 class="section-title">Utilities <span class="meta">slashed-utilities.css · docs/UTILITIES.md</span></h2>
+<!-- ============================================================ SPACING -->
+<section class="section" id="spacing">
+  <h2 class="section-title">Spacing Utilities <span class="meta">slashed-utilities.css · docs/UTILITIES.md</span></h2>
 
   <div class="rationale">
-    <strong>Configure the layout engine, toggle a11y properties, compose inline typography.</strong> Utilities do <em>not</em> encode decoration — that's the components' job. Responsive variants use <code>em</code>-based breakpoints (<code>sm:</code> 30em / <code>md:</code> 48em / <code>lg:</code> 64em / <code>xl:</code> 80em).
+    <strong>Padding · margin · gap.</strong> All sized from the spacing token scale (<code>2xs/xs/s/m/l/xl/2xl/3xl/4xl</code>) plus auto, px, and 0-5 micros. Logical-property aware (top/bottom/left/right).
   </div>
 
-  <h3 class="subheading">Spacing — padding</h3>
+  <h3 class="subheading">Padding</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.p-0</div><div class="desc">No padding.</div><div class="usage">Reset padding on a specific node.</div><div class="demo"><div class="p-0" style="background:var(--primary-100);outline:1px dashed var(--primary)">no padding</div></div><pre class="code-block"><code>class="p-0"</code></pre></div>
     <div class="item"><div class="name">.p-px / p-0-5</div><div class="desc">1px / 2px padding (micro).</div><div class="usage">Hairline padding for icon alignment.</div><div class="demo"><div class="p-px" style="background:var(--primary-100)">1px</div></div><pre class="code-block"><code>class="p-px"</code></pre></div>
@@ -1218,7 +1231,7 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.px-gutter</div><div class="desc">Horizontal padding using <code>--space-gutter</code>.</div><div class="usage">Consistent page-edge padding.</div><div class="demo"><div class="px-gutter" style="background:var(--primary-100);outline:1px dashed var(--primary)">px-gutter</div></div><pre class="code-block"><code>class="px-gutter"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Spacing — margin</h3>
+  <h3 class="subheading">Margin</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.m-0 / 2xs / xs / s / m / l / xl / 2xl / 3xl / 4xl</div><div class="desc">Margin all sides.</div><div class="usage">Add/remove margin uniformly.</div><div class="demo"><div class="m-m" style="background:var(--primary-100);padding:0.25rem">m-m</div></div><pre class="code-block"><code>class="m-m"</code></pre></div>
     <div class="item"><div class="name">.m-auto / mx-auto</div><div class="desc">Auto margin (centring).</div><div class="usage">Centre block-level elements horizontally.</div><div class="demo"><div class="mx-auto" style="background:var(--primary-100);padding:0.25rem;width:50%">mx-auto</div></div><pre class="code-block"><code>class="mx-auto"</code></pre></div>
@@ -1227,24 +1240,34 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.mt-auto / mb-auto / ms-auto / me-auto</div><div class="desc">Auto margin one side (logical for ms/me).</div><div class="usage">Push items in flex containers.</div><div class="demo"><div style="display:flex;gap:0.25rem"><span>A</span><span class="ms-auto">B (pushed)</span></div></div><pre class="code-block"><code>class="ms-auto"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Spacing — gap</h3>
+  <h3 class="subheading">Gap (flex/grid)</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.gap-0 / 2xs / xs / s / m / l / xl / 2xl / 3xl / 4xl</div><div class="desc">Flex/grid gap (all directions).</div><div class="usage">Spacing between flex/grid children.</div><div class="demo"><div style="display:flex" class="gap-l"><div class="grid-cell">A</div><div class="grid-cell">B</div></div></div><pre class="code-block"><code>class="flex gap-l"</code></pre></div>
     <div class="item"><div class="name">.gap-x-* / .gap-y-*</div><div class="desc">Column / row gap separately.</div><div class="usage">Asymmetric gap (more horizontal than vertical, etc.).</div><div class="demo"><div style="display:grid;grid-template-columns:1fr 1fr" class="gap-x-l gap-y-xs"><div class="grid-cell">A</div><div class="grid-cell">B</div><div class="grid-cell">C</div><div class="grid-cell">D</div></div></div><pre class="code-block"><code>class="gap-x-l gap-y-xs"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Typography — font size</h3>
+  </section>
+
+<!-- ============================================================ TYPOGRAPHY -->
+<section class="section" id="typography">
+  <h2 class="section-title">Typography Utilities <span class="meta">slashed-utilities.css · docs/UTILITIES.md</span></h2>
+
+  <div class="rationale">
+    <strong>Inline font composition.</strong> Sizes follow the fluid type scale; weights, tracking, leading and decoration map to tokens. Wrap utilities (truncate, line-clamp, balance, pretty) cover the modern text-wrap surface.
+  </div>
+
+  <h3 class="subheading">Font size</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.text-2xs / xs / s / m / l / xl / 2xl / 3xl / 4xl / 5xl</div><div class="desc">Fluid font size from the type scale.</div><div class="usage">Match text to hierarchy.</div><div class="demo"><div class="text-2xs">2xs</div><div class="text-s">s</div><div class="text-l">l</div><div class="text-2xl">2xl</div></div><pre class="code-block"><code>class="text-l"</code></pre></div>
     <div class="item"><div class="name">.text-fluid-hero</div><div class="desc">Viewport-relative hero text.</div><div class="usage">Single-line hero displays.</div><div class="demo"><span class="text-fluid-hero" style="font-size:clamp(1.5rem,4vw,3rem)">HERO</span></div><pre class="code-block"><code>class="text-fluid-hero"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Typography — semantic headings</h3>
+  <h3 class="subheading">Semantic heading classes</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.h1 / h2 / h3 / h4 / h5 / h6</div><div class="desc">Heading-size + weight + line-height + balance.</div><div class="usage">Apply heading styling without using a heading element (e.g. <code>.h2</code> on a <code>&lt;p&gt;</code>).</div><div class="demo"><div class="h2">Heading 2 size</div></div><pre class="code-block"><code>class="h2"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Typography — weight, style, transform, decoration</h3>
+  <h3 class="subheading">Font weight, style, case, decoration</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.font-light / normal / medium / semi / bold / extrabold / black</div><div class="desc">Font weights (300–900).</div><div class="usage">Emphasise specific words.</div><div class="demo"><span class="font-light">light</span> <span class="font-bold">bold</span> <span class="font-black">black</span></div><pre class="code-block"><code>class="font-bold"</code></pre></div>
     <div class="item"><div class="name">.italic</div><div class="desc">Italic style.</div><div class="usage">Emphasis, quotes.</div><div class="demo"><span class="italic">Italic</span></div><pre class="code-block"><code>class="italic"</code></pre></div>
@@ -1254,7 +1277,7 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.text-eyebrow</div><div class="desc">Bold + tracking-widest + uppercase shorthand.</div><div class="usage">Section eyebrow.</div><div class="demo"><span class="text-eyebrow">Eyebrow</span></div><pre class="code-block"><code>class="text-eyebrow"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Typography — line-height, tracking, alignment</h3>
+  <h3 class="subheading">Line height, tracking, alignment</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.leading-none / tight / snug / normal / loose</div><div class="desc">Line-height presets.</div><div class="usage">Tight for headings, loose for prose.</div><div class="demo"><div class="leading-tight">Tight<br>line height</div></div><pre class="code-block"><code>class="leading-tight"</code></pre></div>
     <div class="item"><div class="name">.tracking-tighter / tight / wide / wider / widest</div><div class="desc">Letter-spacing presets.</div><div class="usage">Display headings (tight), eyebrows (widest).</div><div class="demo"><span class="tracking-widest">WIDE</span></div><pre class="code-block"><code>class="tracking-widest"</code></pre></div>
@@ -1263,7 +1286,7 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.text-pretty</div><div class="desc"><code>text-wrap: pretty</code> — avoid orphans.</div><div class="usage">Body paragraphs.</div><div class="demo"><p class="text-pretty">A short paragraph rendered with text-wrap pretty for cleaner line breaks.</p></div><pre class="code-block"><code>class="text-pretty"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Typography — fonts, wrap, overflow</h3>
+  <h3 class="subheading">Fonts, wrap &amp; overflow</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.font-body / font-heading / font-mono</div><div class="desc">Apply token font stacks.</div><div class="usage">Override body to mono for code samples.</div><div class="demo"><span class="font-mono">monospace</span></div><pre class="code-block"><code>class="font-mono"</code></pre></div>
     <div class="item"><div class="name">.truncate</div><div class="desc">Single-line ellipsis on overflow.</div><div class="usage">List rows, table cells.</div><div class="demo"><div class="truncate" style="width:8rem">A long string that will not fit and gets truncated.</div></div><pre class="code-block"><code>class="truncate"</code></pre></div>
@@ -1273,7 +1296,17 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.list-disc / list-decimal / list-none</div><div class="desc">List-style presets.</div><div class="usage">Restore bullets in <code>.prose</code> blocks; reset elsewhere.</div><div class="demo"><ul class="list-disc" style="margin-left:1em"><li>One</li><li>Two</li></ul></div><pre class="code-block"><code>class="list-disc"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Colors — text &amp; background</h3>
+  </section>
+
+<!-- ============================================================ COLORS -->
+<section class="section" id="colors">
+  <h2 class="section-title">Color Utilities <span class="meta">slashed-utilities.css + slashed-utilities-visual.css</span></h2>
+
+  <div class="rationale">
+    <strong>Semantic colour tokens applied as utilities.</strong> Text colour utilities ship in core; background utilities live in the opt-in <code>slashed-utilities-visual.css</code> (decoration). Every name maps to a theme-aware token — flips automatically with <code>data-theme</code>.
+  </div>
+
+  <h3 class="subheading">Text color</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.text-primary / secondary / accent / success / warning / error / info</div><div class="desc">Semantic text colours.</div><div class="usage">Status text.</div><div class="demo"><span class="text-primary">primary</span> <span class="text-success">success</span> <span class="text-error">error</span></div><pre class="code-block"><code>class="text-success"</code></pre></div>
     <div class="item"><div class="name">.text-muted / subdued / faint / disabled</div><div class="desc">Hierarchy text colours.</div><div class="usage">De-emphasised content.</div><div class="demo"><span class="text-muted">muted</span> <span class="text-faint">faint</span> <span class="text-disabled">disabled</span></div><pre class="code-block"><code>class="text-muted"</code></pre></div>
@@ -1284,10 +1317,35 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.scheme--dark / .scheme--light</div><div class="desc">Force <code>color-scheme</code> on a subtree.</div><div class="usage">Mixed light/dark sections (e.g. dark hero on light page).</div><div class="demo"><div class="scheme--dark" style="background:var(--neutral-900);color:var(--neutral-50);padding:0.5rem">forced dark</div></div><pre class="code-block"><code>class="scheme--dark"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Borders &amp; divides</h3>
+  <h3 class="subheading">Background palette (visual — opt-in)</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.bg-primary-50 / 100 / 200 / 700 / 800 / 900 / 950</div><div class="desc">Brand palette backgrounds.</div><div class="usage">Tinted surfaces.</div><div class="demo"><div class="bg-primary-100" style="padding:0.5rem">primary-100</div></div><pre class="code-block"><code>class="bg-primary-100"</code></pre></div>
+    <div class="item"><div class="name">.bg-secondary-100 / 800 / 900</div><div class="desc">Secondary palette backgrounds.</div><div class="usage">Two-tone hierarchies.</div><div class="demo"><div class="bg-secondary-100" style="padding:0.5rem">secondary-100</div></div><pre class="code-block"><code>class="bg-secondary-100"</code></pre></div>
+    <div class="item"><div class="name">.bg-accent-100 / 800 / 900</div><div class="desc">Accent palette backgrounds.</div><div class="usage">Highlights.</div><div class="demo"><div class="bg-accent-100" style="padding:0.5rem">accent-100</div></div><pre class="code-block"><code>class="bg-accent-100"</code></pre></div>
+    <div class="item"><div class="name">.bg-neutral-100 / 800 / 900</div><div class="desc">Neutral backgrounds.</div><div class="usage">Greys.</div><div class="demo"><div class="bg-neutral-100" style="padding:0.5rem">neutral-100</div></div><pre class="code-block"><code>class="bg-neutral-100"</code></pre></div>
+    <div class="item"><div class="name">.bg-success-100 / .bg-warning-100 / .bg-error-100 / .bg-info-100</div><div class="desc">Status-tinted backgrounds.</div><div class="usage">Notice panels.</div><div class="demo"><div class="bg-success-100" style="padding:0.5rem">success-100</div></div><pre class="code-block"><code>class="bg-success-100"</code></pre></div>
+    <div class="item"><div class="name">.bg-primary / .bg-secondary / .bg-accent</div><div class="desc">Solid brand background + on-* text colour.</div><div class="usage">Solid CTAs.</div><div class="demo"><div class="bg-primary" style="padding:0.5rem">solid primary</div></div><pre class="code-block"><code>class="bg-primary"</code></pre></div>
+    <div class="item"><div class="name">.bg-success / .bg-warning / .bg-error</div><div class="desc">Solid status backgrounds.</div><div class="usage">Status badges, hero banners.</div><div class="demo"><div class="bg-success" style="padding:0.5rem">success</div></div><pre class="code-block"><code>class="bg-success"</code></pre></div>
+    <div class="item"><div class="name">.bg-surface / surface-2 / surface-elevated / surface-overlay</div><div class="desc">Semantic surface backgrounds.</div><div class="usage">Theme-aware fills.</div><div class="demo"><div class="bg-surface-2" style="padding:0.5rem">surface-2</div></div><pre class="code-block"><code>class="bg-surface"</code></pre></div>
+    <div class="item"><div class="name">.bg-light / .bg-dark / .bg-ultra-light / .bg-ultra-dark</div><div class="desc">Forced-scheme backgrounds (independent of <code>data-theme</code>).</div><div class="usage">Hero sections that must always be one scheme.</div><div class="demo"><div class="bg-dark" style="padding:0.5rem">dark</div></div><pre class="code-block"><code>class="bg-dark"</code></pre></div>
+    <div class="item"><div class="name">.bg-transparent / .bg-inherit</div><div class="desc">Background presets.</div><div class="usage">Reset backgrounds.</div><div class="demo">transparent</div><pre class="code-block"><code>class="bg-transparent"</code></pre></div>
+    <div class="item"><div class="name">.bg-gradient</div><div class="desc">Brand gradient surface.</div><div class="usage">Hero panels.</div><div class="demo"><div class="bg-gradient" style="padding:0.5rem">gradient</div></div><pre class="code-block"><code>class="bg-gradient"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">Divide utilities (semantic divider classes)</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.divide-y</div><div class="desc">Adds top border to all but first child.</div><div class="usage">Replace <code>&lt;hr&gt;</code> in lists.</div><div class="demo"><div class="divide-y"><div style="padding:0.25rem">A</div><div style="padding:0.25rem">B</div><div style="padding:0.25rem">C</div></div></div><pre class="code-block"><code>class="divide-y"</code></pre></div>
     <div class="item"><div class="name">.divide-x</div><div class="desc">Adds left border to all but first child.</div><div class="usage">Vertical dividers in toolbars.</div><div class="demo"><div class="divide-x" style="display:flex"><span style="padding:0 0.5rem">A</span><span style="padding:0 0.5rem">B</span></div></div><pre class="code-block"><code>class="divide-x"</code></pre></div>
+  </div>
+
+  </section>
+
+<!-- ============================================================ DISPLAY -->
+<section class="section" id="display">
+  <h2 class="section-title">Display Utilities <span class="meta">slashed-utilities.css</span></h2>
+
+  <div class="rationale">
+    <strong>Layout-mode toggles.</strong> Block / inline / flex / grid / contents / hidden — pair with responsive prefixes for breakpoint-aware layouts.
   </div>
 
   <h3 class="subheading">Display</h3>
@@ -1299,7 +1357,17 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.hidden</div><div class="desc"><code>display: none</code>.</div><div class="usage">Conditionally hide elements.</div><div class="demo">(hidden — not rendered)</div><pre class="code-block"><code>class="hidden"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Flex</h3>
+  </section>
+
+<!-- ============================================================ FLEX & GRID -->
+<section class="section" id="flex-grid">
+  <h2 class="section-title">Flex &amp; Grid Utilities <span class="meta">slashed-utilities.css</span></h2>
+
+  <div class="rationale">
+    <strong>Direction, wrap, alignment, span.</strong> Configure flex/grid containers and their children. Pair with responsive prefixes for break-aware layouts.
+  </div>
+
+  <h3 class="subheading">Flex direction &amp; wrapping</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.flex-row / col / row-reverse</div><div class="desc">Flex direction.</div><div class="usage">Switch flex axis.</div><div class="demo"><div class="flex flex-col gap-2xs"><span class="grid-cell">A</span><span class="grid-cell">B</span></div></div><pre class="code-block"><code>class="flex flex-col"</code></pre></div>
     <div class="item"><div class="name">.flex-wrap / .flex-nowrap</div><div class="desc">Wrap behaviour.</div><div class="usage">Toolbars (nowrap), tag clusters (wrap).</div><div class="demo"><div class="flex flex-wrap gap-2xs"><span class="grid-cell">A</span><span class="grid-cell">B</span><span class="grid-cell">C</span></div></div><pre class="code-block"><code>class="flex flex-wrap"</code></pre></div>
@@ -1321,7 +1389,47 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.row-span-2 / 3 / 4</div><div class="desc">Grid row span.</div><div class="usage">Make a cell taller (vertical span).</div><div class="demo"><div class="grid gap-2xs" style="grid-template-columns:1fr 1fr;grid-auto-rows:24px"><span class="grid-cell row-span-2">tall</span><span class="grid-cell">a</span><span class="grid-cell">b</span></div></div><pre class="code-block"><code>class="row-span-2"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Sizing — width</h3>
+  </section>
+
+<!-- ============================================================ BORDERS -->
+<section class="section" id="borders">
+  <h2 class="section-title">Borders &amp; Radius <span class="meta">slashed-utilities-visual.css · <span class="tag tag--opt">opt-in</span></span></h2>
+
+  <div class="rationale">
+    <strong>Decorative — opt-in.</strong> Border width / style / colour / radius utilities. Lives in <code>slashed-utilities-visual.css</code>. Load it explicitly after <code>slashed-full.css</code>.
+  </div>
+
+  <h3 class="subheading">Border width &amp; sides</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.border</div><div class="desc">1px border (uses <code>--color-border</code>).</div><div class="usage">Quick bordered surface.</div><div class="demo"><div class="border" style="padding:0.5rem">.border</div></div><pre class="code-block"><code>class="border"</code></pre></div>
+    <div class="item"><div class="name">.border-0</div><div class="desc">Removes border.</div><div class="usage">Reset borders on inputs / buttons.</div><div class="demo"><button class="border-0" style="padding:0.5rem">no border</button></div><pre class="code-block"><code>class="border-0"</code></pre></div>
+    <div class="item"><div class="name">.border-2 / .border-4</div><div class="desc">Border-width 2px / 4px.</div><div class="usage">Heavier borders for selected states.</div><div class="demo"><div class="border border-2" style="padding:0.5rem">2px</div></div><pre class="code-block"><code>class="border border-2"</code></pre></div>
+    <div class="item"><div class="name">.border-t / b / l / r / x / y</div><div class="desc">Single-side / axis borders.</div><div class="usage">Card dividers, table borders.</div><div class="demo"><div class="border-b" style="padding:0.5rem">border-b</div></div><pre class="code-block"><code>class="border-b"</code></pre></div>
+    <div class="item"><div class="name">.border-dashed / .border-dotted</div><div class="desc">Border-style overrides.</div><div class="usage">Dashed dropzones.</div><div class="demo"><div class="border border-dashed" style="padding:0.5rem">dashed</div></div><pre class="code-block"><code>class="border border-dashed"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">Border color</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.border-primary / .border-strong / .border-subtle</div><div class="desc">Semantic border colour utilities.</div><div class="usage">Brand-aware borders.</div><div class="demo"><div class="border border-primary" style="padding:0.5rem">primary</div></div><pre class="code-block"><code>class="border border-primary"</code></pre></div>
+    <div class="item"><div class="name">.accent-primary</div><div class="desc"><code>accent-color: var(--primary)</code> — colours native form controls.</div><div class="usage">Native checkboxes/radios in brand colour.</div><div class="demo"><input type="checkbox" class="accent-primary" checked></div><pre class="code-block"><code>class="accent-primary"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">Border radius</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.rounded-none</div><div class="desc">No radius.</div><div class="usage">Flat-corner overrides.</div><div class="demo"><div class="rounded-none border" style="height:32px"></div></div><pre class="code-block"><code>class="rounded-none"</code></pre></div>
+    <div class="item"><div class="name">.rounded-xs / s / m / l / xl / 2xl / full</div><div class="desc">Radius from token scale.</div><div class="usage">Pill (full), card (m), tight (s).</div><div class="demo"><div class="rounded-l border" style="height:32px"></div></div><pre class="code-block"><code>class="rounded-l"</code></pre></div>
+  </div>
+</section>
+
+<!-- ============================================================ POSITION & SIZING -->
+<section class="section" id="position">
+  <h2 class="section-title">Position &amp; Sizing <span class="meta">slashed-utilities.css</span></h2>
+
+  <div class="rationale">
+    <strong>Position, z-index, width / height / aspect-ratio.</strong> z-index utilities use the token scale so stacking is predictable.
+  </div>
+
+  <h3 class="subheading">Width</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.w-full / auto / fit / min / max</div><div class="desc">Intrinsic widths.</div><div class="usage">Reset/auto-size elements.</div><div class="demo"><div class="w-full" style="background:var(--primary-100)">w-full</div></div><pre class="code-block"><code>class="w-full"</code></pre></div>
     <div class="item"><div class="name">.w-1/2, .w-1/3, .w-2/3, .w-1/4, .w-3/4</div><div class="desc">Fractional widths.</div><div class="usage">Quick proportional layouts.</div><div class="demo"><div class="w-1/2" style="background:var(--primary-100)">w-1/2</div></div><pre class="code-block"><code>class="w-1/2"</code></pre></div>
@@ -1332,7 +1440,7 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.measure-xs / s / m / l / xl / 2xl</div><div class="desc">Centred reading-width presets (40–64rem).</div><div class="usage">Article body line lengths.</div><div class="demo"><div class="measure-s" style="background:var(--primary-100);padding:0.25rem">measure-s</div></div><pre class="code-block"><code>class="measure-m"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Sizing — height &amp; aspect</h3>
+  <h3 class="subheading">Height &amp; aspect ratio</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.h-full / auto / screen / svh / min / max</div><div class="desc">Height utilities.</div><div class="usage">Hero sections, full-height containers.</div><div class="demo"><div class="h-full" style="background:var(--primary-100);padding:0.25rem">h-full</div></div><pre class="code-block"><code>class="h-full"</code></pre></div>
     <div class="item"><div class="name">.min-h-0 / screen / svh</div><div class="desc">Min-height utilities.</div><div class="usage">Hero sections.</div><div class="demo">min-h-svh — full viewport</div><pre class="code-block"><code>class="min-h-svh"</code></pre></div>
@@ -1341,12 +1449,22 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.aspect-video / square / 3-2 / 4-3</div><div class="desc">Aspect-ratio presets.</div><div class="usage">Image / video placeholders.</div><div class="demo"><div class="aspect-video" style="width:100px;background:var(--primary-200);border-radius:4px"></div></div><pre class="code-block"><code>class="aspect-video"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Position &amp; z-index</h3>
+  <h3 class="subheading">Position &amp; z-index (all 14 levels)</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.static / relative / absolute / fixed / sticky</div><div class="desc">Position utilities.</div><div class="usage">Stacking contexts, positioned overlays.</div><div class="demo"><div class="relative" style="background:var(--primary-100);padding:0.5rem">relative parent</div></div><pre class="code-block"><code>class="relative"</code></pre></div>
     <div class="item"><div class="name">.inset-0 / inset-x-0 / inset-y-0</div><div class="desc">Inset shorthand (all / horizontal / vertical).</div><div class="usage">Absolute fill.</div><div class="demo">inset-0 → all 0</div><pre class="code-block"><code>class="absolute inset-0"</code></pre></div>
     <div class="item"><div class="name">.top / right / bottom / left / start / end-0</div><div class="desc">Single-side inset utilities.</div><div class="usage">Position element to one side.</div><div class="demo">top-0, etc.</div><pre class="code-block"><code>class="absolute top-0 right-0"</code></pre></div>
     <div class="item"><div class="name">.z-below / base / raised / docked / above / dropdown / sticky / banner / overlay / modal / popover / toast / tooltip / max</div><div class="desc">z-index from token scale.</div><div class="usage">Predictable stacking.</div><div class="demo">tokenised z-index</div><pre class="code-block"><code>class="z-modal"</code></pre></div>
+  </div>
+
+  </section>
+
+<!-- ============================================================ EFFECTS -->
+<section class="section" id="effects">
+  <h2 class="section-title">Effects · Overflow · Cursor · Motion <span class="meta">slashed-utilities.css + slashed-utilities-visual.css (decoration is opt-in)</span></h2>
+
+  <div class="rationale">
+    <strong>Visual effects, scroll, interaction, motion.</strong> Configurational utilities (overflow, cursor, view-transitions, snap) ship in core. Decorative utilities (shadow, opacity, animation, transition, filter) live in the opt-in <code>slashed-utilities-visual.css</code>.
   </div>
 
   <h3 class="subheading">View transitions, object fit, overflow</h3>
@@ -1363,7 +1481,7 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.touch-none / pan-x / pan-y</div><div class="desc"><code>touch-action</code>.</div><div class="usage">Custom drag/pan UI.</div><div class="demo">touch action presets</div><pre class="code-block"><code>class="touch-pan-x"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Interaction &amp; visibility</h3>
+  <h3 class="subheading">Cursor, interaction &amp; visibility</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.cursor-pointer / default / text / not-allowed / wait / grab / grabbing</div><div class="desc">Cursor utilities.</div><div class="usage">Interactive non-link elements.</div><div class="demo"><span class="cursor-pointer" style="text-decoration:underline">hover me</span></div><pre class="code-block"><code>class="cursor-pointer"</code></pre></div>
     <div class="item"><div class="name">.select-none / .select-text / .select-all</div><div class="desc">User-select.</div><div class="usage">Prevent selection on UI chrome, full-select on copy targets.</div><div class="demo"><span class="select-all">select-all</span></div><pre class="code-block"><code>class="select-all"</code></pre></div>
@@ -1374,7 +1492,7 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.order-first / last / none</div><div class="desc">Flex order utilities (-9999 / 9999 / 0).</div><div class="usage">Visual reorder without DOM change.</div><div class="demo"><div class="flex gap-2xs"><span class="grid-cell">A</span><span class="grid-cell order-first">B (first)</span></div></div><pre class="code-block"><code>class="order-first"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Misc utilities</h3>
+  <h3 class="subheading">Misc effects (mask, snap, content-auto, fill/stroke)</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.input-hidden</div><div class="desc">Hides an input visually but keeps it in the form.</div><div class="usage">Custom radio/checkbox UI (style the label).</div><div class="demo">(invisible input)</div><pre class="code-block"><code>class="input-hidden"</code></pre></div>
     <div class="item"><div class="name">.content-auto</div><div class="desc"><code>content-visibility: auto</code> — defer offscreen render.</div><div class="usage">Long pages with many sections.</div><div class="demo">deferred render</div><pre class="code-block"><code>class="content-auto"</code></pre></div>
@@ -1384,20 +1502,63 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.fill-current / .stroke-current</div><div class="desc">SVG fill/stroke from <code>currentColor</code>.</div><div class="usage">Inline SVGs that should match text colour.</div><div class="demo"><svg class="fill-current" viewBox="0 0 16 16" width="20" height="20"><circle cx="8" cy="8" r="6"/></svg></div><pre class="code-block"><code>class="fill-current"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Accessibility helpers</h3>
+  <h3 class="subheading">Shadows &amp; opacity (visual — opt-in)</h3>
   <div class="class-grid">
-    <div class="item"><div class="name">.not-sr-only <span class="tag tag--a11y">a11y</span></div><div class="desc">Reveals an <code>.sr-only</code> element back into normal flow.</div><div class="usage">Toggle visibility on focus or hover.</div><div class="demo">restored to flow</div><pre class="code-block"><code>class="sr-only md:not-sr-only"</code></pre></div>
-    <div class="item"><div class="name">.has-invalid:has(:user-invalid) <span class="tag tag--a11y">a11y</span></div><div class="desc">Marks parent error border when child input is invalid.</div><div class="usage">Custom-styled form groups.</div><div class="demo">parent reflects invalid</div><pre class="code-block"><code>class="has-invalid"</code></pre></div>
-    <div class="item"><div class="name">.has-checked:has(:checked) <span class="tag tag--a11y">a11y</span></div><div class="desc">Marks parent selected state when child input is checked.</div><div class="usage">Card-style radio/checkbox.</div><div class="demo">parent reflects checked</div><pre class="code-block"><code>class="has-checked"</code></pre></div>
+    <div class="item"><div class="name">.shadow-none</div><div class="desc">Removes box-shadow.</div><div class="usage">Override card shadow on flat layouts.</div><div class="demo"><div class="shadow-none border" style="padding:0.5rem">no shadow</div></div><pre class="code-block"><code>class="shadow-none"</code></pre></div>
+    <div class="item"><div class="name">.shadow-2xs / xs / s / m / l / xl / float / glow / colored / inner</div><div class="desc">Token shadow utilities.</div><div class="usage">Quick elevation toggling.</div><div class="demo"><div class="shadow-l" style="padding:0.5rem;background:var(--color-surface);border-radius:6px">shadow-l</div></div><pre class="code-block"><code>class="shadow-m"</code></pre></div>
+    <div class="item"><div class="name">.opacity-0 … .opacity-100 (12 steps)</div><div class="desc">Opacity from 0 → 1.</div><div class="usage">Disabled states, decorative fades.</div><div class="demo"><div class="opacity-50" style="background:var(--primary);padding:0.5rem;color:white">50%</div></div><pre class="code-block"><code>class="opacity-50"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Container queries</h3>
+  <h3 class="subheading">Transitions &amp; animations (visual — opt-in)</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.animate-fade-in</div><div class="desc">Fade-in keyframe animation.</div><div class="usage">Reveal-on-mount.</div><div class="demo"><div class="animate-fade-in" style="background:var(--primary-100);padding:0.5rem">fade in</div></div><pre class="code-block"><code>class="animate-fade-in"</code></pre></div>
+    <div class="item"><div class="name">.animate-scale-in</div><div class="desc">Scale-in keyframe.</div><div class="usage">Modal entrances, popovers.</div><div class="demo"><div class="animate-scale-in" style="background:var(--secondary-100);padding:0.5rem">scale in</div></div><pre class="code-block"><code>class="animate-scale-in"</code></pre></div>
+    <div class="item"><div class="name">.animate-slide-up</div><div class="desc">Slide-up + fade-in.</div><div class="usage">Card grid reveals.</div><div class="demo"><div class="animate-slide-up" style="background:var(--accent-100);padding:0.5rem">slide up</div></div><pre class="code-block"><code>class="animate-slide-up"</code></pre></div>
+    <div class="item"><div class="name">.animate-spin</div><div class="desc">Infinite spin.</div><div class="usage">Loading icons.</div><div class="demo"><span class="animate-spin" style="display:inline-block;width:1.5rem;height:1.5rem;border:2px solid var(--primary);border-top-color:transparent;border-radius:50%"></span></div><pre class="code-block"><code>class="animate-spin"</code></pre></div>
+    <div class="item"><div class="name">.transition / .transition-colors / .transition-fast / .transition-shadow / .transition-transform / .transition-none</div><div class="desc">Transition presets and disable.</div><div class="usage">Hover effects, micro-interactions.</div><div class="demo">.transition presets</div><pre class="code-block"><code>class="transition"
+class="transition-colors"
+class="transition-fast"
+class="transition-shadow"
+class="transition-transform"
+class="transition-none"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">Filters, fill, text effects (visual — opt-in)</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.backdrop-blur</div><div class="desc">8px backdrop blur.</div><div class="usage">Glass headers, modals.</div><div class="demo"><div class="backdrop-blur" style="background:rgba(255,255,255,0.4);padding:0.5rem">blurred</div></div><pre class="code-block"><code>class="backdrop-blur"</code></pre></div>
+    <div class="item"><div class="name">.grayscale / .grayscale-0</div><div class="desc">Grayscale filter on/off.</div><div class="usage">Disabled images, hover-restore colour.</div><div class="demo"><div class="grayscale" style="background:linear-gradient(45deg,red,blue);padding:0.5rem;color:white">grayscale</div></div><pre class="code-block"><code>class="grayscale"</code></pre></div>
+    <div class="item"><div class="name">.fill-primary / success / warning / error / white / none</div><div class="desc">SVG fill utilities.</div><div class="usage">Inline icons.</div><div class="demo"><svg class="fill-primary" viewBox="0 0 16 16" width="20" height="20"><circle cx="8" cy="8" r="6"/></svg></div><pre class="code-block"><code>class="fill-primary"</code></pre></div>
+    <div class="item"><div class="name">.stroke-none / .stroke-width-1 / -2</div><div class="desc">SVG stroke utilities.</div><div class="usage">Match icon weight to typography.</div><div class="demo">stroke utilities</div><pre class="code-block"><code>class="stroke-width-2"</code></pre></div>
+    <div class="item"><div class="name">.text-gradient</div><div class="desc">Gradient text fill.</div><div class="usage">Marketing headlines.</div><div class="demo"><span class="text-gradient" style="background:linear-gradient(45deg,var(--primary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700;font-size:1.5rem">Gradient</span></div><pre class="code-block"><code>class="text-gradient"</code></pre></div>
+    <div class="item"><div class="name">.text-box-trim <span class="tag tag--exp">progressive</span></div><div class="desc"><code>text-box: trim-both cap alphabetic</code> — strips font-leading.</div><div class="usage">Pixel-perfect headings (Chrome 133+).</div><div class="demo">text-box trim</div><pre class="code-block"><code>class="text-box-trim"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">CSS columns (multi-column layout)</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.cols-2 / 3 / 4</div><div class="desc">CSS multi-column layouts.</div><div class="usage">Long lists, magazine-style copy.</div><div class="demo"><div class="cols-2" style="column-gap:0.5rem"><p style="break-inside:avoid">Para 1</p><p style="break-inside:avoid">Para 2</p><p style="break-inside:avoid">Para 3</p></div></div><pre class="code-block"><code>class="cols-2"</code></pre></div>
+    <div class="item"><div class="name">.cols-auto-xs / s / m</div><div class="desc">Auto-flow columns at given column-width.</div><div class="usage">Responsive multi-column without explicit count.</div><div class="demo">auto column-width</div><pre class="code-block"><code>class="cols-auto-m"</code></pre></div>
+    <div class="item"><div class="name">.col-gap-m / .col-gap-l</div><div class="desc">Column gap presets.</div><div class="usage">Wider gutters between columns.</div><div class="demo">column-gap presets</div><pre class="code-block"><code>class="col-gap-l"</code></pre></div>
+    <div class="item"><div class="name">.col-span-all</div><div class="desc"><code>column-span: all</code> — element spans all columns.</div><div class="usage">Full-width headings inside multi-column.</div><div class="demo">spans all cols</div><pre class="code-block"><code>class="col-span-all"</code></pre></div>
+    <div class="item"><div class="name">.col-break-before / .col-break-after / .col-break-avoid</div><div class="desc">Column break controls.</div><div class="usage">Force / prevent column breaks.</div><div class="demo">break controls</div><pre class="code-block"><code>class="col-break-avoid"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">Container queries (cq-*)</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.cq-inline / .cq-size / .cq-normal</div><div class="desc">Set container-type on a parent.</div><div class="usage">Components that respond to their container width (not viewport).</div><div class="demo">container query enabled</div><pre class="code-block"><code>class="cq-inline"</code></pre></div>
     <div class="item"><div class="name">.cq-xs:* / .cq-sm:* / .cq-md:* / .cq-lg:*</div><div class="desc">Container-query variants at 20em / 30em / 48em / 64em.</div><div class="usage">Cards that change layout based on their column width.</div><div class="demo">container-query variants</div><pre class="code-block"><code>class="cq-md:flex"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Responsive variants — sm: / md: / lg: / xl:</h3>
+  </section>
+
+<!-- ============================================================ RESPONSIVE -->
+<section class="section" id="responsive">
+  <h2 class="section-title">Responsive Variants <span class="meta">sm: 30em · md: 48em · lg: 64em · xl: 80em</span></h2>
+
+  <div class="rationale">
+    <strong>em-based breakpoints.</strong> Hardcoded in <code>slashed-utilities.css</code> only — CSS forbids custom properties inside <code>@media</code>, so the four breakpoint values live in that file and nowhere else. Changing them globally requires editing that one file.
+  </div>
+
+  <h3 class="subheading">Responsive prefix utilities</h3>
   <div class="class-grid">
     <div class="item"><div class="name">sm: prefix</div><div class="desc">Applies at viewport ≥ 30em (480px).</div><div class="usage">First responsive break.</div><div class="demo"><div class="sm:flex" style="background:var(--primary-100);padding:0.25rem">resize me</div></div><pre class="code-block"><code>class="block sm:flex"</code></pre></div>
     <div class="item"><div class="name">md: prefix</div><div class="desc">Applies at viewport ≥ 48em (768px).</div><div class="usage">Tablet layouts.</div><div class="demo"><div class="md:hidden">visible below md</div></div><pre class="code-block"><code>class="md:hidden"</code></pre></div>
@@ -1408,7 +1569,33 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.md:sticky</div><div class="desc">Sticky position only at md+.</div><div class="usage">Sidebars that stick on desktop, normal on mobile.</div><div class="demo">md:sticky</div><pre class="code-block"><code>class="md:sticky"</code></pre></div>
   </div>
 
-  <h3 class="subheading">Theme &amp; print variants</h3>
+  </section>
+
+<!-- ============================================================ A11Y / PRINT / DARK -->
+<section class="section" id="a11y">
+  <h2 class="section-title">Accessibility, Print, Dark Mode <span class="meta">slashed-core.css + slashed-utilities.css</span></h2>
+
+  <div class="rationale">
+    <strong>Variants for assistive technology and alternate media.</strong> <code>.sr-only</code> + <code>.skip-to-content</code> live in core; <code>.dark:</code> / <code>.light:</code> / <code>.print:</code> prefixes are tokenised utility variants.
+  </div>
+
+  <h3 class="subheading">Accessibility helpers <span class="tag tag--a11y">a11y</span></h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.sr-only <span class="tag tag--a11y">a11y</span></div><div class="desc">Visually hidden but available to screen readers.</div><div class="usage">Labels for icon-only buttons.</div><div class="demo"><button>★ <span class="sr-only">Favourite</span></button></div><pre class="code-block"><code><span class="c-tag">&lt;span</span> <span class="c-attr">class</span>=<span class="c-string">"sr-only"</span><span class="c-tag">&gt;</span>Read more<span class="c-tag">&lt;/span&gt;</span></code></pre></div>
+    <div class="item"><div class="name">.not-sr-only <span class="tag tag--a11y">a11y</span></div><div class="desc">Reveals an <code>.sr-only</code> element back into normal flow.</div><div class="usage">Toggle visibility on focus or hover.</div><div class="demo">restored to flow</div><pre class="code-block"><code>class="sr-only md:not-sr-only"</code></pre></div>
+    <div class="item"><div class="name">.skip-to-content <span class="tag tag--a11y">a11y</span></div><div class="desc">Off-screen until focused — jumps over nav for keyboard users.</div><div class="usage">First element in <code>&lt;body&gt;</code> for skip-link.</div><div class="demo"><a class="skip-to-content" href="#tokens">Skip (tab to me)</a></div><pre class="code-block"><code><span class="c-tag">&lt;a</span> <span class="c-attr">class</span>=<span class="c-string">"skip-to-content"</span> <span class="c-attr">href</span>=<span class="c-string">"#main"</span><span class="c-tag">&gt;</span>Skip<span class="c-tag">&lt;/a&gt;</span></code></pre></div>
+    <div class="item"><div class="name">.has-invalid:has(:user-invalid) <span class="tag tag--a11y">a11y</span></div><div class="desc">Marks parent error border when child input is invalid.</div><div class="usage">Custom-styled form groups.</div><div class="demo">parent reflects invalid</div><pre class="code-block"><code>class="has-invalid"</code></pre></div>
+    <div class="item"><div class="name">.has-checked:has(:checked) <span class="tag tag--a11y">a11y</span></div><div class="desc">Marks parent selected state when child input is checked.</div><div class="usage">Card-style radio/checkbox.</div><div class="demo">parent reflects checked</div><pre class="code-block"><code>class="has-checked"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">Print utilities</h3>
+  <div class="class-grid">
+    <div class="item"><div class="name">.no-print</div><div class="desc">Hidden when printing.</div><div class="usage">Hide nav / decorative content.</div><div class="demo">visible on screen</div><pre class="code-block"><code>class="no-print"</code></pre></div>
+    <div class="item"><div class="name">.print-only</div><div class="desc">Hidden on screen, shown in print.</div><div class="usage">Print-friendly URL listings, page numbers.</div><div class="demo">(only visible when printing)</div><pre class="code-block"><code>class="print-only"</code></pre></div>
+    <div class="item"><div class="name">.page-break-before / .page-break-after</div><div class="desc">Force page breaks when printing.</div><div class="usage">Print layout control.</div><div class="demo">page-break controls</div><pre class="code-block"><code>class="page-break-before"</code></pre></div>
+  </div>
+
+  <h3 class="subheading">Theme variants &amp; print prefixes</h3>
   <div class="class-grid">
     <div class="item"><div class="name">.dark:hidden / .dark:block / .dark:flex</div><div class="desc">Display variants when <code>[data-theme="dark"]</code>.</div><div class="usage">Show/hide elements per theme.</div><div class="demo"><span class="dark:hidden">visible in light</span></div><pre class="code-block"><code>class="dark:hidden"</code></pre></div>
     <div class="item"><div class="name">.dark:text-white / .dark:text-muted</div><div class="desc">Per-theme text colour.</div><div class="usage">Theme-specific colour overrides.</div><div class="demo"><span class="dark:text-white">contrast</span></div><pre class="code-block"><code>class="text-body dark:text-white"</code></pre></div>
@@ -1416,89 +1603,9 @@ class="cs-modal__foot"</code></pre></div>
     <div class="item"><div class="name">.print:hidden / .print:block / .print:text-black / .print:bg-white / .print:shadow-none / .print:border-none / .print:p-0 / .print:m-0</div><div class="desc">Print-only utilities.</div><div class="usage">Print-friendly stylesheet without a separate file.</div><div class="demo">visible only when printing</div><pre class="code-block"><code>class="print:hidden"</code></pre></div>
   </div>
 
-  <h3 class="subheading">CSS columns</h3>
+  <h3 class="subheading">Dark-mode visual variants <span class="tag tag--opt">opt-in</span></h3>
   <div class="class-grid">
-    <div class="item"><div class="name">.cols-2 / 3 / 4</div><div class="desc">CSS multi-column layouts.</div><div class="usage">Long lists, magazine-style copy.</div><div class="demo"><div class="cols-2" style="column-gap:0.5rem"><p style="break-inside:avoid">Para 1</p><p style="break-inside:avoid">Para 2</p><p style="break-inside:avoid">Para 3</p></div></div><pre class="code-block"><code>class="cols-2"</code></pre></div>
-    <div class="item"><div class="name">.cols-auto-xs / s / m</div><div class="desc">Auto-flow columns at given column-width.</div><div class="usage">Responsive multi-column without explicit count.</div><div class="demo">auto column-width</div><pre class="code-block"><code>class="cols-auto-m"</code></pre></div>
-    <div class="item"><div class="name">.col-gap-m / .col-gap-l</div><div class="desc">Column gap presets.</div><div class="usage">Wider gutters between columns.</div><div class="demo">column-gap presets</div><pre class="code-block"><code>class="col-gap-l"</code></pre></div>
-    <div class="item"><div class="name">.col-span-all</div><div class="desc"><code>column-span: all</code> — element spans all columns.</div><div class="usage">Full-width headings inside multi-column.</div><div class="demo">spans all cols</div><pre class="code-block"><code>class="col-span-all"</code></pre></div>
-    <div class="item"><div class="name">.col-break-before / .col-break-after / .col-break-avoid</div><div class="desc">Column break controls.</div><div class="usage">Force / prevent column breaks.</div><div class="demo">break controls</div><pre class="code-block"><code>class="col-break-avoid"</code></pre></div>
-  </div>
-</section>
-
-<!-- ============================================================ VISUAL UTILITIES -->
-<section class="section" id="visual">
-  <h2 class="section-title">Visual utilities <span class="meta">slashed-utilities-visual.css · docs/UTILITIES-VISUAL.md · <span class="tag tag--opt">opt-in</span></span></h2>
-
-  <div class="rationale">
-    <strong>Opt-in decorative utilities.</strong> SLASHED core does <em>not</em> ship decorative utilities — decoration belongs in BEM rules with design tokens. This file exists for projects that prefer utility composition or rapid prototyping. <strong>Load it after <code>slashed-full.css</code></strong>; rules sit in the <code>slashed.visual</code> layer (after utilities, before a11y).
-  </div>
-
-  <h3 class="subheading">Border utilities</h3>
-  <div class="class-grid">
-    <div class="item"><div class="name">.border</div><div class="desc">1px border (uses <code>--color-border</code>).</div><div class="usage">Quick bordered surface.</div><div class="demo"><div class="border" style="padding:0.5rem">.border</div></div><pre class="code-block"><code>class="border"</code></pre></div>
-    <div class="item"><div class="name">.border-0</div><div class="desc">Removes border.</div><div class="usage">Reset borders on inputs / buttons.</div><div class="demo"><button class="border-0" style="padding:0.5rem">no border</button></div><pre class="code-block"><code>class="border-0"</code></pre></div>
-    <div class="item"><div class="name">.border-2 / .border-4</div><div class="desc">Border-width 2px / 4px.</div><div class="usage">Heavier borders for selected states.</div><div class="demo"><div class="border border-2" style="padding:0.5rem">2px</div></div><pre class="code-block"><code>class="border border-2"</code></pre></div>
-    <div class="item"><div class="name">.border-t / b / l / r / x / y</div><div class="desc">Single-side / axis borders.</div><div class="usage">Card dividers, table borders.</div><div class="demo"><div class="border-b" style="padding:0.5rem">border-b</div></div><pre class="code-block"><code>class="border-b"</code></pre></div>
-    <div class="item"><div class="name">.border-dashed / .border-dotted</div><div class="desc">Border-style overrides.</div><div class="usage">Dashed dropzones.</div><div class="demo"><div class="border border-dashed" style="padding:0.5rem">dashed</div></div><pre class="code-block"><code>class="border border-dashed"</code></pre></div>
-    <div class="item"><div class="name">.border-primary / .border-strong / .border-subtle</div><div class="desc">Semantic border colour utilities.</div><div class="usage">Brand-aware borders.</div><div class="demo"><div class="border border-primary" style="padding:0.5rem">primary</div></div><pre class="code-block"><code>class="border border-primary"</code></pre></div>
-    <div class="item"><div class="name">.accent-primary</div><div class="desc"><code>accent-color: var(--primary)</code> — colours native form controls.</div><div class="usage">Native checkboxes/radios in brand colour.</div><div class="demo"><input type="checkbox" class="accent-primary" checked></div><pre class="code-block"><code>class="accent-primary"</code></pre></div>
-  </div>
-
-  <h3 class="subheading">Border radius</h3>
-  <div class="class-grid">
-    <div class="item"><div class="name">.rounded-none</div><div class="desc">No radius.</div><div class="usage">Flat-corner overrides.</div><div class="demo"><div class="rounded-none border" style="height:32px"></div></div><pre class="code-block"><code>class="rounded-none"</code></pre></div>
-    <div class="item"><div class="name">.rounded-xs / s / m / l / xl / 2xl / full</div><div class="desc">Radius from token scale.</div><div class="usage">Pill (full), card (m), tight (s).</div><div class="demo"><div class="rounded-l border" style="height:32px"></div></div><pre class="code-block"><code>class="rounded-l"</code></pre></div>
-  </div>
-
-  <h3 class="subheading">Background — palette &amp; semantic</h3>
-  <div class="class-grid">
-    <div class="item"><div class="name">.bg-primary-50 / 100 / 200 / 700 / 800 / 900 / 950</div><div class="desc">Brand palette backgrounds.</div><div class="usage">Tinted surfaces.</div><div class="demo"><div class="bg-primary-100" style="padding:0.5rem">primary-100</div></div><pre class="code-block"><code>class="bg-primary-100"</code></pre></div>
-    <div class="item"><div class="name">.bg-secondary-100 / 800 / 900</div><div class="desc">Secondary palette backgrounds.</div><div class="usage">Two-tone hierarchies.</div><div class="demo"><div class="bg-secondary-100" style="padding:0.5rem">secondary-100</div></div><pre class="code-block"><code>class="bg-secondary-100"</code></pre></div>
-    <div class="item"><div class="name">.bg-accent-100 / 800 / 900</div><div class="desc">Accent palette backgrounds.</div><div class="usage">Highlights.</div><div class="demo"><div class="bg-accent-100" style="padding:0.5rem">accent-100</div></div><pre class="code-block"><code>class="bg-accent-100"</code></pre></div>
-    <div class="item"><div class="name">.bg-neutral-100 / 800 / 900</div><div class="desc">Neutral backgrounds.</div><div class="usage">Greys.</div><div class="demo"><div class="bg-neutral-100" style="padding:0.5rem">neutral-100</div></div><pre class="code-block"><code>class="bg-neutral-100"</code></pre></div>
-    <div class="item"><div class="name">.bg-success-100 / .bg-warning-100 / .bg-error-100</div><div class="desc">Status-tinted backgrounds.</div><div class="usage">Notice panels.</div><div class="demo"><div class="bg-success-100" style="padding:0.5rem">success</div></div><pre class="code-block"><code>class="bg-success-100"</code></pre></div>
-    <div class="item"><div class="name">.bg-primary / .bg-secondary / .bg-accent</div><div class="desc">Solid brand background + on-* text colour.</div><div class="usage">Solid CTAs.</div><div class="demo"><div class="bg-primary" style="padding:0.5rem">solid primary</div></div><pre class="code-block"><code>class="bg-primary"</code></pre></div>
-    <div class="item"><div class="name">.bg-success / .bg-warning / .bg-error</div><div class="desc">Solid status backgrounds.</div><div class="usage">Status badges, hero banners.</div><div class="demo"><div class="bg-success" style="padding:0.5rem">success</div></div><pre class="code-block"><code>class="bg-success"</code></pre></div>
-    <div class="item"><div class="name">.bg-surface / surface-2 / surface-elevated / surface-overlay</div><div class="desc">Semantic surface backgrounds.</div><div class="usage">Theme-aware fills.</div><div class="demo"><div class="bg-surface-2" style="padding:0.5rem">surface-2</div></div><pre class="code-block"><code>class="bg-surface"</code></pre></div>
-    <div class="item"><div class="name">.bg-light / .bg-dark / .bg-ultra-light / .bg-ultra-dark</div><div class="desc">Forced-scheme backgrounds (independent of <code>data-theme</code>).</div><div class="usage">Hero sections that should always be one scheme.</div><div class="demo"><div class="bg-dark" style="padding:0.5rem">dark</div></div><pre class="code-block"><code>class="bg-dark"</code></pre></div>
-    <div class="item"><div class="name">.bg-transparent / .bg-inherit</div><div class="desc">Background presets.</div><div class="usage">Reset backgrounds.</div><div class="demo">transparent</div><pre class="code-block"><code>class="bg-transparent"</code></pre></div>
-    <div class="item"><div class="name">.bg-gradient</div><div class="desc">Brand gradient surface.</div><div class="usage">Hero panels.</div><div class="demo"><div class="bg-gradient" style="padding:0.5rem">gradient</div></div><pre class="code-block"><code>class="bg-gradient"</code></pre></div>
-  </div>
-
-  <h3 class="subheading">Shadow &amp; opacity</h3>
-  <div class="class-grid">
-    <div class="item"><div class="name">.shadow-none</div><div class="desc">Removes box-shadow.</div><div class="usage">Override card shadow on flat layouts.</div><div class="demo"><div class="shadow-none border" style="padding:0.5rem">no shadow</div></div><pre class="code-block"><code>class="shadow-none"</code></pre></div>
-    <div class="item"><div class="name">.shadow-2xs / xs / s / m / l / xl / float / glow / colored / inner</div><div class="desc">Token shadow utilities.</div><div class="usage">Quick elevation toggling.</div><div class="demo"><div class="shadow-l" style="padding:0.5rem;background:var(--color-surface);border-radius:6px">shadow-l</div></div><pre class="code-block"><code>class="shadow-m"</code></pre></div>
-    <div class="item"><div class="name">.opacity-0 … .opacity-100 (12 steps)</div><div class="desc">Opacity from 0 → 1.</div><div class="usage">Disabled states, decorative fades.</div><div class="demo"><div class="opacity-50" style="background:var(--primary);padding:0.5rem;color:white">50%</div></div><pre class="code-block"><code>class="opacity-50"</code></pre></div>
-  </div>
-
-  <h3 class="subheading">Animations &amp; transitions</h3>
-  <div class="class-grid">
-    <div class="item"><div class="name">.animate-fade-in</div><div class="desc">Fade-in keyframe animation.</div><div class="usage">Reveal-on-mount.</div><div class="demo"><div class="animate-fade-in" style="background:var(--primary-100);padding:0.5rem">fade in</div></div><pre class="code-block"><code>class="animate-fade-in"</code></pre></div>
-    <div class="item"><div class="name">.animate-scale-in</div><div class="desc">Scale-in keyframe.</div><div class="usage">Modal entrances, popovers.</div><div class="demo"><div class="animate-scale-in" style="background:var(--secondary-100);padding:0.5rem">scale in</div></div><pre class="code-block"><code>class="animate-scale-in"</code></pre></div>
-    <div class="item"><div class="name">.animate-slide-up</div><div class="desc">Slide-up + fade-in.</div><div class="usage">Card grid reveals.</div><div class="demo"><div class="animate-slide-up" style="background:var(--accent-100);padding:0.5rem">slide up</div></div><pre class="code-block"><code>class="animate-slide-up"</code></pre></div>
-    <div class="item"><div class="name">.animate-spin</div><div class="desc">Infinite spin.</div><div class="usage">Loading icons.</div><div class="demo"><span class="animate-spin" style="display:inline-block;width:1.5rem;height:1.5rem;border:2px solid var(--primary);border-top-color:transparent;border-radius:50%"></span></div><pre class="code-block"><code>class="animate-spin"</code></pre></div>
-    <div class="item"><div class="name">.transition</div><div class="desc">Default transition (all / 250ms / ease-out).</div><div class="usage">Quick interactive transitions.</div><div class="demo">.transition</div><pre class="code-block"><code>class="transition"</code></pre></div>
-    <div class="item"><div class="name">.transition-colors</div><div class="desc">Colour-only transition.</div><div class="usage">Hover-on-hover colour changes.</div><div class="demo">.transition-colors</div><pre class="code-block"><code>class="transition-colors"</code></pre></div>
-    <div class="item"><div class="name">.transition-fast</div><div class="desc">Faster transition (150ms).</div><div class="usage">Micro-interactions.</div><div class="demo">.transition-fast</div><pre class="code-block"><code>class="transition-fast"</code></pre></div>
-    <div class="item"><div class="name">.transition-none</div><div class="desc">Disable transitions.</div><div class="usage">Override inherited transitions.</div><div class="demo">none</div><pre class="code-block"><code>class="transition-none"</code></pre></div>
-    <div class="item"><div class="name">.transition-shadow / .transition-transform</div><div class="desc">Property-specific transitions.</div><div class="usage">Targeted hover effects.</div><div class="demo">shadow / transform</div><pre class="code-block"><code>class="transition-shadow"</code></pre></div>
-  </div>
-
-  <h3 class="subheading">Filters, fill, text effects</h3>
-  <div class="class-grid">
-    <div class="item"><div class="name">.backdrop-blur</div><div class="desc">8px backdrop blur.</div><div class="usage">Glass headers, modals.</div><div class="demo"><div class="backdrop-blur" style="background:rgba(255,255,255,0.4);padding:0.5rem">blurred</div></div><pre class="code-block"><code>class="backdrop-blur"</code></pre></div>
-    <div class="item"><div class="name">.grayscale / .grayscale-0</div><div class="desc">Grayscale filter on/off.</div><div class="usage">Disabled images, hover-restore colour.</div><div class="demo"><div class="grayscale" style="background:linear-gradient(45deg,red,blue);padding:0.5rem;color:white">grayscale</div></div><pre class="code-block"><code>class="grayscale"</code></pre></div>
-    <div class="item"><div class="name">.fill-primary / success / warning / error / white / none</div><div class="desc">SVG fill utilities.</div><div class="usage">Inline icons.</div><div class="demo"><svg class="fill-primary" viewBox="0 0 16 16" width="20" height="20"><circle cx="8" cy="8" r="6"/></svg></div><pre class="code-block"><code>class="fill-primary"</code></pre></div>
-    <div class="item"><div class="name">.stroke-none / .stroke-width-1 / -2</div><div class="desc">SVG stroke utilities.</div><div class="usage">Match icon weight to typography.</div><div class="demo">stroke utilities</div><pre class="code-block"><code>class="stroke-width-2"</code></pre></div>
-    <div class="item"><div class="name">.text-gradient</div><div class="desc">Gradient text fill.</div><div class="usage">Marketing headlines.</div><div class="demo"><span class="text-gradient" style="background:linear-gradient(45deg,var(--primary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700;font-size:1.5rem">Gradient</span></div><pre class="code-block"><code>class="text-gradient"</code></pre></div>
-    <div class="item"><div class="name">.text-box-trim <span class="tag tag--exp">progressive</span></div><div class="desc"><code>text-box: trim-both cap alphabetic</code> — strips font-leading.</div><div class="usage">Pixel-perfect headings (Chrome 133+).</div><div class="demo">text-box trim</div><pre class="code-block"><code>class="text-box-trim"</code></pre></div>
-  </div>
-
-  <h3 class="subheading">Dark-mode visual variants</h3>
-  <div class="class-grid">
-    <div class="item"><div class="name">.dark:bg-surface</div><div class="desc">Surface background only in dark mode.</div><div class="usage">Per-theme backgrounds.</div><div class="demo">dark-only fill</div><pre class="code-block"><code>class="dark:bg-surface"</code></pre></div>
+    <div class="item"><div class="name">.dark:bg-surface</div><div class="desc">Surface background only in dark mode (visual layer).</div><div class="usage">Per-theme backgrounds.</div><div class="demo">dark-only fill</div><pre class="code-block"><code>class="dark:bg-surface"</code></pre></div>
     <div class="item"><div class="name">.dark:bg-neutral-900</div><div class="desc">Specific neutral background in dark mode.</div><div class="usage">Card override in dark mode.</div><div class="demo">dark-only neutral</div><pre class="code-block"><code>class="dark:bg-neutral-900"</code></pre></div>
     <div class="item"><div class="name">.dark:border-strong</div><div class="desc">Stronger border in dark mode.</div><div class="usage">Compensate for low-contrast borders in dark.</div><div class="demo">dark-only border</div><pre class="code-block"><code>class="dark:border-strong"</code></pre></div>
     <div class="item"><div class="name">.dark:shadow-none</div><div class="desc">Remove shadow in dark mode.</div><div class="usage">Shadows often distract in dark themes.</div><div class="demo">dark-only no-shadow</div><pre class="code-block"><code>class="dark:shadow-none"</code></pre></div>
