@@ -37,10 +37,12 @@ work on the framework itself.
   only `.masonry`). Not included in `slashed-full.css`.
 - `css/slashed-full.css` — concatenation of the four core files (tokens +
   core + components + utilities). Rebuilt by `bin/build-bundle.sh`.
-- `js/slashed-ui.js` — ~500B optional IIFE. Public API:
-  `window.slashedUI = { initStagger, toast }`. Adds ARIA states, focus
-  management, keyboard navigation, and programmatic toast on top of the
-  pure-CSS baseline. Zero dependencies.
+- `js/slashed-ui.js` — optional IIFE. Post-0.5.0.0 public API:
+  `window.slashedUI = { initStagger, toast, updateRange, closeModal,
+  openModal, toggleModal, initTabsAccessible, initModalFocusRestore,
+  initFormGroups, dismissToast }`. Adds ARIA states, focus management,
+  keyboard navigation, and programmatic toast on top of the pure-CSS
+  baseline. Zero dependencies.
 - `bin/build-bundle.sh` — rebuilds `slashed-full.css` from the four source
   files in the correct order.
 
@@ -179,6 +181,8 @@ obligations at `0.8.0.0` as a pre-condition for the 1.0 freeze.
 ---
 
 ## Pending work
+
+### 0.5.0.0 release — scheduled for this cut
 
 ---
 

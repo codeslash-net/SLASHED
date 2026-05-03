@@ -119,11 +119,14 @@ Classes: `.h1`, `.h2`, `.h3`, `.h4`, `.h5`, `.h6`
 | `.underline` | `text-decoration: underline` |
 | `.line-through` | `text-decoration: line-through` |
 | `.no-underline` | `text-decoration: none` |
+| `.link-reset` | `color: var(--color-text); text-decoration: none` (links inside surfaces that already imply clickability) |
+| `.text-eyebrow` | `font-weight: 700` + `letter-spacing: var(--tracking-widest)` + `text-transform: uppercase` (consolidated eyebrow primitive) |
 
 ### Line height
 
 | Class | Value |
 |-------|-------|
+| `.leading-none` | `1` (stat / number displays) |
 | `.leading-tight` | `var(--leading-tight)` (~1.15) |
 | `.leading-snug` | `var(--leading-snug)` (~1.3) |
 | `.leading-normal` | `var(--leading-normal)` (~1.5) |
@@ -369,6 +372,23 @@ Three axes with explicit prefix:
 | `.max-w-prose` | `max-width: var(--container-prose)` (~65ch for reading) |
 | `.max-h-full` | `max-height: 100%` |
 | `.max-h-screen` | `max-height: 100vh / 100dvh` |
+
+### Measure (centred reading widths)
+
+Pair `margin-inline: auto` with `max-inline-size`. Use for centred text
+columns with explicit rem widths (sourced from blueprints audit pass #2).
+Distinct from `.max-w-prose`, which uses the `--container-prose` token at
+65ch — `.measure-*` preserves the explicit rem values measured in
+wireframes.
+
+| Class | Value |
+|-------|-------|
+| `.measure-xs` | `40rem` |
+| `.measure-s` | `42rem` |
+| `.measure-m` | `44rem` |
+| `.measure-l` | `48rem` |
+| `.measure-xl` | `56rem` |
+| `.measure-2xl` | `64rem` |
 
 ### Aspect ratio
 

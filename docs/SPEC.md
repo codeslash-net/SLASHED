@@ -31,7 +31,8 @@ is what makes SLASHED work anywhere and stay working indefinitely.
 
 **2. Lean.** No class exists speculatively. Framework additions are at the
 maintainer's discretion — evaluated against utility, composability from
-existing classes, and fit with the framework's philosophy. Decorative
+existing classes, and fit with the framework's philosophy. Frequency across
+unrelated blueprint categories is a signal, not a hard threshold. Decorative
 utilities live in an opt-in file (`slashed-utilities-visual.css`) and are
 never loaded by default. Target bundle size: 25 KB gzip for the full bundle.
 
