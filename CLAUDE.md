@@ -68,6 +68,11 @@ or JS API):
 - Add an entry to `CHANGELOG.md` (append-only, Keep-a-Changelog format).
 - Breaking changes go under `### Breaking` with a one-line rename map.
   No migration guide required before `0.8.0.0`.
+- Update `cheatsheet.html` **in the same commit**. The pre-commit hook
+  (installed by `bin/setup-hooks.sh`) will block the commit if CSS/JS
+  source files are staged without `cheatsheet.html`. After edits, run
+  `bin/check-cheatsheet-sync.sh` to verify every documented class and
+  token still maps to a real declaration in `css/*.css`.
 
 **When implementing any item tracked in `ROADMAP.md`:**
 - In the same commit: move it out of the "Pending work" section and add a

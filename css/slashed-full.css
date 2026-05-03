@@ -6387,6 +6387,7 @@
 
   /* ----- Typography: additional text color & word-break ----- */
 
+  .text-default { color: var(--color-text); }
   .text-body    { color: var(--color-text-body); }
   .text-info    { color: var(--info-600); }
 

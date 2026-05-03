@@ -120,6 +120,18 @@ rules.
   entry. Use this as a release-time gate after bumping CHANGELOG and before
   tagging.
 
+## First-time setup after cloning
+
+Install the git hooks so the cheatsheet-sync guard runs on every commit:
+
+```sh
+bin/setup-hooks.sh
+```
+
+This installs a `pre-commit` hook that blocks commits which stage CSS/JS
+source files without also staging `cheatsheet.html`. Bypass with
+`--no-verify` only for pure refactors that touch no documented surface.
+
 ## Testing & verification
 
 Visual verification is still manual. Open `cheatsheet.html` in a browser
@@ -132,6 +144,8 @@ Automated checks that run (locally and in CI on every PR):
 - `npx stylelint css/*.css` — basic CSS syntax / hygiene.
 - `bin/check-version-sync.sh` — verifies CLAUDE.md and CONTRIBUTING.md
   match the latest released CHANGELOG entry.
+- `bin/check-cheatsheet-sync.sh` — verifies every `.class` and `--token`
+  documented in `cheatsheet.html` maps to a real declaration in `css/*.css`.
 
 Run before pushing:
 
@@ -139,6 +153,7 @@ Run before pushing:
 bin/build-bundle.sh && git diff --exit-code -- css/slashed-full.css
 npx --yes -p stylelint@16 -p stylelint-config-standard@36 stylelint "css/*.css"
 bin/check-version-sync.sh
+bin/check-cheatsheet-sync.sh
 ```
 
 Or via npm:
