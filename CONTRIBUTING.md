@@ -18,7 +18,7 @@ Lean (does this class earn its place?), Edgeless (does this block the
 consumer from doing something they need?), and Deterministic (does this
 produce a predictable, consistent result?).
 
-Current version: 0.5.0.0 (pre-1.0).
+Current version: 0.4.9.0 (pre-1.0).
 
 ## Layout of the repo
 
@@ -115,6 +115,10 @@ rules.
   body describing *why*.
 - Run `bin/bump-version.sh NEW_VERSION` to update all version strings and
   regenerate the bundle in one step.
+- Run `bin/check-version-sync.sh` to verify `CLAUDE.md` and `CONTRIBUTING.md`
+  "Current version" lines match the most recent released `CHANGELOG.md`
+  entry. Use this as a release-time gate after bumping CHANGELOG and before
+  tagging.
 
 ## Testing & verification
 
@@ -126,12 +130,15 @@ Automated checks that run (locally and in CI on every PR):
 - `bin/build-bundle.sh` regenerated and `git diff --exit-code` —
   catches drift between `slashed-full.css` and its four sources.
 - `npx stylelint css/*.css` — basic CSS syntax / hygiene.
+- `bin/check-version-sync.sh` — verifies CLAUDE.md and CONTRIBUTING.md
+  match the latest released CHANGELOG entry.
 
 Run before pushing:
 
 ```sh
 bin/build-bundle.sh && git diff --exit-code -- css/slashed-full.css
 npx --yes -p stylelint@16 -p stylelint-config-standard@36 stylelint "css/*.css"
+bin/check-version-sync.sh
 ```
 
 Or via npm:

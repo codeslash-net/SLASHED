@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Current version: **0.5.0.0** (pre-1.0).
+Current version: **0.4.9.0** (pre-1.0).
 
 See **`CONTRIBUTING.md`** for repo layout, full gotchas list, versioning
 policy, and testing procedures. See **`ROADMAP.md`** for pending work.
@@ -74,6 +74,11 @@ or JS API):
   one-liner to the "Explicitly NOT on the roadmap" section that says what
   shipped and in which version. Do not leave a completed item in
   "Pending work" — a stale roadmap is worse than no roadmap.
+
+**At every version bump:**
+- After updating `CHANGELOG.md`, run `bin/check-version-sync.sh` to verify
+  that `CLAUDE.md` and `CONTRIBUTING.md` "Current version" lines match the
+  most recent released CHANGELOG entry. Exits non-zero on mismatch.
 
 ---
 
