@@ -3,7 +3,7 @@
 > Forward-looking only. Shipped work lives in [`CHANGELOG.md`](CHANGELOG.md).
 > Reviewed at every framework version bump.
 >
-> **Last reviewed:** v0.4.6.0 (2026-05-02). Items labelled `0.5.0.0` are implemented in the codebase; the version tag has not yet been cut.
+> **Last reviewed:** v0.5.0.0 (2026-05-02). Pending work below describes what ships in the 0.5.0.0 cut.
 
 This file is the single authoritative list of what is *not yet shipped*. If
 something is here and has since shipped, move it to the corresponding
@@ -37,10 +37,12 @@ work on the framework itself.
   only `.masonry`). Not included in `slashed-full.css`.
 - `css/slashed-full.css` — concatenation of the four core files (tokens +
   core + components + utilities). Rebuilt by `bin/build-bundle.sh`.
-- `js/slashed-ui.js` — ~500B optional IIFE. Public API:
-  `window.slashedUI = { initStagger, toast }`. Adds ARIA states, focus
-  management, keyboard navigation, and programmatic toast on top of the
-  pure-CSS baseline. Zero dependencies.
+- `js/slashed-ui.js` — optional IIFE. Post-0.5.0.0 public API:
+  `window.slashedUI = { initStagger, toast, updateRange, closeModal,
+  openModal, toggleModal, initTabsAccessible, initModalFocusRestore,
+  initFormGroups, dismissToast }`. Adds ARIA states, focus management,
+  keyboard navigation, and programmatic toast on top of the pure-CSS
+  baseline. Zero dependencies.
 - `bin/build-bundle.sh` — rebuilds `slashed-full.css` from the four source
   files in the correct order.
 
@@ -91,13 +93,12 @@ The consumer links a CSS file. That is the full install. Any proposed change
 that introduces a build step, a preprocessor, or a runtime dependency on the
 consumer side is permanently out of scope — not "not yet", permanently.
 
-**Lean.** Every class earns its place. No class is added speculatively — a
-pattern must appear 3+ times across unrelated blueprint categories (in the
-`slashed-blueprints` repo) before it becomes a framework class. Decorative
-utilities stay in
-the opt-in `slashed-utilities-visual.css`. The target bundle size is 25 KB
-gzip for the full bundle. When evaluating a new addition: does it earn its
-bytes?
+**Lean.** Every class earns its place. Additions are at the maintainer's
+discretion — evaluated against utility, composability from existing classes,
+and fit with the framework's philosophy. Frequency across unrelated blueprint
+categories is a useful signal, not a hard threshold. Decorative utilities
+stay in the opt-in `slashed-utilities-visual.css`. Target bundle size: 25 KB
+gzip. When evaluating a new addition: does it earn its bytes?
 
 **Agnostic.** SLASHED works on any platform that can load a CSS file.
 Framework integrations (Bricks, WordPress) are additive and opt-in — never
@@ -181,76 +182,151 @@ obligations at `0.8.0.0` as a pre-condition for the 1.0 freeze.
 
 ## Pending work
 
----
-
-#### Required first: battle-test pass #2 audit
-
-Conduct a full re-audit of all categories in `slashed-blueprints`.
-For each category, produce a table with three columns:
-
-1. **Local BEM class** — every class defined in the blueprint's own
-   `<style>` block that is not a framework class.
-2. **Frequency** — how many unrelated categories use this same structural
-   pattern (not the same class name — the same CSS pattern).
-3. **Framework coverage** — can this pattern be reasonably composed from
-   existing framework classes? If yes, which ones?
-
-A local BEM pattern qualifies for promotion to the framework only if it:
-- Appears **3 or more times across unrelated categories**, AND
-- Cannot be reasonably composed from existing framework classes.
-
-The audit output document lives in the slashed-blueprints repo and must
-be reviewed before any conditional item below ships.
+### 0.5.0.0 release — scheduled for this cut
 
 ---
 
-#### Competitive coverage audit
+#### Tokens: `--info` color system
 
-As part of pass #2, compare slashed-blueprints coverage against:
+Add `--info: #0ea5e9` (sky-500) to the status color system.
+Required changes to `css/tokens-default.css`:
 
-**Bricks wireframe library** (`templates.bricksbuilder.io/wireframes/wireframes-library/`)
-Categories present in Bricks but absent or thin in SLASHED: Profile (15
-templates vs. SLASHED's team-only coverage), WooCommerce depth (30
-templates covering account/view-order/thank-you/pay-confirmation that
-SLASHED's 6 e-commerce categories do not reach), Intros (5 templates —
-short above-fold text blocks distinct from full hero sections).
-
-**Frames layout library** (`getframes.io/layouts/`)
-Categories present in Frames but absent from SLASHED: Backgrounds,
-Devices, Image Groups, Schedules, Social Icons, Style Guide, Squeeze Pages,
-Switches, Tables, Taxonomy, Woo Dashboard. Of these, **Style Guide** and
-**Image Groups** are the highest-value additions. Style Guide (a page
-showing token colors, typography scale, spacing scale, and component states
-in context) doubles as a framework marketing asset. Image Groups (creative
-image arrangements: overlapping, masked, collaged) demonstrate `.frame`,
-`.overlay`, and `.bento` in a context consumers often build locally.
-
-**Frames component library** (`getframes.io/components/`)
-Frames ships: Modal, Trigger, Slider & Carousel, Table of Contents,
-Accordion & Toggle, Tabs, Switch, Color Scheme Toggle. SLASHED covers all
-of these except Slider & Carousel (deliberately out of scope — see Out of
-scope section) and Table of Contents (partially covered by the
-`article` category in slashed-blueprints).
-
-**Gaps to evaluate in the audit:**
-
-- Whether `team.html` should be extended or a separate `profile.html`
-  category added for individual profile pages (user profile, author bio
-  page, speaker page, member card).
-- Whether SLASHED's 6 e-commerce categories need a `woocommerce.html`
-  supplement covering the WP-specific Woo account/order/receipt pages.
-- Whether a `style-guide.html` single-variant page is worth adding as a
-  framework showcase.
+- Static legacy fallback added to the top-of-file block
+- `@property` removed for `--success`, `--warning`, `--error` — status
+  colors, not brand colors; CSS transition registration unneeded
+- `light-dark()` replaced with fixed light-mode values in `:root`;
+  dark-mode values moved to the `@media (prefers-color-scheme: dark)`
+  and `[data-theme="dark"]` blocks explicitly
+- `--info`, `--info-100`, `--info-600` defined in `:root` and both
+  dark-mode blocks
 
 ---
 
-#### Conditional component: `.cs-btn--icon`
+#### Tokens: new system tokens
 
-**Condition:** audit confirms the icon-only button pattern (equal x/y
-padding, square aspect ratio, no visible text label) appears 3+ times
-across unrelated blueprints categories.
+Add to `css/tokens-default.css`:
 
-**Spec if confirmed:**
+- `--border-width: 1px`, `--border-width-2: 2px`, `--border-width-4: 4px`,
+  `--border-style: solid`
+- `--font-weight-body: 400`, `--font-weight-medium: 500`,
+  `--font-weight-semi: 600` (complement to the existing `--font-weight-heading: 700`)
+- `--shadow-2xs` — half-strength shadow between `none` and `--shadow-xs`
+
+---
+
+#### Tokens: new semantic aliases
+
+Add to the `--color-*` alias block in `css/tokens-default.css`:
+
+- `--color-text-body` (alias → `--color-text`)
+- `--color-placeholder` (alias → `--color-text-faint`)
+- `--color-link-active` (alias → `--primary-700`)
+- `--color-text-on-success`, `--color-text-on-warning`,
+  `--color-text-on-error`, `--color-text-on-info`
+
+---
+
+#### Utilities: new classes (`slashed-utilities.css`)
+
+- **Text:** `.text-body`, `.text-info`, `.break-all`, `.break-keep`,
+  `.hyphens-auto`, `.hyphens-none`, `.tabular-nums`
+- **Lists:** `.list-disc`, `.list-decimal`
+- **Sizing:** `.max-w-content`, `.size-full`, `.size-fit`, `.min-h-svh`
+- **Overflow:** `.overflow-clip`, `.overflow-x-clip`, `.overflow-y-clip`
+- **Interaction:** `.pointer-events-auto`, `.select-text`, `.select-all`,
+  `.isolate`, `.isolation-auto`
+- **CSS Columns:** `.cols-2`, `.cols-3`, `.cols-4`, `.cols-auto-xs`,
+  `.cols-auto-s`, `.cols-auto-m`, `.col-gap-m`, `.col-gap-l`,
+  `.col-span-all`, `.col-break-before`, `.col-break-after`, `.col-break-avoid`
+
+---
+
+#### Visual utilities: opacity, shadow, borders, contextual colors (`slashed-utilities-visual.css`)
+
+- Opacity scale expanded to 14 stops: 0, 5, 10, 20, 25, 30, 40, 50,
+  60, 70, 75, 80, 90, 100
+- `.shadow-2xs`
+- `.border-2` and `.border-4` — replace hardcoded `px` values with
+  `var(--border-width-2)` and `var(--border-width-4)` tokens
+- `.isolation-isolate` — remove entirely; replaced by `.isolate` in
+  `slashed-utilities.css`
+- Contextual color cascading: `.bg-primary`, `.bg-secondary`, `.bg-accent`
+  cascade `--color-text`, `--color-link`, and `--color-border` to children
+  so nested text and UI components automatically use correct contrast values
+
+---
+
+#### Components: `--info` variants (`slashed-components.css`)
+
+Add info-tinted modifiers to four existing component families:
+
+- `.cs-notice--info` — `--notice-color: var(--info); --notice-bg: var(--info-100)`
+- `.cs-badge--info` — `--badge-bg: var(--info-100); --badge-text: var(--info-600)`
+- `.cs-toast--info` — `--toast-color: var(--info)`
+- `.cs-message--info` — `--message-color: var(--info-600); --message-bg: var(--info-100)`
+
+---
+
+#### Components: `.cs-modal--drawer-start` / `.cs-modal--drawer-end`
+
+Offcanvas / drawer pattern built on native `<dialog>`. Slides in from the
+inline-start or inline-end edge. Uses `@starting-style` + `transition:
+translate allow-discrete` — no JavaScript required for animation.
+Instance token: `--drawer-width` (default 20rem). Combines with existing
+`initModalFocusRestore()` for full a11y support.
+
+---
+
+#### Components: `@media (hover: hover)` guards
+
+Wrap in `@media (hover: hover)` to prevent stuck hover states on touch
+devices:
+
+- `.cs-card--interactive:hover`
+- `.cs-chip:hover`
+- `[data-tooltip]:hover::after`
+- `.cs-table--hoverable tbody tr:hover`
+
+---
+
+#### Core: `::placeholder` token (`slashed-core.css`)
+
+Replace hardcoded reference with a token:
+
+```css
+/* before */ color: var(--color-text-faint, #9ca3af);
+/* after  */ color: var(--color-placeholder, var(--color-text-faint, #9ca3af));
+```
+
+---
+
+#### JS: new public API (`slashed-ui.js`)
+
+- `slashedUI.openModal(dialog)` — calls `dialog.showModal()` programmatically
+- `slashedUI.toggleModal(dialog)` — opens if closed, closes if open
+- `slashedUI.dismissToast(el)` — public alias for the internal `dismiss()`
+  function
+
+Update `window.slashedUI` export to include all three.
+
+---
+
+#### Ecosystem: new files
+
+- `ecosystem/slashed-bricks.css` — opt-in Bricks Builder integration layer.
+  Includes `:root:root` rem fix (in case tokens file is not loaded
+  separately), focus ring reset for Bricks wrapper elements, and section
+  padding zeroing for `.section.brxe-section`.
+- `ecosystem/bricks-theme-styles.json` — Bricks Variable Manager import file
+  with all SLASHED tokens pre-mapped (brand, status, spacing, typography,
+  radius).
+
+---
+
+#### Pending: `.cs-btn--icon`
+
+Icon-only button modifier: equal x/y padding, square aspect ratio.
+Combines with existing variants: `<button class="cs-btn--outline cs-btn--icon">`.
 
 ```css
 .cs-btn--icon {
@@ -260,44 +336,23 @@ across unrelated blueprints categories.
 }
 ```
 
-Applied in combination with `--primary`, `--outline`, or `--ghost`:
-`<button class="cs-btn--outline cs-btn--icon">`. No new HTML structure —
-just a size/shape modifier on the existing button base.
-
 ---
 
-#### Conditional layout extension: `.section--soft` / `.section--bold`
+#### Pending: `.section--soft` / `.section--bold`
 
-**Condition:** audit confirms tinted brand-colored section backgrounds appear
-3+ times as local BEM across unrelated categories.
-
-**Spec if confirmed:**
+Brand-colored section backgrounds alongside existing `.section--alt`.
 
 ```css
-.section--soft {
-  background: var(--primary-50);
-  color: var(--color-text);
-}
-.section--bold {
-  background: var(--primary);
-  color: var(--color-text-on-primary);
-}
+.section--soft { background: var(--primary-50);  color: var(--color-text); }
+.section--bold { background: var(--primary);      color: var(--color-text-on-primary); }
 ```
-
-These are brand-colored companions to the existing `.section--alt`
-(which uses `--color-surface-2`, a neutral tint). `--soft` encodes "subtle
-brand presence"; `--bold` encodes "emphatic brand fill". Dark mode works
-automatically — `--primary-50` and `--primary` are both redefined in the
-dark mode blocks of `tokens-default.css`.
 
 ---
 
-#### Conditional shared wrapper: brand-tile grid
+#### Pending: Brand-tile grid wrapper
 
-**Condition:** audit confirms `logos.html` and `integration.html` share an
-identical or near-identical local BEM wrapper for their brand-tile grids
-(beyond the `.cs-brand-tile` component itself). Exact spec depends on
-audit findings.
+Shared container for `.cs-brand-tile` grid patterns in logo bars and
+integration sections. Exact spec TBD based on blueprint patterns.
 
 ---
 

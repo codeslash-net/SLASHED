@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Current version: **0.4.9.0** (pre-1.0).
+Current version: **0.5.0.0** (pre-1.0).
 
 See **`CONTRIBUTING.md`** for repo layout, full gotchas list, versioning
 policy, and testing procedures. See **`ROADMAP.md`** for pending work.
@@ -16,11 +16,11 @@ The consumer links a CSS file. Full stop. Any change that introduces a
 preprocessor, build tool, or runtime dependency on the consumer side is
 permanently out of scope — not "not yet", permanently.
 
-**Lean** — Every class earns its place. A pattern must appear 3+ times
-across unrelated blueprint categories before becoming a framework class.
-Target bundle size: 25 KB gzip. When evaluating an addition: does it earn
-its bytes? Decorative utilities belong in `slashed-utilities-visual.css`,
-not core.
+**Lean** — Every class earns its place. Additions are at the maintainer's
+discretion. When evaluating an addition: does it earn its bytes? Is it
+composable from existing classes without unreasonable overhead? Decorative
+utilities belong in `slashed-utilities-visual.css`, not core.
+Target bundle size: 25 KB gzip.
 
 **Agnostic** — Works on any platform that can load a CSS file. Framework
 integrations (Bricks, WordPress) are additive and opt-in, never a

@@ -29,11 +29,12 @@ The consumer downloads CSS files and links them. That is the entire install
 process. This is a deliberate architectural decision, not a limitation — it
 is what makes SLASHED work anywhere and stay working indefinitely.
 
-**2. Lean.** No class exists speculatively. Every framework class was promoted
-from a pattern that appeared 3+ times across unrelated use cases and could
-not be reasonably composed from existing classes. Decorative utilities live
-in an opt-in file (`slashed-utilities-visual.css`) and are never loaded by
-default. Target bundle size: 25 KB gzip for the full bundle.
+**2. Lean.** No class exists speculatively. Framework additions are at the
+maintainer's discretion — evaluated against utility, composability from
+existing classes, and fit with the framework's philosophy. Frequency across
+unrelated blueprint categories is a signal, not a hard threshold. Decorative
+utilities live in an opt-in file (`slashed-utilities-visual.css`) and are
+never loaded by default. Target bundle size: 25 KB gzip for the full bundle.
 
 **3. Agnostic.** SLASHED works on WordPress, Bricks Builder, Astro, 11ty,
 plain HTML, or any platform that can load a CSS file. It is not locked to
@@ -162,7 +163,7 @@ Promotion rule: a feature graduates from `slashed-experimental.css` into a core 
 - Pre-1.0 (`0.x.x.x`): API may change across minor versions. Patch-level (`0.1.2.1`) changes aim to be additive or non-breaking cleanup, but until 1.0 ships and semver applies, **even a patch bump can carry a breaking change** if the framework's growth requires it (a token rename, a removed modifier, a layer-order tweak). Treat every pre-1.0 bump as potentially breaking, read `CHANGELOG.md`, and pin to the exact version in production — see `docs/INSTALLATION.md`. Minor (`0.2.0`) changes introduce new components or restructure surface.
 - Breaking changes during pre-1.0 are acknowledged in `CHANGELOG.md` with migration notes; users are warned that version bumps may require small refactors.
 - The blueprint library lives in a separate repository (`slashed-blueprints`). It is content, not API; adding variants there does not bump the framework version.
-- Components get promoted to the framework only after appearing 3+ times across unrelated files in the library. Single-use patterns stay in the variant's local BEM.
+- Components get promoted to the framework at the maintainer's discretion.
 - Once the framework reaches `1.0.0`, semver applies strictly.
 
 ### Path to 1.0

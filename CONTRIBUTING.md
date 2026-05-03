@@ -18,7 +18,7 @@ Lean (does this class earn its place?), Edgeless (does this block the
 consumer from doing something they need?), and Deterministic (does this
 produce a predictable, consistent result?).
 
-Current version: 0.4.6.0 (pre-1.0).
+Current version: 0.5.0.0 (pre-1.0).
 
 ## Layout of the repo
 
@@ -145,6 +145,6 @@ npm run verify
 - Prefer **editing existing files** over creating new ones.
 - Don't add decorative classes to core utilities — that's what
   `slashed-utilities-visual.css` is for.
-- When a pattern appears 3+ times across unrelated use cases,
-  consider promoting it to `slashed-components.css` or a layout primitive.
+- New classes and components are added at the maintainer's discretion.
+  Frequency of use across blueprints is one signal, not a hard threshold.
 - Keep the `Lean` pillar in mind: every class must earn its place.
