@@ -127,7 +127,7 @@
   }
 
   function openModal(dialog) {
-    if (dialog && typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (dialog && typeof dialog.showModal === 'function' && !dialog.open && dialog.isConnected) dialog.showModal();
   }
 
   function toggleModal(dialog) {
