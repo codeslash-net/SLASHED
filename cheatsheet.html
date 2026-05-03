@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SLASHED — Cheatsheet v0.4.6.0</title>
+<title>SLASHED — Cheatsheet v0.5.0.0</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -306,13 +306,14 @@
   <a href="#effects">Effects</a>
   <a href="#responsive">Responsive</a>
   <a href="#a11y">A11y</a>
+  <a href="#js-api">JS API</a>
   <div class="docs-search">
     <input type="search" id="search" placeholder="Filter classes…" autocomplete="off">
   </div>
 </nav>
 
 <div class="page-header">
-  <h1>SLASHED Cheatsheet <span class="version-badge">v0.4.6.0</span></h1>
+  <h1>SLASHED Cheatsheet <span class="version-badge">v0.5.0.0</span></h1>
   <p>Buildless CSS framework · 201 tokens · 647 utility classes · 50+ components · <a href="README.md">README</a> · <a href="docs/">Docs</a></p>
 </div>
 
@@ -356,11 +357,12 @@
     <div class="item"><span class="name">--primary</span><span class="desc"><span class="color-chip" style="background:#2563eb"></span>Primary brand color. Default: <code>#2563eb</code>.</span><span class="why">Root of the primary scale. Override: <code>:root { --primary: oklch(55% 0.2 250); }</code></span></div>
     <div class="item"><span class="name">--secondary</span><span class="desc"><span class="color-chip" style="background:#0d9488"></span>Secondary brand color. Default: <code>#0d9488</code>.</span><span class="why">Used for supporting actions, links, tags. Same derivation system as primary.</span></div>
     <div class="item"><span class="name">--accent</span><span class="desc"><span class="color-chip" style="background:#f59e0b"></span>Accent / highlight color. Default: <code>#f59e0b</code>.</span><span class="why">Warm contrast against cool primary. Used for highlights, callouts, badges.</span></div>
-    <div class="item"><span class="name">--success / --warning / --error</span><span class="desc">Status feedback colors.</span><span class="why">Semantic, not brand. Always use these for feedback states — never primary-tinted hues.</span></div>
+    <div class="item"><span class="name">--success / --warning / --error / --info</span><span class="desc">Status feedback colors. <code>--info</code>: <span class="color-chip" style="background:#0ea5e9"></span>sky-500 (#0ea5e9).</span><span class="why">Semantic, not brand. Always use these for feedback states — never primary-tinted hues.</span></div>
     <div class="item"><span class="name">--primary-50 … --primary-950</span><span class="desc">Primary shade scale (10 stops: 50, 100, 200, 300, 400, 600, 700, 800, 900, 950).</span><span class="why">Derived via <code>color-mix(in oklch)</code>. Use for tinted backgrounds, hover fills, disabled states.</span></div>
     <div class="item"><span class="name">--primary-a25 / -a50 / -a75</span><span class="desc">Alpha variants at 25%, 50%, 75% opacity.</span><span class="why">For overlays and tinted surfaces where transparency is needed. Same pattern for secondary and accent.</span></div>
     <div class="item"><span class="name">--primary-hover</span><span class="desc">Hover state tint (slightly darker/lighter than root).</span><span class="why">Computed from root — guarantees hover always contrasts with base regardless of custom brand color.</span></div>
-    <div class="item"><span class="name">--success-100 / -600</span><span class="desc">Light tint and dark text variant for success.</span><span class="why">Pattern: <code>-100</code> for backgrounds, <code>-600</code> for text on white. Same for warning/error. <strong>Do not use <code>--warning</code> for text on white</strong> — ~2.8:1 contrast fails WCAG AA; use <code>--warning-600</code>.</span></div>
+    <div class="item"><span class="name">--success-100 / -600</span><span class="desc">Light tint and dark text variant for success.</span><span class="why">Pattern: <code>-100</code> for backgrounds, <code>-600</code> for text on white. Same for warning/error/info. <strong>Do not use <code>--warning</code> for text on white</strong> — ~2.8:1 contrast fails WCAG AA; use <code>--warning-600</code>.</span></div>
+    <div class="item"><span class="name">--info-100 / --info-600</span><span class="desc">Info tint and darker text variant.</span><span class="why">Use <code>--info-100</code> for info callout backgrounds, <code>--info-600</code> for accessible text on white. Mirrors the success/warning/error pattern.</span></div>
   </div>
 
   <h3 class="subheading">Neutral scale</h3>
@@ -391,10 +393,13 @@
     <div class="item"><span class="name">--color-text-faint</span><span class="desc">Decorative labels, watermarks. ~3.4:1 contrast.<span class="tag tag--issue">⚠ contrast</span></span><span class="why"><strong>Fails WCAG AA for body text.</strong> Decision: rename to <code>--color-text-decorative</code> to make the intent explicit, or add a prominent "decorative only" warning.</span></div>
     <div class="item"><span class="name">--color-text-disabled</span><span class="desc">Disabled form controls. ~2.7:1 contrast (WCAG exemption for disabled).</span><span class="why">WCAG explicitly exempts disabled controls from contrast requirements. Value is intentional.</span></div>
     <div class="item"><span class="name">--color-text-on-primary</span><span class="desc">Text on primary-colored backgrounds.</span><span class="why">Auto-computed via Relative Color Syntax (<code>oklch(from …)</code>) in supporting browsers. Static fallback for others.</span></div>
+    <div class="item"><span class="name">--color-text-on-success / -warning / -error / -info</span><span class="desc">Accessible text colors for status-colored surfaces.</span><span class="why">Use on elements with <code>background: var(--success)</code> etc. Dark-mode-aware: status colors flip lighter in dark mode, so text flips dark accordingly.</span></div>
     <div class="item"><span class="name">--color-text-on-dark</span><span class="desc">Text on dark/inverted surfaces.</span><span class="why">For footer-dark, hero-dark, and any <code>.bg-dark</code> context.</span></div>
+    <div class="item"><span class="name">--color-text-body</span><span class="desc">Alias → <code>--color-text</code>. Semantic name for body text color.</span><span class="why">Explicitly signals body-text intent. Rebind independently from heading/muted text if needed.</span></div>
+    <div class="item"><span class="name">--color-placeholder</span><span class="desc">Input placeholder text color. Alias → <code>--color-text-faint</code>.</span><span class="why">Override per-project to match brand or increase contrast without touching the faint text scale.</span></div>
     <div class="item"><span class="name">--color-border</span><span class="desc">Default border color.</span><span class="why">Used by <code>--border-width</code> components and <code>.border</code> visual utility.</span></div>
     <div class="item"><span class="name">--color-border-subtle / --color-border-strong</span><span class="desc">Weaker and stronger border variants.</span><span class="why">For dividers (subtle) and input focus rings (strong). Provides contrast hierarchy without custom values.</span></div>
-    <div class="item"><span class="name">--color-link / --color-link-visited / --color-link-hover</span><span class="desc">Link color stack.</span><span class="why">Centralises link styling — override once, affects all unclassed links.</span></div>
+    <div class="item"><span class="name">--color-link / --color-link-visited / --color-link-hover / --color-link-active</span><span class="desc">Link color stack.</span><span class="why">Centralises link styling — override once, affects all unclassed links. <code>--color-link-active</code> aliases <code>--primary-700</code> for pressed-state contrast.</span></div>
   </div>
 
   <h3 class="subheading">Spacing scale — fluid clamp (11 steps + semantic aliases)</h3>
@@ -444,6 +449,9 @@
     <div class="item"><span class="name">--h1..h6</span><span class="val">Aliases → text-4xl / 3xl / 2xl / xl / l / m</span><span class="why">Semantic heading aliases. Override to globally remap heading sizes without changing utility classes.</span></div>
     <div class="item"><span class="name">--font-body / --font-heading / --font-mono</span><span class="val">system-ui / inherit / monospace stacks</span><span class="why">Three font family roles. Override all three to brand the typography system.</span></div>
     <div class="item"><span class="name">--font-weight-heading</span><span class="val">700</span><span class="why">Single override point for all heading weights. Change to <code>600</code> for lighter headings.</span></div>
+    <div class="item"><span class="name">--font-weight-body</span><span class="val">400</span><span class="why">Default body text weight. Named token for override consistency.</span></div>
+    <div class="item"><span class="name">--font-weight-medium</span><span class="val">500</span><span class="why">Medium emphasis — labels, nav links, UI chrome. Complement to heading (700) and body (400).</span></div>
+    <div class="item"><span class="name">--font-weight-semi</span><span class="val">600</span><span class="why">Semi-bold — subheadings, table headers, strong emphasis without full bold.</span></div>
     <div class="item"><span class="name">--leading-tight / -snug / -normal / -loose</span><span class="val">~1.15 / ~1.3 / ~1.5 / ~1.8</span><span class="why">Line-height scale. tight = headings. normal = body. loose = prose with dyslexia accommodations.</span></div>
     <div class="item"><span class="name">--tracking-tighter … --tracking-widest</span><span class="val">5-step letter-spacing scale</span><span class="why">tighter = large display headings. widest = small-caps eyebrows and labels.</span></div>
   </div>
@@ -468,6 +476,7 @@
     <code>--shadow-float</code>, <code>--shadow-glow</code>, and <code>--shadow-colored</code> are special-purpose extras.
   </div>
   <div class="class-grid">
+    <div class="item"><span class="name">--shadow-2xs</span><span class="desc">Half-strength whisper shadow — between none and xs.</span><span class="why">Subtle surface definition without visible lift. Use for inline elements and barely-elevated chips.</span></div>
     <div class="item"><span class="name">--shadow-xs</span><span class="desc">Barely-there lift. Cards on light backgrounds.</span></div>
     <div class="item"><span class="name">--shadow-s</span><span class="desc">Subtle elevation. Default card shadow.</span></div>
     <div class="item"><span class="name">--shadow-m</span><span class="desc">Mid-range. Dropdowns, modals at rest.</span></div>
@@ -536,6 +545,9 @@
   <h3 class="subheading">Border + Focus tokens</h3>
   <div class="class-grid">
     <div class="item"><span class="name">--border-width</span><span class="val">1px</span><span class="why">Default border width used by all components. Override once to globally thicken borders.</span></div>
+    <div class="item"><span class="name">--border-width-2</span><span class="val">2px</span><span class="why">Used by <code>.border-2</code>. Override to change double-width borders globally.</span></div>
+    <div class="item"><span class="name">--border-width-4</span><span class="val">4px</span><span class="why">Used by <code>.border-4</code>. Override to change thick accent borders globally.</span></div>
+    <div class="item"><span class="name">--border-style</span><span class="val">solid</span><span class="why">Default border style. Override to <code>dashed</code> or <code>dotted</code> for entire project at once.</span></div>
     <div class="item"><span class="name">--focus-ring-width</span><span class="val">2px</span><span class="why">Width of keyboard focus outlines. WCAG 2.2 requires ≥2px.</span></div>
     <div class="item"><span class="name">--focus-ring-color</span><span class="val">= --primary (with alpha)</span><span class="why">Focus ring color. Matches brand. Override for high-contrast modes.</span></div>
     <div class="item"><span class="name">--focus-ring-offset</span><span class="val">2px</span><span class="why">Gap between element and focus ring. Improves visibility on colored backgrounds.</span></div>
@@ -558,6 +570,8 @@
     <div class="item"><span class="name">.section</span><span class="desc">Vertical padding rhythm for page sections (uses <code>--space-section</code>).</span><span class="why">Ensures consistent vertical breathing room between page blocks without per-section CSS.</span></div>
     <div class="item"><span class="name">.section--s / --m / --xl</span><span class="desc">Smaller / default / larger padding variants.</span><span class="why">For tight landing-page sections (<code>--s</code>) or generous hero blocks (<code>--xl</code>).</span></div>
     <div class="item"><span class="name">.section--alt</span><span class="desc">Neutral tinted background (<code>--color-surface-2</code>).</span><span class="why">Alternating visual rhythm without custom background colors. Safe in any brand.</span></div>
+    <div class="item"><span class="name">.section--soft</span><span class="desc">Primary-50 tint background — very subtle brand wash.</span><span class="why">Brand-aware tint without full saturation. Safer than <code>--bold</code> for sections with body text.</span></div>
+    <div class="item"><span class="name">.section--bold</span><span class="desc">Full primary color background with on-primary text.</span><span class="why">Full-saturation brand band — hero bands, CTA sections, promotional blocks. Automatically sets text to <code>--color-text-on-primary</code>.</span></div>
     <div class="item"><span class="name">.container</span><span class="desc">Max-width centered wrapper with side gutters (default: <code>--container-default</code> = 75rem).</span><span class="why">The single standard centering pattern. Replaces <code>max-width + margin: auto + padding</code> boilerplate.</span></div>
     <div class="item"><span class="name">.container--dialog / --form / --prose / --wide / --full</span><span class="desc">Container width variants.</span><span class="why">Semantic sizing — e.g. <code>--prose</code> gives 65ch readable width for articles without a magic number.</span></div>
   </div>
@@ -622,6 +636,7 @@
     <div class="item"><span class="name">.cs-btn--outline</span><span class="desc">Outline button (border + transparent bg)</span><span class="why">Secondary action or alternative to primary in the same button group.</span></div>
     <div class="item"><span class="name">.cs-btn--ghost</span><span class="desc">Ghost button (no border, no background)</span><span class="why">Tertiary/low-priority actions. Nav links, cancel buttons.</span></div>
     <div class="item"><span class="name">.cs-btn--l</span><span class="desc">Large size modifier (+padding, +font-size)</span><span class="why">Above-the-fold CTAs that need more visual weight.</span></div>
+    <div class="item"><span class="name">.cs-btn--icon</span><span class="desc">Square icon-only button (aspect-ratio: 1, min-width: 2.75rem)</span><span class="why">For close buttons, action icons, and toolbar icons. Instance token: <code>--btn-icon-padding</code>. Always add <code>aria-label</code>.</span></div>
   </div>
 
   <h3 class="subheading">Cards &amp; Content</h3>
@@ -647,7 +662,9 @@
     <div class="item"><span class="name">.cs-form-group</span><span class="desc">Accessible form field wrapper (label + input + hint + error)</span><span class="why">Encodes the correct accessible label/input association pattern in one component. JS optional: <code>initFormGroups()</code> adds live validation.</span></div>
     <div class="item"><span class="name">.cs-form-group__label / __input / __hint / __error</span><span class="desc">BEM elements — all required for correct accessible form pattern</span></div>
     <div class="item"><span class="name">.cs-notice</span><span class="desc">Info callout box</span><span class="why">Semantic notice/alert box. Auto-adapts to dark mode. Use <code>role="alert"</code> for live regions.</span></div>
-    <div class="item"><span class="name">.cs-notice--success / --warning / --error</span><span class="desc">Notice state variants</span></div>
+    <div class="item"><span class="name">.cs-notice--success / --warning / --error / --info</span><span class="desc">Notice state variants</span><span class="why"><code>--info</code> added in 0.5.0.0 — sky-blue callout using <code>--info</code>/<code>--info-100</code> tokens. Same pattern as success/warning/error.</span></div>
+    <div class="item"><span class="name">.cs-badge--info</span><span class="desc">Info-tinted badge (<code>--info-100</code> background, <code>--info-600</code> text)</span><span class="why">Accessible info status pill — uses darker <code>--info-600</code> text on <code>--info-100</code> for WCAG AA contrast.</span></div>
+    <div class="item"><span class="name">.cs-toast--info / .cs-message--info</span><span class="desc">Info variants for toast and message components</span><span class="why">Completes the four-status set (success/warning/error/info) across all status-bearing components.</span></div>
     <div class="item"><span class="name">.cs-spinner</span><span class="desc">Loading spinner (CSS animation, no JS)</span><span class="why">Inline loading state. Respects <code>prefers-reduced-motion</code> via <code>@layer slashed.a11y</code>.</span></div>
     <div class="item"><span class="name">.cs-progress</span><span class="desc">Progress bar (native <code>&lt;progress&gt;</code> primary pattern)</span><span class="why">Styled native <code>&lt;progress&gt;</code> element — fully accessible, no ARIA needed.</span></div>
     <div class="item"><span class="name">.cs-select-wrap</span><span class="desc">Select wrapper with token-driven chevron via <code>mask-image</code></span><span class="why">Custom-styled native <code>&lt;select&gt;</code> — uses CSS <code>mask-image</code> for the chevron, no extra HTML or SVG needed.</span></div>
@@ -663,6 +680,7 @@
     <div class="item"><span class="name">.cs-chip / .cs-nav-link / .cs-nav-link--active</span><span class="desc">Chip button and navigation link components</span><span class="why">UI chip for filter bars, tag selection. Nav link with active/current state styling.</span></div>
     <div class="item"><span class="name">.cs-tabs / .cs-tab / .cs-tab-panel</span><span class="desc">Tab interface (pure-CSS baseline + optional JS ARIA enhancement)</span><span class="why">Pure-CSS tabs use <code>:has(:checked)</code> on radio inputs. <code>initTabsAccessible()</code> upgrades to full ARIA tabs with keyboard navigation.</span></div>
     <div class="item"><span class="name">.cs-modal / .cs-modal__header / .cs-modal__body / .cs-modal__footer</span><span class="desc">Native <code>&lt;dialog&gt;</code> modal with <code>@starting-style</code> animation</span><span class="why">Wraps native <code>&lt;dialog&gt;</code> — correct backdrop handling, <code>closeModal()</code>/<code>initModalFocusRestore()</code> for full accessibility.</span></div>
+    <div class="item"><span class="name">.cs-modal--drawer-start / --drawer-end</span><span class="desc">Side-drawer variant of <code>.cs-modal</code> — slides in from inline-start or inline-end edge</span><span class="why">Attach to the same <code>&lt;dialog&gt;</code> element. Uses <code>translate</code> + <code>@starting-style</code> for GPU-accelerated slide animation. Instance token: <code>--drawer-width</code> (default 20rem). RTL-aware via logical properties.</span></div>
     <div class="item"><span class="name">.cs-banner / .cs-banner--sticky</span><span class="desc">Top-of-page notification banner</span><span class="why">Cookie consent, announcement banners. Sticky variant persists on scroll via <code>position: sticky; z-index: var(--z-banner)</code>.</span></div>
     <div class="item"><span class="name">.cs-tooltip / [data-tooltip]</span><span class="desc">CSS tooltip via <code>[popover]</code></span><span class="why">Zero-JS tooltip using native popover API. Full keyboard-accessible.</span></div>
   </div>
@@ -763,6 +781,11 @@
     <div class="item"><span class="name">.text-left / .text-center / .text-right</span><span class="desc">text-align — uses logical equivalents internally</span><span class="why">Override text alignment per-element. <code>.text-center</code> for headings and CTAs, <code>.text-left</code> to reset centered paragraphs in mixed layouts.</span></div>
     <div class="item"><span class="name">.text-balance</span><span class="desc">text-wrap: balance — distributes words evenly across lines</span><span class="why">Eliminates "widow" words in multi-line headings. Apply to <code>&lt;h2&gt;</code> / <code>&lt;h3&gt;</code> elements. Already built into framework heading styles — use to opt in on custom elements.</span></div>
     <div class="item"><span class="name">.text-pretty</span><span class="desc">text-wrap: pretty — avoids orphaned last words</span><span class="why">For paragraphs and lead text. Prevents a single word on the final line without the layout cost of <code>balance</code> (which can slow rendering on long text).</span></div>
+    <div class="item"><span class="name">.break-all</span><span class="desc">word-break: break-all</span><span class="why">Force-breaks any word at any point. For long tokens (hashes, URLs, code) in narrow containers.</span></div>
+    <div class="item"><span class="name">.break-keep</span><span class="desc">word-break: keep-all</span><span class="why">Prevent line breaks mid-word for CJK text (Chinese/Japanese/Korean). No-op for Latin scripts.</span></div>
+    <div class="item"><span class="name">.hyphens-auto</span><span class="desc">hyphens: auto</span><span class="why">Browser-inserted hyphens for long words in narrow columns. Use with <code>.cols-*</code> and prose content.</span></div>
+    <div class="item"><span class="name">.hyphens-none</span><span class="desc">hyphens: none</span><span class="why">Disable automatic hyphenation — for headings and UI text where hyphens would look odd.</span></div>
+    <div class="item"><span class="name">.tabular-nums</span><span class="desc">font-variant-numeric: tabular-nums</span><span class="why">Fixed-width numerals for tables, prices, counters — prevents layout shift as numbers change.</span></div>
   </div>
 
   <h3 class="subheading">Line height &amp; tracking</h3>
@@ -775,6 +798,15 @@
     <div class="item"><span class="name">.tracking-tighter / tight / normal / wide / wider / widest</span><span class="desc">letter-spacing scale (5 steps, <code>--tracking-*</code> tokens)</span><span class="why">Tight: large display text. Normal: body. Wide/wider/widest: uppercase labels and eyebrows (wide tracking improves readability at small caps).</span></div>
     <div class="item"><span class="name">.text-eyebrow</span><span class="desc">700 + tracking-widest + uppercase</span><span class="why">Consolidated eyebrow primitive. Sourced from blueprints audit pass #2 (consolidates four variant patterns into one class).</span></div>
     <div class="item"><span class="name">.link-reset</span><span class="desc">color: var(--color-text); text-decoration: none</span><span class="why">For links inside surfaces that already imply clickability (cards, list rows). Removes default underline and accent colour.</span></div>
+  </div>
+
+  <h3 class="subheading">List styles</h3>
+  <div class="rationale">
+    Opt-in list markers — slashed-core.css strips list styles from all <code>&lt;ul&gt;</code>/<code>&lt;ol&gt;</code> by default (navigation pattern). Re-apply markers for prose content.
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">.list-disc</span><span class="desc">list-style: disc + padding-inline-start: 1.25em</span><span class="why">Restore bullet markers on a <code>&lt;ul&gt;</code> inside prose or a card body where the default strip is too aggressive.</span></div>
+    <div class="item"><span class="name">.list-decimal</span><span class="desc">list-style: decimal + padding-inline-start: 1.25em</span><span class="why">Numbered lists inside articles, step-by-step instructions, ordered feature lists.</span></div>
   </div>
 </section>
 
@@ -791,9 +823,11 @@
   <div class="class-grid">
     <div class="item"><span class="name">.text-primary / -secondary / -accent</span><span class="desc">Brand text colors (map to <code>--primary</code>, <code>--secondary</code>, <code>--accent</code>)</span><span class="why">For brand-colored headings, links, and UI accents. Automatically use the correct shade for contrast in both light and dark mode.</span></div>
     <div class="item"><span class="name">.text-default</span><span class="desc">color: var(--color-text) — main body text</span><span class="why">Resets text color to the base body color when inside a colored parent. Most reliable color reset.</span></div>
+    <div class="item"><span class="name">.text-body</span><span class="desc">color: var(--color-text-body) — explicit body text alias</span><span class="why">Same as <code>.text-default</code> but reads as "this is body text" — use when intent matters more than the reset.</span></div>
     <div class="item"><span class="name">.text-muted</span><span class="desc">color: var(--color-text-muted) — secondary text</span><span class="why">For metadata, timestamps, subtitles — visually receding but still comfortably readable (≥4.5:1 contrast).</span></div>
     <div class="item"><span class="name">.text-faint <span class="tag tag--issue">⚠ issue</span></span><span class="desc">color: var(--color-text-faint) — tertiary text (~3.4:1 contrast)</span><span class="why">For decorative labels only — does NOT meet WCAG AA for body text. Never use for meaningful content. Decision pending: rename to <code>text-decorative</code> or add a "decorative only" token type.</span></div>
-    <div class="item"><span class="name">.text-success / -warning / -error / -info</span><span class="desc">Status text colors — map to semantic status tokens</span><span class="why">For status messages, form validation, alerts. Note: raw <code>--warning</code> on white = ~2.8:1 — use <code>.text-warning-600</code> when the background is white.</span></div>
+    <div class="item"><span class="name">.text-success / -warning / -error</span><span class="desc">Status text colors — map to semantic status tokens</span><span class="why">For status messages, form validation, alerts. Note: raw <code>--warning</code> on white = ~2.8:1 — use <code>.text-warning-600</code> when the background is white.</span></div>
+    <div class="item"><span class="name">.text-info</span><span class="desc">color: var(--info) — info status text</span><span class="why">For informational callouts, help text, tips. Completes the success/warning/error/info status text set.</span></div>
     <div class="item"><span class="name">.text-on-primary / -on-dark</span><span class="desc">Contrast text for colored / dark backgrounds</span><span class="why"><code>.text-on-primary</code>: white text on brand primary backgrounds. <code>.text-on-dark</code>: light text for any dark surface. Both derived from <code>light-dark()</code>.</span></div>
     <div class="item"><span class="name">.text-inherit</span><span class="desc">color: inherit</span><span class="why">Forces a child element to use its parent's text color — for SVG icons inside colored buttons and links.</span></div>
   </div>
@@ -801,9 +835,14 @@
   <h3 class="subheading">Background color</h3>
   <div class="class-grid">
     <div class="item"><span class="name">.bg-surface / -2 / -elevated</span><span class="desc">Semantic surface layers — auto-adapt to dark mode</span><span class="why">The correct way to apply backgrounds to cards, panels, and sections. <code>surface</code> = page base, <code>surface-2</code> = slightly off-white/dark gray layer, <code>elevated</code> = card with shadow context.</span></div>
-    <div class="item"><span class="name">.bg-primary / -50 / -100 / -200 / -700 / -800 / -900 / -950</span><span class="desc">Primary brand palette range</span><span class="why">Tint backgrounds (<code>-50</code> to <code>-200</code>) for light badges, callout boxes. Dark shades (<code>-700</code> to <code>-950</code>) for dark sections and inverted headers.</span></div>
-    <div class="item"><span class="name">.bg-secondary / -100 / -800 / -900</span><span class="desc">Secondary brand palette</span><span class="why">Secondary callouts and alternate section tones.</span></div>
-    <div class="item"><span class="name">.bg-accent / -100 / -800 / -900</span><span class="desc">Accent palette</span><span class="why">Highlight sections, promo banners, featured items.</span></div>
+    <div class="item"><span class="name">.bg-primary</span><span class="desc">background: var(--primary) + contextual cascade</span><span class="why">Sets background AND cascades <code>--color-text</code>, <code>--color-link</code>, <code>--color-border</code> to correct on-primary values — nested text and UI components automatically use correct contrast colors.</span></div>
+    <div class="item"><span class="name">.bg-primary-50 / -100 / -200 / -700 / -800 / -900 / -950</span><span class="desc">Primary brand palette range (scale only, no contextual cascade)</span><span class="why">Tint backgrounds (<code>-50</code> to <code>-200</code>) for light badges, callout boxes. Dark shades (<code>-700</code> to <code>-950</code>) for dark sections and inverted headers.</span></div>
+    <div class="item"><span class="name">.bg-secondary</span><span class="desc">background: var(--secondary) + contextual cascade</span><span class="why">Like <code>.bg-primary</code> — cascades <code>--color-text</code>/<code>--color-link</code>/<code>--color-border</code> to on-secondary values.</span></div>
+    <div class="item"><span class="name">.bg-secondary-100 / -800 / -900</span><span class="desc">Secondary brand palette (scale only)</span><span class="why">Secondary callouts and alternate section tones.</span></div>
+    <div class="item"><span class="name">.bg-accent</span><span class="desc">background: var(--accent) + contextual cascade</span><span class="why">Like <code>.bg-primary</code> — cascades on-accent values to child text.</span></div>
+    <div class="item"><span class="name">.bg-accent-100 / -800 / -900</span><span class="desc">Accent palette (scale only)</span><span class="why">Highlight sections, promo banners, featured items.</span></div>
+    <div class="item"><span class="name">.bg-error-100</span><span class="desc">Error tint background</span><span class="why">Form error highlight, destructive action banners.</span></div>
+    <div class="item"><span class="name">.bg-info-100 <span class="tag tag--proposed">0.5.0.0</span></span><span class="desc">Info tint background</span><span class="why">Use with <code>.text-info</code> or <code>--info-600</code> text for accessible info callout boxes.</span></div>
     <div class="item"><span class="name">.bg-success / -100</span><span class="desc">Success fill / tint</span><span class="why"><code>.bg-success</code>: dark-mode-aware success green. <code>.bg-success-100</code>: light tint for success callout boxes. Pair with <code>.text-success</code>.</span></div>
     <div class="item"><span class="name">.bg-warning / -100</span><span class="desc">Warning fill / tint</span><span class="why"><code>.bg-warning-100</code> + <code>.text-warning-600</code> is the WCAG-safe warning callout pattern. Raw <code>.bg-warning</code> with white text fails contrast — use with dark text.</span></div>
     <div class="item"><span class="name">.bg-error / -100</span><span class="desc">Error fill / tint</span><span class="why">Form error highlight, destructive action banners.</span></div>
@@ -906,8 +945,8 @@
   <div class="class-grid">
     <div class="item"><span class="name">.border</span><span class="desc">1px solid (uses <code>--border-width</code> token and <code>--color-border</code>)</span><span class="why">The default border. Used inline when a one-off element needs a border without writing a rule.</span></div>
     <div class="item"><span class="name">.border-0</span><span class="desc">border-width: 0</span><span class="why">Removes a border — responsive override or reset on a bordered component instance.</span></div>
-    <div class="item"><span class="name">.border-2</span><span class="desc">border-width: 2px</span><span class="why">Emphasis border — selected states, active tabs, focused inputs.</span></div>
-    <div class="item"><span class="name">.border-4 <span class="tag tag--proposed">proposed</span></span><span class="desc">border-width: 4px</span><span class="why">Heavy accent border — blockquote-style left border, feature card highlight. Completing the 0/1/2/4 width family.</span></div>
+    <div class="item"><span class="name">.border-2</span><span class="desc">border-width: var(--border-width-2) [2px]</span><span class="why">Emphasis border — selected states, active tabs, focused inputs. Now uses <code>--border-width-2</code> token.</span></div>
+    <div class="item"><span class="name">.border-4</span><span class="desc">border-width: var(--border-width-4) [4px]</span><span class="why">Heavy accent border — blockquote-style left border, feature card highlight. Uses <code>--border-width-4</code> token.</span></div>
     <div class="item"><span class="name">.border-b / -t / -l / -r</span><span class="desc">Single-side border (bottom / top / left / right)</span><span class="why">Dividers, header bottom rule, table cell borders.</span></div>
     <div class="item"><span class="name">.border-x / -y</span><span class="desc">Inline (left+right) / block (top+bottom) borders</span></div>
     <div class="item"><span class="name">.border-dashed / -dotted</span><span class="desc">Border style variants</span><span class="why">Dashed: drop zones, placeholder cards. Dotted: decorative separators.</span></div>
@@ -991,6 +1030,9 @@
     <div class="item"><span class="name">.max-w-full <span class="tag tag--proposed">proposed</span></span><span class="desc">max-width: 100%</span><span class="why">Constrains to parent width — prevents images and tables from overflowing. One of the most common one-off CSS declarations.</span></div>
     <div class="item"><span class="name">.max-w-none <span class="tag tag--proposed">proposed</span></span><span class="desc">max-width: none</span><span class="why">Resets a <code>max-width</code> constraint from a parent or component default. Needed when a component sets max-width but an instance should be unconstrained.</span></div>
     <div class="item"><span class="name">.max-w-prose <span class="tag tag--breaking">breaking rename</span></span><span class="desc">max-width: var(--container-prose) — formerly <code>.max-prose</code></span><span class="why">Constrains reading content to 65ch for optimal line length. Rename from <code>.max-prose</code> to align with the <code>max-w-*</code> naming axis.</span></div>
+    <div class="item"><span class="name">.max-w-content</span><span class="desc">max-width: var(--content-width)</span><span class="why">Constrains to the global content width token — the same value <code>.container</code> uses. For full-bleed sections with a capped inner text width.</span></div>
+    <div class="item"><span class="name">.size-full</span><span class="desc">width: 100%; height: 100%</span><span class="why">Both dimensions at once — for flex/grid children that should fill their cell completely.</span></div>
+    <div class="item"><span class="name">.size-fit</span><span class="desc">width: fit-content; height: fit-content</span><span class="why">Shrink-wraps both axes to content size. Use for centered badges and floating elements.</span></div>
   </div>
 
   <h3 class="subheading">Height &amp; aspect ratio</h3>
@@ -998,6 +1040,7 @@
     <div class="item"><span class="name">.h-full</span><span class="desc">height: 100%</span><span class="why">Fill parent height. Works when parent has an explicit height. Use in flex columns for equal-height stretching.</span></div>
     <div class="item"><span class="name">.h-screen</span><span class="desc">height: 100vh</span><span class="why">Viewport-height section. For landing pages.</span></div>
     <div class="item"><span class="name">.h-svh</span><span class="desc">height: 100svh (small viewport height)</span><span class="why">Mobile-safe 100vh — accounts for browser chrome (Safari notch, Android URL bar). Use instead of <code>100vh</code> on mobile.</span></div>
+    <div class="item"><span class="name">.min-h-svh</span><span class="desc">min-height: 100svh</span><span class="why">Ensures a page or section is at least viewport-tall on mobile. Preferred over <code>min-height: 100vh</code> for landing pages and app shells.</span></div>
     <div class="item"><span class="name">.h-auto</span><span class="desc">height: auto (default)</span><span class="why">Resets an explicit height. Content-driven sizing.</span></div>
     <div class="item"><span class="name">.h-fit</span><span class="desc">height: fit-content</span><span class="why">Shrinks to content height. Useful for sticky sidebars that shouldn't extend beyond their content.</span></div>
     <div class="item"><span class="name">.h-min <span class="tag tag--proposed">proposed</span></span><span class="desc">height: min-content</span><span class="why">Shrinks to minimum content height. Documented in UTILITIES.md; missing from CSS.</span></div>
@@ -1015,10 +1058,11 @@
 
   <h3 class="subheading">Shadows &amp; visual effects <span style="font-weight:400;font-size:11px;color:var(--cs-muted)">(slashed-utilities-visual.css)</span></h3>
   <div class="class-grid">
+    <div class="item"><span class="name">.shadow-2xs</span><span class="desc">Hairline shadow — <code>--shadow-2xs</code> token</span><span class="why">Half-strength shadow for UI elements that need just a hint of depth (chips, inline buttons, table rows).</span></div>
     <div class="item"><span class="name">.shadow-none / -xs / -s / -m / -l / -xl</span><span class="desc">Box shadow scale using <code>--shadow-*</code> tokens</span><span class="why">Inline shadow assignment without writing a rule. Responds to dark mode automatically via shadow-strength multipliers.</span></div>
     <div class="item"><span class="name">.shadow-float / -glow / -colored / -inner</span><span class="desc">Special-purpose shadows</span><span class="why">Floating buttons, glow effects, brand drop shadow, inset inputs.</span></div>
     <div class="item"><span class="name">.backdrop-blur</span><span class="desc">backdrop-filter: blur(…) — frosted glass</span><span class="why">For glass-morphism headers, modal backdrops, sticky panels. Creates a stacking context — beware of dropdown clipping.</span></div>
-    <div class="item"><span class="name">.opacity-0 / -50 / -80 / -100</span><span class="desc">Opacity scale</span><span class="why">Disabled/inactive states, overlay layers.</span></div>
+    <div class="item"><span class="name">.opacity-0 / -5 / -10 / -20 / -25 / -30 / -40 / -50 / -60 / -70 / -75 / -80 / -90 / -100</span><span class="desc">14-stop opacity scale</span><span class="why">Disabled/inactive states, overlay layers, hover feedback. Expanded from 4 stops to 14 in 0.5.0.0.</span></div>
   </div>
 
   <h3 class="subheading">Transitions &amp; animations <span style="font-weight:400;font-size:11px;color:var(--cs-muted)">(slashed-utilities-visual.css)</span></h3>
@@ -1044,6 +1088,8 @@
     <div class="item"><span class="name">.overflow-visible <span class="tag tag--proposed">proposed</span></span><span class="desc">overflow: visible — content escapes container</span><span class="why">Resets <code>overflow: hidden</code> so tooltips and dropdowns inside a clipped parent can escape. Documented in UTILITIES.md; missing from CSS.</span></div>
     <div class="item"><span class="name">.overflow-x-auto</span><span class="desc">overflow-x: auto — horizontal scroll when needed</span><span class="why">For wide tables and code blocks that should scroll horizontally.</span></div>
     <div class="item"><span class="name">.overflow-y-auto</span><span class="desc">overflow-y: auto — vertical scroll when needed</span><span class="why">For fixed-height containers with dynamic content (e.g. autocomplete lists).</span></div>
+    <div class="item"><span class="name">.overflow-clip</span><span class="desc">overflow: clip — hard clip, no scroll, no stacking context</span><span class="why">Unlike <code>overflow: hidden</code>, <code>clip</code> does NOT create a new stacking context. Prevents overflow without breaking <code>z-index</code> on child tooltips/dropdowns.</span></div>
+    <div class="item"><span class="name">.overflow-x-clip / .overflow-y-clip</span><span class="desc">Single-axis hard clip</span><span class="why">Clip one axis while leaving the other unrestricted. Common for horizontal marquee containers that should not clip vertically.</span></div>
     <div class="item"><span class="name">.scrollbar-thin</span><span class="desc">Narrow scrollbar (Webkit + Firefox)</span><span class="why">For tight UI panels where the default scrollbar is too visually heavy.</span></div>
     <div class="item"><span class="name">.overscroll-contain</span><span class="desc">Prevents scroll chaining to parent</span><span class="why">Modal and drawer bodies — prevents page scroll when the inner container reaches its boundary.</span></div>
     <div class="item"><span class="name">.overscroll-none</span><span class="desc">Prevents bounce/overscroll effects</span><span class="why">Removes iOS rubber-band effect inside scroll containers.</span></div>
@@ -1077,6 +1123,32 @@
     <div class="item"><span class="name">.cursor-wait <span class="tag tag--proposed">proposed</span></span><span class="desc">cursor: wait — hourglass/spinner</span><span class="why">Loading state feedback — shows the user the system is processing. Documented in UTILITIES.md; missing from CSS.</span></div>
     <div class="item"><span class="name">.cursor-grab <span class="tag tag--proposed">proposed</span></span><span class="desc">cursor: grab — open hand</span><span class="why">For draggable elements (image galleries, kanban cards, carousels). Documented in UTILITIES.md; missing from CSS.</span></div>
     <div class="item"><span class="name">.cursor-grabbing <span class="tag tag--proposed">proposed</span></span><span class="desc">cursor: grabbing — closed hand</span><span class="why">Active drag state — apply via JS <code>:active</code> or <code>dragging</code> class. Pair with <code>cursor-grab</code>. Documented in UTILITIES.md; missing from CSS.</span></div>
+  </div>
+
+  <h3 class="subheading">Interaction</h3>
+  <div class="rationale">
+    Pointer events, text selection, and stacking-context utilities. Functional — belong in core utilities, not visual.
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">.pointer-events-auto</span><span class="desc">pointer-events: auto</span><span class="why">Re-enables pointer events on an element inside a <code>pointer-events: none</code> parent. Common in overlay/backdrop patterns.</span></div>
+    <div class="item"><span class="name">.select-text</span><span class="desc">user-select: text</span><span class="why">Ensures text is selectable — restores selectability inside a <code>user-select: none</code> parent (e.g. drag handles).</span></div>
+    <div class="item"><span class="name">.select-all</span><span class="desc">user-select: all — single click selects everything</span><span class="why">Code snippets and API keys — one click selects the whole value for copy.</span></div>
+    <div class="item"><span class="name">.isolate</span><span class="desc">isolation: isolate — creates a new stacking context</span><span class="why">Contains <code>z-index</code> wars to a subtree. Replaces the old <code>.isolation-isolate</code> class (removed).</span></div>
+    <div class="item"><span class="name">.isolation-auto</span><span class="desc">isolation: auto — resets stacking context</span><span class="why">Removes an explicit isolation boundary set by a parent or component.</span></div>
+  </div>
+
+  <h3 class="subheading">CSS Columns</h3>
+  <div class="rationale">
+    Multi-column text layout — ideal for masonry-like card flows, magazine-style prose, and responsive content grids without JavaScript.
+    <span class="when-not">For grid layouts with precise row alignment, use <code>.grid</code> utilities instead. CSS columns are best for content that can flow naturally across columns (prose, image galleries).</span>
+  </div>
+  <div class="class-grid">
+    <div class="item"><span class="name">.cols-2 / .cols-3 / .cols-4</span><span class="desc">Fixed column count: 2, 3, or 4</span><span class="why">Explicit column count — works at any container width. Content distributes evenly across columns.</span></div>
+    <div class="item"><span class="name">.cols-auto-xs / -s / -m</span><span class="desc">Auto column count with minimum widths: 12rem / 16rem / 20rem</span><span class="why">Responsive masonry without media queries — browser picks how many columns fit at the given minimum width. <code>cols-auto-m</code> with a 1200px container = ~4 cols; on mobile = 1 col.</span></div>
+    <div class="item"><span class="name">.col-gap-m / .col-gap-l</span><span class="desc">Column gap using <code>--space-m</code> / <code>--space-l</code></span><span class="why">Fluid gap between columns. Pairs with any <code>.cols-*</code> class.</span></div>
+    <div class="item"><span class="name">.col-span-all</span><span class="desc">column-span: all — element spans all columns</span><span class="why">Section headings and "featured" items inside a columns container that should span the full width.</span></div>
+    <div class="item"><span class="name">.col-break-before / .col-break-after</span><span class="desc">Force a column break before / after the element</span><span class="why">Control column break points manually — e.g. ensure a new section always starts in the next column.</span></div>
+    <div class="item"><span class="name">.col-break-avoid</span><span class="desc">break-inside: avoid — prevent column break inside the element</span><span class="why">Prevents a card or quote block from splitting across two columns. Apply to each card inside a <code>.cols-*</code> container.</span></div>
   </div>
 
   <h3 class="subheading">Motion utilities (a11y layer — respects prefers-reduced-motion)</h3>
@@ -1161,11 +1233,58 @@
   </div>
 </section>
 
+<!-- ============================================================ JS API -->
+<section class="section" id="js-api">
+  <h2 class="section-title">JavaScript API <span class="meta">js/slashed-ui.js · window.slashedUI · zero dependencies</span></h2>
+
+  <div class="rationale">
+    <strong>Why optional JS:</strong> SLASHED is CSS-first. Every component has a pure-CSS baseline. The JS layer adds WCAG-AAA enhancements (focus management, live regions, ARIA state) without being required for the component to function. Load <code>js/slashed-ui.js</code> once — it auto-initialises on <code>DOMContentLoaded</code> and exposes the public API on <code>window.slashedUI</code>.
+    <span class="when-not">Don't call <code>init()</code> manually — it runs automatically. Call individual functions only for dynamic content added after page load.</span>
+  </div>
+
+  <h3 class="subheading">Modal</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">slashedUI.openModal(dialog)</span><span class="desc">Opens a <code>&lt;dialog&gt;</code> element via <code>showModal()</code></span><span class="why">Use when you need programmatic open from JS (e.g. after an async operation). Equivalent to calling <code>dialog.showModal()</code> but safely guards against non-dialog elements.</span></div>
+    <div class="item"><span class="name">slashedUI.closeModal(dialog)</span><span class="desc">Closes an open <code>&lt;dialog&gt;</code> element</span><span class="why">Programmatic close — equivalent to <code>dialog.close()</code>. Use in custom footer buttons or post-form-submit flows.</span></div>
+    <div class="item"><span class="name">slashedUI.toggleModal(dialog)</span><span class="desc">Opens if closed, closes if open</span><span class="why">For toggle-button patterns where the same button controls open/close state. Checks <code>dialog.open</code> and delegates to <code>openModal</code> / <code>closeModal</code>.</span></div>
+    <div class="item"><span class="name">slashedUI.initModalFocusRestore()</span><span class="desc">Restores focus to the trigger element after a modal closes</span><span class="why">WCAG 2.4.3 requirement. Attach via <code>data-modal-trigger</code> attribute — runs automatically on <code>DOMContentLoaded</code>.</span></div>
+  </div>
+
+  <h3 class="subheading">Toast</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">slashedUI.toast(message, options)</span><span class="desc">Creates and shows a toast notification</span><span class="why">Options: <code>{ type: 'success'|'error'|'warning'|'info', duration: ms }</code>. Auto-dismisses. Appends to a toast region with correct ARIA live attributes.</span></div>
+    <div class="item"><span class="name">slashedUI.dismissToast(el)</span><span class="desc">Programmatically dismisses a specific toast element</span><span class="why">Use when your code knows a toast is obsolete before its auto-dismiss timer fires (e.g. upload completed early).</span></div>
+  </div>
+
+  <h3 class="subheading">Other utilities</h3>
+  <div class="class-grid">
+    <div class="item"><span class="name">slashedUI.initStagger()</span><span class="desc">Adds staggered entrance animation delays to children</span><span class="why">For list or grid entrance animations. Sets <code>--stagger-delay</code> on each child — pair with <code>.animate-fade-in</code> on the parent.</span></div>
+    <div class="item"><span class="name">slashedUI.updateRange(input)</span><span class="desc">Syncs a range input's fill percentage to a CSS custom property</span><span class="why">Keeps the track fill behind the thumb in sync. Auto-runs on <code>input</code> events — call manually for programmatically changed range values.</span></div>
+    <div class="item"><span class="name">slashedUI.initTabsAccessible()</span><span class="desc">Upgrades CSS-only tabs to full ARIA tab interface</span><span class="why">Adds <code>role="tablist"</code>, <code>role="tab"</code>, <code>aria-selected</code>, and arrow-key navigation. Runs automatically on <code>DOMContentLoaded</code>.</span></div>
+    <div class="item"><span class="name">slashedUI.initFormGroups()</span><span class="desc">Adds live validation feedback to <code>.cs-form-group</code> elements</span><span class="why">Wires <code>:user-invalid</code> to the error element — shows inline error messages after the user leaves a field.</span></div>
+  </div>
+
+  <pre class="code-block"><code><span class="c-comment">&lt;!-- Programmatic modal open after async operation --&gt;</span>
+<span class="c-tag">&lt;script&gt;</span>
+  <span class="c-keyword">const</span> dialog = document.querySelector(<span class="c-string">'#confirm-dialog'</span>);
+  slashedUI.openModal(dialog);
+
+  <span class="c-comment">// Or toggle on button click:</span>
+  btn.addEventListener(<span class="c-string">'click'</span>, () =&gt; slashedUI.toggleModal(dialog));
+
+  <span class="c-comment">// Show a toast then dismiss it on success:</span>
+  <span class="c-keyword">const</span> t = slashedUI.toast(<span class="c-string">'Uploading…'</span>, { type: <span class="c-string">'info'</span>, duration: 0 });
+  <span class="c-keyword">await</span> upload();
+  slashedUI.dismissToast(t);
+  slashedUI.toast(<span class="c-string">'Upload complete'</span>, { type: <span class="c-string">'success'</span> });
+<span class="c-tag">&lt;/script&gt;</span></code></pre>
+</section>
+
 <div class="no-results" id="no-results" style="display:none;">No classes match your filter.</div>
 
 <footer class="footer-note">
-  SLASHED v0.4.9.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
-  <span style="font-size:10px;opacity:0.6;">Cheatsheet updated for 0.5.0.0 planning · Classes marked <span class="tag tag--proposed" style="vertical-align:middle">proposed</span> are pending approval before implementation · Classes marked <span class="tag tag--breaking" style="vertical-align:middle">breaking rename</span> will change in 0.4.7.0 or 0.4.9.0</span>
+  SLASHED v0.5.0.0 · <a href="https://github.com/codeslash-net/slashed">GitHub</a> · MIT License<br>
+  <span style="font-size:10px;opacity:0.6;">Cheatsheet updated for 0.5.0.0 · Classes marked <span class="tag tag--proposed" style="vertical-align:middle">proposed</span> are documented but not yet in CSS</span>
 </footer>
 
 <script>

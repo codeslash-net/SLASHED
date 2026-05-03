@@ -3,7 +3,7 @@
 > Forward-looking only. Shipped work lives in [`CHANGELOG.md`](CHANGELOG.md).
 > Reviewed at every framework version bump.
 >
-> **Last reviewed:** v0.5.0.0 (2026-05-02). Pending work below describes what ships in the 0.5.0.0 cut.
+> **Last reviewed:** v0.5.0.0 (2026-05-03). 0.5.0.0 shipped — pending work below is for future versions.
 
 This file is the single authoritative list of what is *not yet shipped*. If
 something is here and has since shipped, move it to the corresponding
@@ -182,135 +182,6 @@ obligations at `0.8.0.0` as a pre-condition for the 1.0 freeze.
 
 ## Pending work
 
-### 0.5.0.0 release — scheduled for this cut
-
----
-
-#### Tokens: `--info` color system
-
-Add `--info: #0ea5e9` (sky-500) to the status color system.
-Required changes to `css/tokens-default.css`:
-
-- Static legacy fallback added to the top-of-file block
-- `@property` removed for `--success`, `--warning`, `--error` — status
-  colors, not brand colors; CSS transition registration unneeded
-- `light-dark()` replaced with fixed light-mode values in `:root`;
-  dark-mode values moved to the `@media (prefers-color-scheme: dark)`
-  and `[data-theme="dark"]` blocks explicitly
-- `--info`, `--info-100`, `--info-600` defined in `:root` and both
-  dark-mode blocks
-
----
-
-#### Tokens: new system tokens
-
-Add to `css/tokens-default.css`:
-
-- `--border-width: 1px`, `--border-width-2: 2px`, `--border-width-4: 4px`,
-  `--border-style: solid`
-- `--font-weight-body: 400`, `--font-weight-medium: 500`,
-  `--font-weight-semi: 600` (complement to the existing `--font-weight-heading: 700`)
-- `--shadow-2xs` — half-strength shadow between `none` and `--shadow-xs`
-
----
-
-#### Tokens: new semantic aliases
-
-Add to the `--color-*` alias block in `css/tokens-default.css`:
-
-- `--color-text-body` (alias → `--color-text`)
-- `--color-placeholder` (alias → `--color-text-faint`)
-- `--color-link-active` (alias → `--primary-700`)
-- `--color-text-on-success`, `--color-text-on-warning`,
-  `--color-text-on-error`, `--color-text-on-info`
-
----
-
-#### Utilities: new classes (`slashed-utilities.css`)
-
-- **Text:** `.text-body`, `.text-info`, `.break-all`, `.break-keep`,
-  `.hyphens-auto`, `.hyphens-none`, `.tabular-nums`
-- **Lists:** `.list-disc`, `.list-decimal`
-- **Sizing:** `.max-w-content`, `.size-full`, `.size-fit`, `.min-h-svh`
-- **Overflow:** `.overflow-clip`, `.overflow-x-clip`, `.overflow-y-clip`
-- **Interaction:** `.pointer-events-auto`, `.select-text`, `.select-all`,
-  `.isolate`, `.isolation-auto`
-- **CSS Columns:** `.cols-2`, `.cols-3`, `.cols-4`, `.cols-auto-xs`,
-  `.cols-auto-s`, `.cols-auto-m`, `.col-gap-m`, `.col-gap-l`,
-  `.col-span-all`, `.col-break-before`, `.col-break-after`, `.col-break-avoid`
-
----
-
-#### Visual utilities: opacity, shadow, borders, contextual colors (`slashed-utilities-visual.css`)
-
-- Opacity scale expanded to 14 stops: 0, 5, 10, 20, 25, 30, 40, 50,
-  60, 70, 75, 80, 90, 100
-- `.shadow-2xs`
-- `.border-2` and `.border-4` — replace hardcoded `px` values with
-  `var(--border-width-2)` and `var(--border-width-4)` tokens
-- `.isolation-isolate` — remove entirely; replaced by `.isolate` in
-  `slashed-utilities.css`
-- Contextual color cascading: `.bg-primary`, `.bg-secondary`, `.bg-accent`
-  cascade `--color-text`, `--color-link`, and `--color-border` to children
-  so nested text and UI components automatically use correct contrast values
-
----
-
-#### Components: `--info` variants (`slashed-components.css`)
-
-Add info-tinted modifiers to four existing component families:
-
-- `.cs-notice--info` — `--notice-color: var(--info); --notice-bg: var(--info-100)`
-- `.cs-badge--info` — `--badge-bg: var(--info-100); --badge-text: var(--info-600)`
-- `.cs-toast--info` — `--toast-color: var(--info)`
-- `.cs-message--info` — `--message-color: var(--info-600); --message-bg: var(--info-100)`
-
----
-
-#### Components: `.cs-modal--drawer-start` / `.cs-modal--drawer-end`
-
-Offcanvas / drawer pattern built on native `<dialog>`. Slides in from the
-inline-start or inline-end edge. Uses `@starting-style` + `transition:
-translate allow-discrete` — no JavaScript required for animation.
-Instance token: `--drawer-width` (default 20rem). Combines with existing
-`initModalFocusRestore()` for full a11y support.
-
----
-
-#### Components: `@media (hover: hover)` guards
-
-Wrap in `@media (hover: hover)` to prevent stuck hover states on touch
-devices:
-
-- `.cs-card--interactive:hover`
-- `.cs-chip:hover`
-- `[data-tooltip]:hover::after`
-- `.cs-table--hoverable tbody tr:hover`
-
----
-
-#### Core: `::placeholder` token (`slashed-core.css`)
-
-Replace hardcoded reference with a token:
-
-```css
-/* before */ color: var(--color-text-faint, #9ca3af);
-/* after  */ color: var(--color-placeholder, var(--color-text-faint, #9ca3af));
-```
-
----
-
-#### JS: new public API (`slashed-ui.js`)
-
-- `slashedUI.openModal(dialog)` — calls `dialog.showModal()` programmatically
-- `slashedUI.toggleModal(dialog)` — opens if closed, closes if open
-- `slashedUI.dismissToast(el)` — public alias for the internal `dismiss()`
-  function
-
-Update `window.slashedUI` export to include all three.
-
----
-
 #### Ecosystem: new files
 
 - `ecosystem/slashed-bricks.css` — opt-in Bricks Builder integration layer.
@@ -320,32 +191,6 @@ Update `window.slashedUI` export to include all three.
 - `ecosystem/bricks-theme-styles.json` — Bricks Variable Manager import file
   with all SLASHED tokens pre-mapped (brand, status, spacing, typography,
   radius).
-
----
-
-#### Pending: `.cs-btn--icon`
-
-Icon-only button modifier: equal x/y padding, square aspect ratio.
-Combines with existing variants: `<button class="cs-btn--outline cs-btn--icon">`.
-
-```css
-.cs-btn--icon {
-  padding: var(--btn-icon-padding, var(--space-xs));
-  aspect-ratio: 1;
-  justify-content: center;
-}
-```
-
----
-
-#### Pending: `.section--soft` / `.section--bold`
-
-Brand-colored section backgrounds alongside existing `.section--alt`.
-
-```css
-.section--soft { background: var(--primary-50);  color: var(--color-text); }
-.section--bold { background: var(--primary);      color: var(--color-text-on-primary); }
-```
 
 ---
 
@@ -536,6 +381,18 @@ when planning the version that will become 1.0.
 Items that have been proposed in the past but are not pending. Documented
 here to prevent re-addition.
 
+- **`--info` color system** — shipped in `0.5.0.0`. `--info` (sky-500), `--info-100`, `--info-600` added to `tokens-default.css`; dark-mode overrides in both dark-mode blocks; `@property` removed for `--success`/`--warning`/`--error` (status colors don't need transition registration); status colors now use static light-mode values instead of `light-dark()`.
+- **New system tokens** — shipped in `0.5.0.0`. `--border-width-2` / `--border-width-4` / `--border-style`, `--font-weight-body` / `--font-weight-medium` / `--font-weight-semi`, `--shadow-2xs` added to `tokens-default.css`.
+- **New semantic aliases** — shipped in `0.5.0.0`. `--color-text-body`, `--color-placeholder`, `--color-link-active`, `--color-text-on-success`/`warning`/`error`/`info` added to `tokens-default.css`.
+- **Utilities: new classes** — shipped in `0.5.0.0`. `.text-body`, `.text-info`, `.break-all`, `.break-keep`, `.hyphens-auto`, `.hyphens-none`, `.tabular-nums`, `.list-disc`, `.list-decimal`, `.max-w-content`, `.size-full`, `.size-fit`, `.min-h-svh`, `.overflow-clip`, `.overflow-x-clip`, `.overflow-y-clip`, `.pointer-events-auto`, `.select-text`, `.select-all`, `.isolate`, `.isolation-auto`, and full CSS Columns group (`.cols-2/3/4`, `.cols-auto-xs/s/m`, `.col-gap-m/l`, `.col-span-all`, `.col-break-before/after/avoid`) added to `slashed-utilities.css`.
+- **Visual utilities: opacity, shadow, borders, contextual cascade** — shipped in `0.5.0.0`. Opacity scale expanded to 14 stops; `.shadow-2xs` added; `.border-2`/`.border-4` now use token refs; `.isolation-isolate` removed (replaced by `.isolate`); `.bg-primary`/`.bg-secondary`/`.bg-accent` cascade `--color-text`/`--color-link`/`--color-border` to children.
+- **Components: `--info` variants** — shipped in `0.5.0.0`. `.cs-notice--info`, `.cs-badge--info`, `.cs-toast--info`, `.cs-message--info` added to `slashed-components.css`.
+- **Components: drawer modifiers** — shipped in `0.5.0.0`. `.cs-modal--drawer-start` / `.cs-modal--drawer-end` on native `<dialog>` with `@starting-style` entrance animation; `--drawer-width` instance token (default 20rem).
+- **Components: `@media (hover: hover)` guards** — shipped in `0.5.0.0`. Hover rules for `.cs-card--interactive`, `.cs-chip`, `[data-tooltip]`, `.cs-table--hoverable` wrapped to prevent stuck hover on touch devices.
+- **Components: `.cs-btn--icon`** — shipped in `0.5.0.0`. Square icon-only button modifier with `aspect-ratio: 1` and `--btn-icon-padding` instance token.
+- **Core: `.section--soft` / `.section--bold`** — shipped in `0.5.0.0`. Brand-colored section backgrounds added to `slashed-core.css`.
+- **Core: `::placeholder` token** — shipped in `0.5.0.0`. `::placeholder` now resolves through `--color-placeholder` before falling back to `--color-text-faint`.
+- **JS: `openModal` / `toggleModal` / `dismissToast`** — shipped in `0.5.0.0`. Three new public functions added to `window.slashedUI`.
 - **BEM fix: `.cs-skeleton-line` → `.cs-skeleton__line`** — shipped in `0.4.8.0`. Breaking rename in `slashed-components.css`; cheatsheet updated.
 - **`sibling-index()` native stagger** — shipped in `0.4.8.0`. `@supports` block added in `slashed-core.css`; `initStagger()` in `slashed-ui.js` remains as polyfill for `Chrome <130` / `Firefox <131` / `Safari <18`.
 - **`text-box` trim extended to `.cs-badge`, `.cs-nav-link`, `.cs-chip`, `.cs-eyebrow`** — shipped in `0.4.8.0`. Added to the existing `@supports (text-box: trim-both cap alphabetic)` block in `slashed-components.css`.

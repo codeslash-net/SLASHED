@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SLASHED Tokens — Default — v0.4.9.0
+   SLASHED Tokens — Default — v0.5.0.0
    ========================================================================== */
 
 /* ================================================================
@@ -53,6 +53,7 @@
   --success-100: #dcfce7;  --success-600: #16a34a;
   --warning-100: #fef9c3;  --warning-600: #ca8a04;
   --error-100:   #fee2e2;  --error-600:   #dc2626;
+  --info:        #0ea5e9;  --info-100:    #e0f2fe;  --info-600: #0284c7;
 
   --neutral-tint: 0%;
   --neutral-50:  #f9fafb;
@@ -126,9 +127,6 @@
 @property --primary   { syntax: '<color>'; inherits: true; initial-value: #2563eb; }
 @property --secondary { syntax: '<color>'; inherits: true; initial-value: #0d9488; }
 @property --accent    { syntax: '<color>'; inherits: true; initial-value: #f59e0b; }
-@property --success   { syntax: '<color>'; inherits: true; initial-value: #16a34a; }
-@property --warning   { syntax: '<color>'; inherits: true; initial-value: #eab308; }
-@property --error     { syntax: '<color>'; inherits: true; initial-value: #dc2626; }
 
 /* ⚠️ BRICKS / WORDPRESS REM PROTECTION
    Some WordPress themes / Bricks templates set font-size: 62.5% (= 10px) on :root
@@ -174,11 +172,12 @@
   /* Contrast on white: ~4.6:1 (WCAG AA pass). For AAA text, use --primary-700. */
   --secondary: light-dark(#0d9488, #2dd4bf);
   --accent:    light-dark(#f59e0b, #fbbf24);
-  --success:   light-dark(#16a34a, #4ade80);
-  --warning:   light-dark(#eab308, #facc15);
+  --success: #16a34a;
+  --warning: #eab308;
   /* ⚠️ --warning on white: ~2.8:1 — fails WCAG for text. Use --warning-600 for text,
      --warning-100 background with --warning-600 text for accessible warning messages. */
-  --error:     light-dark(#dc2626, #f87171);
+  --error:   #dc2626;
+  --info:    #0ea5e9;
 
   /* ===== Primary shades (auto-update from --primary) =====
      -100/-200 flip in dark mode; -300/-400 are light tints; -600 through -950 are dark shades.
@@ -248,6 +247,9 @@
   --error-100: color-mix(in oklch, var(--error) 10%, white);
   --error-600: color-mix(in oklch, var(--error) 80%, black);
 
+  --info-100: color-mix(in oklch, var(--info) 10%, white);
+  --info-600: color-mix(in oklch, var(--info) 80%, black);
+
   /* ===== Neutrals (set --neutral-tint: 2-3% for brand-cohesive grays) ===== */
 
   --neutral-tint: 0%;
@@ -295,6 +297,13 @@
   --color-link:                 var(--primary);
   --color-link-visited:         var(--primary-800);
   --color-link-hover:           var(--primary-700);
+  --color-link-active:          var(--primary-700);
+  --color-text-body:            var(--color-text);
+  --color-placeholder:          var(--color-text-faint);
+  --color-text-on-success:      white;
+  --color-text-on-warning:      var(--neutral-900);
+  --color-text-on-error:        white;
+  --color-text-on-info:         var(--neutral-900);
 
   /* ===== Spacing (fluid, base 16→24px, 320→1440px) ===== */
 
@@ -361,6 +370,9 @@
 
   /* font-weight named tokens */
   --font-weight-heading: 700;
+  --font-weight-body:    400;
+  --font-weight-medium:  500;
+  --font-weight-semi:    600;
 
   --leading-tight:  1.2;
   --leading-snug:   1.35;
@@ -385,13 +397,17 @@
 
   /* ===== Border ===== */
 
-  --border-width: 1px;
+  --border-width:   1px;
+  --border-width-2: 2px;
+  --border-width-4: 4px;
+  --border-style:   solid;
 
   /* ===== Shadows — calc()-based, dark mode overrides only --shadow-strength ===== */
 
   --shadow-strength:   0.04;  /* light mode base opacity multiplier */
   --shadow-strength-2: 0.08;  /* stronger layers */
 
+  --shadow-2xs:   0 1px 2px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.375));
   --shadow-xs:    0 1px 2px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.75));
   --shadow-s:     0 1px 2px 0 rgba(0, 0, 0, calc(var(--shadow-strength) * 0.5)),
                   0 2px 6px 0 rgba(0, 0, 0, var(--shadow-strength));
@@ -623,6 +639,14 @@
     --warning-600: color-mix(in oklch, var(--warning) 40%, white);
     --error-100:   color-mix(in oklch, var(--error)   20%, #1f2937);
     --error-600:   color-mix(in oklch, var(--error)   40%, white);
+    --info:        #38bdf8;
+    --info-100:    color-mix(in oklch, var(--info) 20%, #1f2937);
+    --info-600:    color-mix(in oklch, var(--info) 40%, white);
+
+    --color-text-on-success: #111827;
+    --color-text-on-warning: #111827;
+    --color-text-on-error:   #111827;
+    --color-text-on-info:    #111827;
 
     --shadow-strength:   0.12;
     --shadow-strength-2: 0.24;
@@ -691,6 +715,14 @@
   --warning-600: color-mix(in oklch, var(--warning) 40%, white);
   --error-100:   color-mix(in oklch, var(--error)   20%, #1f2937);
   --error-600:   color-mix(in oklch, var(--error)   40%, white);
+  --info:        #38bdf8;
+  --info-100:    color-mix(in oklch, var(--info) 20%, #1f2937);
+  --info-600:    color-mix(in oklch, var(--info) 40%, white);
+
+  --color-text-on-success: #111827;
+  --color-text-on-warning: #111827;
+  --color-text-on-error:   #111827;
+  --color-text-on-info:    #111827;
 
   --shadow-strength:   0.12;
   --shadow-strength-2: 0.24;
