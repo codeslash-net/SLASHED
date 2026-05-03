@@ -126,6 +126,20 @@
     if (dialog && typeof dialog.close === 'function') dialog.close();
   }
 
+  function openModal(dialog) {
+    if (dialog && typeof dialog.showModal === 'function' && !dialog.open && dialog.isConnected) dialog.showModal();
+  }
+
+  function toggleModal(dialog) {
+    if (!dialog) return;
+    if (dialog.open) closeModal(dialog);
+    else openModal(dialog);
+  }
+
+  function dismissToast(el) {
+    dismiss(el);
+  }
+
   /* ---------------------------------------------------------------
      3. Modal focus restore — return focus to trigger on dialog close.
      Native <dialog> traps focus inside and handles Escape; the gap
@@ -358,7 +372,7 @@
       document.body.appendChild(stack);
     }
     var el = document.createElement('aside');
-    var allowedVariants = { success: true, warning: true, error: true };
+    var allowedVariants = { success: true, warning: true, error: true, info: true };
     var variant = typeof opts.variant === 'string' ? opts.variant.trim() : '';
     el.className = 'cs-toast' + (allowedVariants[variant] ? ' cs-toast--' + variant : '');
     el.setAttribute('role', opts.urgency === 'assertive' ? 'alert' : 'status');
@@ -455,22 +469,28 @@
   }
 
   /* Expose public helpers for dynamic content re-runs, toasts, range
-     re-paints, programmatic modal close, and accessible tab keyboard nav:
+     re-paints, programmatic modal control, and accessible tab keyboard nav:
      slashedUI.initStagger(containerElement)
      slashedUI.toast({ title, body, variant, urgency, duration })
      slashedUI.updateRange(rangeInputElement)
      slashedUI.closeModal(dialogElement)
+     slashedUI.openModal(dialogElement)
+     slashedUI.toggleModal(dialogElement)
+     slashedUI.dismissToast(toastElement)
      slashedUI.initTabsAccessible()
      slashedUI.initModalFocusRestore()
      slashedUI.initFormGroups() */
   window.slashedUI = Object.assign(window.slashedUI || {}, {
-    initStagger: initStagger,
-    toast: toast,
-    updateRange: updateRange,
-    closeModal: closeModal,
-    initTabsAccessible: initTabsAccessible,
+    initStagger:          initStagger,
+    toast:                toast,
+    updateRange:          updateRange,
+    closeModal:           closeModal,
+    openModal:            openModal,
+    toggleModal:          toggleModal,
+    dismissToast:         dismissToast,
+    initTabsAccessible:   initTabsAccessible,
     initModalFocusRestore: initModalFocusRestore,
-    initFormGroups: initFormGroups
+    initFormGroups:       initFormGroups
   });
 
 })();

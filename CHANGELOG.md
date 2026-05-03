@@ -10,36 +10,125 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [unreleased]
+## [0.5.0.0] — 2026-05-03
 
-### Fixed (review pass on PR #4)
+### Added — design tokens (`tokens-default.css`)
+
+**`--info` color system:** `--info` (#0ea5e9 sky-500), `--info-100`
+(10% oklch tint), `--info-600` (80% oklch shade). Dark-mode overrides
+flip to `--info: #38bdf8` (sky-400) with adjusted shades. Completes the
+four-status set (success / warning / error / info) across the entire
+token system.
+
+**New system tokens:**
+- Border: `--border-width-2` (2px), `--border-width-4` (4px), `--border-style` (solid)
+- Typography: `--font-weight-body` (400), `--font-weight-medium` (500), `--font-weight-semi` (600)
+- Shadow: `--shadow-2xs` — half-strength hairline shadow
+
+**New semantic aliases:**
+`--color-text-body` · `--color-placeholder` · `--color-link-active`
+(→ `--primary-700`) · `--color-text-on-success` (white) ·
+`--color-text-on-warning` (neutral-900) · `--color-text-on-error` (white) ·
+`--color-text-on-info` (neutral-900). Dark-mode flips all on-* tokens
+to `#111827` since status colors lighten in dark mode.
+
+**Removed `@property` for status colors:** `--success`, `--warning`,
+`--error` no longer register `@property`. CSS transitions on status
+colors are unused; removing the registrations avoids overhead. Brand
+colors (`--primary`, `--secondary`, `--accent`) keep their `@property`
+registrations for smooth theme switching.
+
+**Fixed status color authoring:** `--success`, `--warning`, `--error`
+now use static light-mode values (`#16a34a`, `#eab308`, `#dc2626`)
+instead of `light-dark()`. The dark-mode blocks override them correctly.
+
+### Added — layout primitives (`slashed-core.css`)
+
+- `::placeholder` now resolves via `--color-placeholder` token (falls
+  back to `--color-text-faint`).
+- `.section--soft` — primary-50 tint background (subtle brand wash).
+- `.section--bold` — full primary background with `--color-text-on-primary` text.
+
+### Added — utilities (`slashed-utilities.css`)
+
+**Typography:** `.text-body` · `.text-info` · `.break-all` ·
+`.break-keep` · `.hyphens-auto` · `.hyphens-none` · `.tabular-nums`
+
+**Lists:** `.list-disc` · `.list-decimal` (opt-in markers; base resets
+list-style by default)
+
+**Sizing:** `.max-w-content` (→ `--content-width`) · `.size-full`
+(width+height 100%) · `.size-fit` (both fit-content) · `.min-h-svh`
+
+**Overflow:** `.overflow-clip` · `.overflow-x-clip` · `.overflow-y-clip`
+(hard clip — does NOT create stacking context unlike `overflow: hidden`)
+
+**Interaction:** `.pointer-events-auto` · `.select-text` · `.select-all`
+· `.isolate` · `.isolation-auto`
+
+**CSS Columns (new group):** `.cols-2` / `.cols-3` / `.cols-4` ·
+`.cols-auto-xs` (12rem) / `.cols-auto-s` (16rem) / `.cols-auto-m`
+(20rem) · `.col-gap-m` / `.col-gap-l` · `.col-span-all` ·
+`.col-break-before` / `.col-break-after` / `.col-break-avoid`
+
+### Added — visual utilities (`slashed-utilities-visual.css`)
+
+- **Opacity scale expanded** from 4 stops to 14: 0 / 5 / 10 / 20 / 25 /
+  30 / 40 / 50 / 60 / 70 / 75 / 80 / 90 / 100.
+- **`.shadow-2xs`** — uses new `--shadow-2xs` token.
+- **`.border-2` / `.border-4`** — now use `--border-width-2` /
+  `--border-width-4` tokens instead of raw px values.
+- **Contextual cascade on semantic bg utilities:** `.bg-primary`,
+  `.bg-secondary`, `.bg-accent` now re-declare `--color-text`,
+  `--color-link`, `--color-border` to on-* values, so nested text and
+  UI components automatically use correct contrast colors.
+
+### Breaking
+
+- `.isolation-isolate` → `.isolate` (class renamed; old name removed)
+
+### Removed — visual utilities (`slashed-utilities-visual.css`)
+
+- **`.isolation-isolate`** — replaced by `.isolate` in core utilities.
+
+### Added — components (`slashed-components.css`)
+
+**`--info` variants:** `.cs-notice--info` · `.cs-badge--info` ·
+`.cs-toast--info` · `.cs-message--info`. Completes four-status coverage
+in all status-bearing components.
+
+**Drawer modifiers:** `.cs-modal--drawer-start` / `.cs-modal--drawer-end`.
+Side-drawer pattern on native `<dialog>` via `translate` + `@starting-style`.
+Instance token `--drawer-width` (default 20rem). RTL-aware via logical properties.
+
+**`.cs-btn--icon`** — square icon-only button with `aspect-ratio: 1`
+and `min-width: 2.75rem`. Instance token `--btn-icon-padding`.
+
+**`@media (hover: hover)` guards** added to four existing hover rules:
+`.cs-card--interactive:hover`, `.cs-chip:hover`,
+`[data-tooltip]:hover::after`, `.cs-table--hoverable tbody tr:hover`.
+Prevents stuck hover states on touch devices.
+
+### Added — JavaScript API (`js/slashed-ui.js`)
+
+Three new public functions on `window.slashedUI`:
+
+- **`openModal(dialog)`** — calls `dialog.showModal()` safely.
+- **`toggleModal(dialog)`** — opens if closed, closes if open.
+- **`dismissToast(el)`** — programmatically dismisses a specific toast.
+
+### Fixed (absorbed from unreleased)
 
 - `css/tokens-default.css` — `--color-text-on-primary` in dark mode
   changed from `#ffffff` to `#111827`. White on dark-mode primary
   (`#5b8def`) was 3.24:1, failing WCAG AA. Dark text is 5.48:1.
 - `css/slashed-core.css` `prefers-reduced-data` selector tightened from
-  `[class*="cs-"]` / `[class*="bg-"]` (substring match, false-positives
-  on names like `btn-cs-primary`) to whole-token matching with
-  `[class^="cs-"], [class*=" cs-"]`.
+  substring match to whole-token matching.
 - `css/slashed-core.css` `.bento` `@container` queries — `(max-width:
-  48em)` tightened to `(max-width: 47.99em)` on both occurrences (medium
-  bento layout and span-collapse override). Aligns with the
-  `47.99em` convention used elsewhere in the framework and prevents
-  the medium rule from leaking into the `48em` breakpoint.
-- `css/slashed-core.css` `dialog` element — width now derives from
-  `--container-dialog` (20rem) via a new `--dialog-max-width` instance
-  custom property. The previous default routed through
-  `--container-prose` (65ch), which made the new `--container-dialog`
-  token meaningless for the very element it was named for. Consumers
-  who want wider dialogs can override per-instance:
-  `<dialog style="--dialog-max-width: var(--container-prose)">…</dialog>`.
-  This shrinks the default `<dialog>` width from ~40rem to 20rem; if
-  your app has substantive dialogs, set `--dialog-max-width` (per
-  instance or globally on `:root`) to your preferred token.
-- `docs/COMPONENTS.md` `.cs-nav-link` paragraph rewritten — no longer
-  claims the rule is authored as `a.cs-nav-link` with specificity
-  0,1,1; documents the class-only authoring and the cascade-layer
-  mechanism.
+  48em)` tightened to `(max-width: 47.99em)`.
+- `css/slashed-core.css` `dialog` width now derives from
+  `--container-dialog` via `--dialog-max-width` instance token.
+- `docs/COMPONENTS.md` `.cs-nav-link` paragraph corrected.
 
 ---
 
